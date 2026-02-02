@@ -162,7 +162,7 @@ $categories = ExpenseCategory::getExpenseCategoryHierarchy();
                     <div class="upload-placeholder text-center p-4" id="upload-placeholder">
                         <i class="bi bi-cloud-arrow-up text-danger" style="font-size: 2.5rem;"></i>
                         <p class="mb-1 mt-2"><?= Yii::t('app', 'Drop file here or click to upload') ?></p>
-                        <small class="text-muted">PNG, JPG, JPEG, PDF (Max 4MB)</small>
+                        <small class="text-muted">PNG, JPG, JPEG, PDF (Max 12MB)</small>
                     </div>
                     <div class="upload-preview d-none" id="upload-preview">
                         <div class="d-flex align-items-center p-3">

@@ -133,7 +133,7 @@ var NEM = (function ($) {
                     duration: Config.toastDuration,
                     position: "top-end",
                 },
-                options
+                options,
             );
 
             var container = $(Config.toastContainerSelector);
@@ -302,7 +302,7 @@ var NEM = (function ($) {
                     url: url,
                     type: "POST",
                     data: data,
-                })
+                }),
             );
         },
 
@@ -314,7 +314,7 @@ var NEM = (function ($) {
                 $.extend({}, options, {
                     url: url,
                     type: "GET",
-                })
+                }),
             );
         },
     };
@@ -438,7 +438,7 @@ var NEM = (function ($) {
                         '<div class="alert alert-danger m-3">' +
                             '<i class="bi bi-exclamation-triangle me-2"></i>' +
                             "Failed to load content. Please try again." +
-                            "</div>"
+                            "</div>",
                     );
                 },
             });
@@ -838,7 +838,7 @@ var NEM = (function ($) {
                     {
                         scrollTop: $element.offset().top - offset,
                     },
-                    300
+                    300,
                 );
             }
         },
@@ -994,7 +994,7 @@ var NEM = (function ($) {
             previewSizeSelector: "#preview-size",
             removeBtnSelector: "#remove-file",
             validTypes: ["image/png", "image/jpeg", "image/jpg", "application/pdf"],
-            maxSize: 4 * 1024 * 1024, // 4MB
+            maxSize: 12 * 1024 * 1024, // 12MB
             dragoverClass: "dragover",
         },
 
@@ -1159,7 +1159,7 @@ var NEM = (function ($) {
                         parseFloat(value).toLocaleString(settings.locale, {
                             minimumFractionDigits: settings.minimumFractionDigits,
                             maximumFractionDigits: settings.maximumFractionDigits,
-                        })
+                        }),
                     );
                 }
             });

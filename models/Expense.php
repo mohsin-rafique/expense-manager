@@ -121,7 +121,7 @@ class Expense extends ActiveRecord
             [['filepath', 'reference'], 'string', 'max' => 191],
 
             // File upload validation
-            [['myFile'], 'file', 'extensions' => 'png, jpg, jpeg, pdf', 'maxSize' => 4 * 1024 * 1024],
+            [['myFile'], 'file', 'extensions' => 'png, jpg, jpeg, pdf', 'maxSize' => 12 * 1024 * 1024],
 
             // Payment method validation
             [['payment_method'], 'in', 'range' => array_keys(self::getPaymentMethods())],
