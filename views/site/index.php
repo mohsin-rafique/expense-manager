@@ -10,35 +10,30 @@
  * Dashboard View
  *
  * Main dashboard displaying financial overview, trends, and analytics.
- * Provides at-a-glance insights into income, expenses, and balance.
+ * All data comes from the DashboardViewModel — no business logic here.
  *
  * @var yii\web\View $this
+ * @var app\viewmodels\DashboardViewModel $vm
  *
  * @author Mohsin Rafique <mohsin.rafique@gmail.com>
  * @since 1.0.0
  */
 
 use yii\bootstrap5\Html;
+use yii\helpers\Url;
 use app\widgets\CurrentMonthPanelWidget;
 use app\widgets\MonthlyPerformanceWidget;
 use app\widgets\ExpensesByCategoryWidget;
 use app\widgets\FiscalYearExpenseSummaryByMonth;
 use app\widgets\ComparativeAnalysisPanel;
 use app\widgets\LifetimeOverviewWidget;
+use app\assets\DashboardAsset;
+
+DashboardAsset::register($this);
 
 // Page configuration
 $this->title = Yii::t('app', 'Dashboard');
 $this->params['breadcrumbs'][] = $this->title;
-
-// Fiscal year configuration
-$fiscalYearConfig = [
-    'startDate' => '2024-07-01',
-    'endDate' => '2025-06-30',
-    'label' => 'FY 2024-25',
-];
-
-// Currency configuration
-$currencyCode = Yii::$app->params['currencyCode'] ?? 'PKR';
 ?>
 
 <!-- ============================================================== -->
@@ -53,14 +48,21 @@ $currencyCode = Yii::$app->params['currencyCode'] ?? 'PKR';
             </p>
         </div>
         <div class="col-md-6 text-md-end">
-            <p class="text-muted mb-0">
-                <small>
-                    <i class="bi bi-clock me-1"></i>
-                    <?= Yii::t('app', 'Last updated: {date}', [
-                        'date' => Yii::$app->formatter->asDatetime(time(), 'medium'),
-                    ]) ?>
-                </small>
-            </p>
+            <!-- Fiscal Year Selector -->
+            <div class="fy-selector">
+                <select onchange="window.location.href='<?= Url::to(['site/index']) ?>?fy=' + encodeURIComponent(this.value)">
+                    <?php foreach ($vm->availableFiscalYears as $fy): ?>
+                        <option value="<?= Html::encode($fy['label']) ?>"
+                            <?= $vm->isFiscalYearActive($fy['label']) ? 'selected' : '' ?>>
+                            <?= Html::encode($fy['label']) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+                <span class="fy-updated">
+                    <i class="bi bi-clock"></i>
+                    <?= Yii::t('app', 'Last updated: {date}', ['date' => $vm->lastUpdated]) ?>
+                </span>
+            </div>
         </div>
     </div>
 </div>
@@ -71,25 +73,19 @@ $currencyCode = Yii::$app->params['currencyCode'] ?? 'PKR';
 <!-- ============================================================== -->
 <section class="dashboard-section mb-4">
     <div class="d-flex align-items-center justify-content-between mb-3">
-        <h2 class="h5 mb-0">
-            <?= Yii::t('app', 'Current Month Overview') ?>
-        </h2>
-        <span class="badge bg-primary">
-            <?= Yii::$app->formatter->asDate(time(), 'MMMM yyyy') ?>
-        </span>
+        <h2 class="h5 mb-0"><?= Yii::t('app', 'Current Month Overview') ?></h2>
+        <span class="badge bg-primary"><?= Html::encode($vm->currentMonth) ?></span>
     </div>
 
     <div class="row g-4">
         <!-- Summary Stats -->
         <div class="col-xl-6">
-            <?= CurrentMonthPanelWidget::widget([
-                'mode' => 'summary'
-            ]) ?>
+            <?= CurrentMonthPanelWidget::widget(['mode' => 'summary']) ?>
         </div>
 
         <!-- Performance Donut Chart -->
         <div class="col-xl-6">
-            <?= MonthlyPerformanceWidget::widget(); ?>
+            <?= MonthlyPerformanceWidget::widget() ?>
         </div>
     </div>
 </section>
@@ -116,7 +112,7 @@ $currencyCode = Yii::$app->params['currencyCode'] ?? 'PKR';
         <!-- Category Breakdown -->
         <div class="col-xl-6">
             <?= ExpensesByCategoryWidget::widget([
-                'maxCategories' => 10,
+                'maxCategories' => $vm->maxCategories,
             ]) ?>
         </div>
     </div>
@@ -127,13 +123,13 @@ $currencyCode = Yii::$app->params['currencyCode'] ?? 'PKR';
 <!-- Year-to-date expense breakdown by month                        -->
 <!-- ============================================================== -->
 <?= FiscalYearExpenseSummaryByMonth::widget([
-    'fiscalStartDate' => $fiscalYearConfig['startDate'],
-    'fiscalEndDate' => $fiscalYearConfig['endDate'],
-    'fiscalYearLabel' => $fiscalYearConfig['label'],
+    'fiscalStartDate' => $vm->getFiscalStartDate(),
+    'fiscalEndDate' => $vm->getFiscalEndDate(),
+    'fiscalYearLabel' => $vm->getFiscalYearLabel(),
     'title' => Yii::t('app', 'Fiscal Year Expense Summary'),
     'subtitle' => Yii::t('app', 'Monthly breakdown by category'),
-    'enableExport' => true,
-    'enableFiltering' => true,
+    'enableExport' => $vm->enableExport,
+    'enableFiltering' => $vm->enableFiltering,
     'containerClass' => 'mb-4',
 ]) ?>
 
@@ -142,13 +138,13 @@ $currencyCode = Yii::$app->params['currencyCode'] ?? 'PKR';
 <!-- Period-over-period comparison and insights                     -->
 <!-- ============================================================== -->
 <?= ComparativeAnalysisPanel::widget([
-    'fiscalStartDate' => $fiscalYearConfig['startDate'],
-    'fiscalEndDate' => $fiscalYearConfig['endDate'],
-    'fiscalYearLabel' => $fiscalYearConfig['label'],
-    'showTrendIndicators' => true,
-    'enablePreviousPeriodComparison' => true,
+    'fiscalStartDate' => $vm->getFiscalStartDate(),
+    'fiscalEndDate' => $vm->getFiscalEndDate(),
+    'fiscalYearLabel' => $vm->getFiscalYearLabel(),
+    'showTrendIndicators' => $vm->showTrendIndicators,
+    'enablePreviousPeriodComparison' => $vm->enablePreviousPeriodComparison,
     'containerClass' => 'mb-4',
-    'maxCategories' => 10,
+    'maxCategories' => $vm->maxCategories,
 ]) ?>
 
 <!-- ============================================================== -->
@@ -156,8 +152,8 @@ $currencyCode = Yii::$app->params['currencyCode'] ?? 'PKR';
 <!-- All-time financial statistics                                  -->
 <!-- ============================================================== -->
 <?= LifetimeOverviewWidget::widget([
-    'showTrendIndicators' => true,
-    'currencyCode' => $currencyCode,
+    'showTrendIndicators' => $vm->showTrendIndicators,
+    'currencyCode' => $vm->currencyCode,
     'containerClass' => 'mb-4',
 ]) ?>
 
