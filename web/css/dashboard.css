@@ -733,3 +733,345 @@
         display: none;
     }
 }
+
+/* ============================================================== */
+/* Enhanced Stat Cards with Sparklines                            */
+/* ============================================================== */
+
+.enhanced-stat-card {
+    border: none;
+    border-radius: var(--em-radius-lg);
+    overflow: hidden;
+}
+
+.enhanced-stat-card .stat-row {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--em-gray-100);
+    transition: background-color 0.2s ease;
+}
+
+.enhanced-stat-card .stat-row:last-of-type {
+    border-bottom: none;
+}
+
+.enhanced-stat-card .stat-row:hover {
+    background-color: var(--em-gray-50, #f8fafc);
+}
+
+.enhanced-stat-card .stat-row-main {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+}
+
+/* ── Icon Wrapper ── */
+.enhanced-stat-card .icon-wrapper {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--em-radius-lg);
+    font-size: 1.25rem;
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+}
+
+.enhanced-stat-card .stat-row:hover .icon-wrapper {
+    transform: scale(1.08);
+}
+
+.enhanced-stat-card .icon-wrapper.income {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.2));
+    color: #10b981;
+}
+
+.enhanced-stat-card .icon-wrapper.expense {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.2));
+    color: #ef4444;
+}
+
+.enhanced-stat-card .icon-wrapper.success {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.2));
+    color: #10b981;
+}
+
+.enhanced-stat-card .icon-wrapper.danger {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.2));
+    color: #ef4444;
+}
+
+/* ── Content ── */
+.enhanced-stat-card .stat-row-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.enhanced-stat-card .stat-row-label {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--em-gray-400);
+    margin-bottom: 0.15rem;
+}
+
+.enhanced-stat-card .stat-row-value {
+    display: block;
+    font-size: 1.35rem;
+    font-weight: 700;
+    line-height: 1.2;
+    font-variant-numeric: tabular-nums;
+}
+
+/* ── Sparkline ── */
+.enhanced-stat-card .stat-row-sparkline {
+    flex-shrink: 0;
+    width: 100px;
+    opacity: 0.9;
+}
+
+.enhanced-stat-card .stat-row:hover .stat-row-sparkline {
+    opacity: 1;
+}
+
+/* ── Expense Progress Bar ── */
+.enhanced-stat-card .stat-row-progress {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    padding-left: 3.5rem;
+}
+
+.progress-micro {
+    flex: 1;
+    height: 4px;
+    background: var(--em-gray-100);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.progress-micro-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 1s ease;
+}
+
+.progress-micro-fill.healthy {
+    background: linear-gradient(90deg, #10b981, #34d399);
+}
+
+.progress-micro-fill.warning {
+    background: linear-gradient(90deg, #f59e0b, #fbbf24);
+}
+
+.progress-micro-fill.critical {
+    background: linear-gradient(90deg, #ef4444, #f87171);
+}
+
+.progress-micro-label {
+    font-size: 0.65rem;
+    color: var(--em-gray-400);
+    white-space: nowrap;
+    font-weight: 500;
+}
+
+/* ── Savings Badge ── */
+.enhanced-stat-card .stat-row-badge {
+    flex-shrink: 0;
+}
+
+.savings-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.65rem;
+    border-radius: 2rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+.savings-badge.positive {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+}
+
+.savings-badge.negative {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+.savings-badge i {
+    font-size: 1rem;
+    margin-right: 0.1rem;
+}
+
+/* ── Responsive ── */
+@media (max-width: 575.98px) {
+    .enhanced-stat-card .stat-row-sparkline {
+        display: none;
+    }
+
+    .enhanced-stat-card .stat-row-value {
+        font-size: 1.15rem;
+    }
+
+    .enhanced-stat-card .stat-row-progress {
+        padding-left: 0;
+    }
+}
+
+/* ============================================================== */
+/* Enhanced Monthly Performance Widget                            */
+/* ============================================================== */
+
+.enhanced-performance-card {
+    border: none;
+    border-radius: var(--em-radius-lg);
+}
+
+.enhanced-performance-card .card-body {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem 1.25rem;
+}
+
+/* ── Radial Chart ── */
+.perf-chart-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 0.5rem;
+}
+
+/* ── Metric Cards ── */
+.perf-metrics {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.perf-metric-item {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 0.75rem;
+    border-radius: var(--em-radius);
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.perf-metric-item:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--em-shadow);
+}
+
+.perf-metric-item.income {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.06), rgba(16, 185, 129, 0.12));
+}
+
+.perf-metric-item.expense {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.06), rgba(239, 68, 68, 0.12));
+}
+
+.perf-metric-item.savings {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.06), rgba(99, 102, 241, 0.12));
+}
+
+.perf-metric-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.perf-metric-item.income .perf-metric-dot {
+    background: #10b981;
+}
+.perf-metric-item.expense .perf-metric-dot {
+    background: #ef4444;
+}
+.perf-metric-item.savings .perf-metric-dot {
+    background: #6366f1;
+}
+
+.perf-metric-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.perf-metric-label {
+    font-size: 0.6rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--em-gray-400);
+    line-height: 1;
+    margin-bottom: 0.15rem;
+}
+
+.perf-metric-value {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--em-gray-800);
+    font-variant-numeric: tabular-nums;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ── Trend Section ── */
+.perf-trend {
+    border-top: 1px solid var(--em-gray-100);
+    padding-top: 0.65rem;
+    margin-top: auto;
+}
+
+.perf-trend-header {
+    margin-bottom: 0.25rem;
+}
+
+.perf-trend-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--em-gray-400);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+/* ── Equal Height Fix ── */
+.dashboard-section .row.g-4 > [class*="col-"] > .monthly-performance-widget,
+.dashboard-section .row.g-4 > [class*="col-"] > .current-month-panel-widget {
+    height: 100%;
+}
+
+.dashboard-section .row.g-4 > [class*="col-"] > .monthly-performance-widget > .card,
+.dashboard-section .row.g-4 > [class*="col-"] > .current-month-panel-widget > .card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.dashboard-section .row.g-4 > [class*="col-"] > .monthly-performance-widget > .card > .card-body,
+.dashboard-section .row.g-4 > [class*="col-"] > .current-month-panel-widget > .card > .card-body {
+    flex: 1;
+}
+
+/* ── Responsive ── */
+@media (max-width: 575.98px) {
+    .perf-metrics {
+        flex-direction: column;
+    }
+
+    .perf-metric-item {
+        padding: 0.5rem;
+    }
+
+    .perf-metric-value {
+        font-size: 0.75rem;
+    }
+}

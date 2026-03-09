@@ -128,11 +128,59 @@ class MonthlyPerformanceWidget extends Widget
     }
 
     /**
+     * Get monthly savings rate for last N months (for trend display)
+     *
+     * @param int $months Number of months
+     * @return array ['labels' => [...], 'rates' => [...]]
+     */
+    protected function getMonthlyTrend(int $months = 6): array
+    {
+        $userId = (int) $this->userId;
+        $labels = [];
+        $rates = [];
+        $incomes = [];
+        $expenses = [];
+
+        for ($i = $months - 1; $i >= 0; $i--) {
+            $date = strtotime("-{$i} months");
+            $m = (int) date('m', $date);
+            $y = (int) date('Y', $date);
+            $labels[] = date('M', $date);
+
+            $inc = (float) Yii::$app->db->createCommand(
+                'SELECT COALESCE(SUM(amount), 0) FROM {{%incomes}}
+             WHERE user_id = :userId AND MONTH(entry_date) = :month AND YEAR(entry_date) = :year',
+                [':userId' => $userId, ':month' => $m, ':year' => $y]
+            )->queryScalar();
+
+            $exp = (float) Yii::$app->db->createCommand(
+                'SELECT COALESCE(SUM(amount), 0) FROM {{%expenses}}
+             WHERE user_id = :userId AND MONTH(expense_date) = :month AND YEAR(expense_date) = :year',
+                [':userId' => $userId, ':month' => $m, ':year' => $y]
+            )->queryScalar();
+
+            $incomes[] = $inc;
+            $expenses[] = $exp;
+            $rates[] = $inc > 0 ? round((($inc - $exp) / $inc) * 100, 1) : 0;
+        }
+
+        return compact('labels', 'rates', 'incomes', 'expenses');
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function run(): string
     {
         $this->registerAssets();
+
+        $savingsRate = $this->_income > 0
+            ? round(($this->_balance / $this->_income) * 100, 1)
+            : 0;
+        $expenseRate = $this->_income > 0
+            ? round(($this->_expense / $this->_income) * 100, 1)
+            : 0;
+        $trend = $this->getMonthlyTrend(6);
 
         return $this->render('monthly-performance', [
             'widgetId' => $this->_widgetId,
@@ -142,8 +190,11 @@ class MonthlyPerformanceWidget extends Widget
             'income' => $this->_income,
             'expense' => $this->_expense,
             'balance' => $this->_balance,
+            'savingsRate' => $savingsRate,
+            'expenseRate' => $expenseRate,
             'hasData' => ($this->_income > 0 || $this->_expense > 0),
             'chartHeight' => $this->chartHeight,
+            'trend' => $trend,
         ]);
     }
 

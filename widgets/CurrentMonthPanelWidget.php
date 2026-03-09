@@ -302,6 +302,8 @@ class CurrentMonthPanelWidget extends Widget
         }
 
         // Default: summary mode
+        $sparklineData = $this->getMonthlySparklineData(6);
+
         return $this->render('current-month-panel', [
             'widgetId' => $this->_widgetId,
             'title' => Yii::t('app', $this->title),
@@ -312,6 +314,42 @@ class CurrentMonthPanelWidget extends Widget
             'icons' => $this->icons,
             'currentMonthName' => $this->getMonthName($this->_currentMonth, $this->_currentYear),
             'isProfit' => $this->_currentMonthProfitLoss >= 0,
+            'sparklineData' => $sparklineData,
         ]);
+    }
+
+    /**
+     * Get monthly totals for the last N months (for sparkline charts)
+     *
+     * @param int $months Number of months to fetch
+     * @return array ['labels' => [...], 'income' => [...], 'expense' => [...]]
+     */
+    protected function getMonthlySparklineData(int $months = 6): array
+    {
+        $userId = (int) $this->userId;
+        $labels = [];
+        $income = [];
+        $expense = [];
+
+        for ($i = $months - 1; $i >= 0; $i--) {
+            $date = strtotime("-{$i} months");
+            $m = (int) date('m', $date);
+            $y = (int) date('Y', $date);
+            $labels[] = date('M', $date);
+
+            $income[] = (float) Yii::$app->db->createCommand(
+                'SELECT COALESCE(SUM(amount), 0) FROM {{%incomes}}
+             WHERE user_id = :userId AND MONTH(entry_date) = :month AND YEAR(entry_date) = :year',
+                [':userId' => $userId, ':month' => $m, ':year' => $y]
+            )->queryScalar();
+
+            $expense[] = (float) Yii::$app->db->createCommand(
+                'SELECT COALESCE(SUM(amount), 0) FROM {{%expenses}}
+             WHERE user_id = :userId AND MONTH(expense_date) = :month AND YEAR(expense_date) = :year',
+                [':userId' => $userId, ':month' => $m, ':year' => $y]
+            )->queryScalar();
+        }
+
+        return compact('labels', 'income', 'expense');
     }
 }

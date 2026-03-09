@@ -7,10 +7,7 @@
  */
 
 /**
- * Current Month Panel Widget View (Summary Mode)
- *
- * Displays current month income, expense, and profit/loss metrics
- * in a card-based layout with icons and trend indicators.
+ * Current Month Panel Widget View (Summary Mode) — Enhanced with Sparklines
  *
  * @var yii\web\View $this
  * @var string $widgetId Unique widget identifier
@@ -22,118 +19,115 @@
  * @var array $icons Icon classes for each metric
  * @var string $currentMonthName Formatted current month name
  * @var bool $isProfit Whether profit/loss is positive
+ * @var array $sparklineData Last 6 months data for sparklines
  *
  * @author Mohsin Rafique <mohsin.rafique@gmail.com>
- * @since 1.0.0
+ * @since 1.1.0
  */
 
 use yii\helpers\Html;
+use yii\helpers\Json;
 
-// Build container classes
 $containerClasses = ['current-month-panel-widget'];
 if ($containerClass) {
     $containerClasses[] = $containerClass;
 }
 
-// Determine profit/loss styling
-$profitLossClass = $isProfit ? 'text-success' : 'text-danger';
-$profitLossIcon = $isProfit ? 'bi-arrow-up-circle-fill' : 'bi-arrow-down-circle-fill';
+$profitLossClass = $isProfit ? 'success' : 'danger';
 $profitLossLabel = $isProfit ? Yii::t('app', 'Profit') : Yii::t('app', 'Loss');
+
+// Calculate savings rate
+$savingsRate = $income > 0 ? round(($profitLoss / $income) * 100, 1) : 0;
+
+// Encode sparkline data for JS
+$sparklineJson = Json::encode($sparklineData);
 ?>
 
-<!-- ============================================================== -->
-<!-- Current Month Panel Widget (Summary Mode)                      -->
-<!-- ============================================================== -->
 <div class="<?= implode(' ', $containerClasses) ?>" id="<?= Html::encode($widgetId) ?>">
-    <div class="card h-100 shadow-sm">
+    <div class="card h-100 shadow-sm enhanced-stat-card">
         <div class="card-body p-0">
-            <div class="row g-0">
 
-                <!-- Income Metric -->
-                <div class="col-12 border-bottom">
-                    <div class="p-4">
-                        <div class="d-flex align-items-start justify-content-between mb-2">
-                            <h6 class="text-muted text-uppercase fw-semibold mb-0" style="font-size: 0.75rem; letter-spacing: 0.05em;">
-                                <?= Yii::t('app', 'Current Month Income') ?>
-                            </h6>
-                            <span class="text-success">
-                                <i class="bi bi-arrow-up-circle-fill"></i>
-                            </span>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <div class="flex-shrink-0 me-3">
-                                <span class="d-inline-flex align-items-center justify-content-center bg-success bg-opacity-10 rounded"
-                                    style="width: 48px; height: 48px;">
-                                    <i class="<?= Html::encode($icons['income']) ?> text-success fs-4"></i>
-                                </span>
-                            </div>
-                            <div class="flex-grow-1">
-                                <h3 class="mb-0 text-success" style="font-size: 1.5rem; font-weight: 600;">
-                                    <?= Yii::$app->currency->format($income) ?>
-                                </h3>
-                            </div>
-                        </div>
+            <!-- Income Card -->
+            <div class="stat-row income-row">
+                <div class="stat-row-main">
+                    <div class="stat-row-icon">
+                        <span class="icon-wrapper income">
+                            <i class="<?= Html::encode($icons['income']) ?>"></i>
+                        </span>
+                    </div>
+                    <div class="stat-row-content">
+                        <span class="stat-row-label">
+                            <?= Yii::t('app', 'Current Month Income') ?>
+                        </span>
+                        <span class="stat-row-value text-success" data-count="<?= $income ?>">
+                            <?= Yii::$app->currency->format($income) ?>
+                        </span>
+                    </div>
+                    <div class="stat-row-sparkline">
+                        <div id="sparkline-income-<?= $widgetId ?>"></div>
                     </div>
                 </div>
-
-                <!-- Expense Metric -->
-                <div class="col-12 border-bottom">
-                    <div class="p-4">
-                        <div class="d-flex align-items-start justify-content-between mb-2">
-                            <h6 class="text-muted text-uppercase fw-semibold mb-0" style="font-size: 0.75rem; letter-spacing: 0.05em;">
-                                <?= Yii::t('app', 'Current Month Expenses') ?>
-                            </h6>
-                            <span class="text-danger">
-                                <i class="bi bi-arrow-down-circle-fill"></i>
-                            </span>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <div class="flex-shrink-0 me-3">
-                                <span class="d-inline-flex align-items-center justify-content-center bg-danger bg-opacity-10 rounded"
-                                    style="width: 48px; height: 48px;">
-                                    <i class="<?= Html::encode($icons['expense']) ?> text-danger fs-4"></i>
-                                </span>
-                            </div>
-                            <div class="flex-grow-1">
-                                <h3 class="mb-0 text-danger" style="font-size: 1.5rem; font-weight: 600;">
-                                    <?= Yii::$app->currency->format($expense) ?>
-                                </h3>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Profit/Loss Metric -->
-                <div class="col-12">
-                    <div class="p-4">
-                        <div class="d-flex align-items-start justify-content-between mb-2">
-                            <h6 class="text-muted text-uppercase fw-semibold mb-0" style="font-size: 0.75rem; letter-spacing: 0.05em;">
-                                <?= Yii::t('app', 'Net {status}', ['status' => $profitLossLabel]) ?>
-                            </h6>
-                            <span class="<?= $profitLossClass ?>">
-                                <i class="<?= $profitLossIcon ?>"></i>
-                            </span>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <div class="flex-shrink-0 me-3">
-                                <span class="d-inline-flex align-items-center justify-content-center <?= $isProfit ? 'bg-success' : 'bg-danger' ?> bg-opacity-10 rounded"
-                                    style="width: 48px; height: 48px;">
-                                    <i class="<?= Html::encode($icons['profit']) ?> <?= $profitLossClass ?> fs-4"></i>
-                                </span>
-                            </div>
-                            <div class="flex-grow-1">
-                                <h3 class="mb-0 <?= $profitLossClass ?>" style="font-size: 1.5rem; font-weight: 600;">
-                                    <?php if (!$isProfit): ?>
-                                        <span>-</span>
-                                    <?php endif ?>
-                                    <?= Yii::$app->currency->format(abs($profitLoss)) ?>
-                                </h3>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
             </div>
+
+            <!-- Expense Card -->
+            <div class="stat-row expense-row">
+                <div class="stat-row-main">
+                    <div class="stat-row-icon">
+                        <span class="icon-wrapper expense">
+                            <i class="<?= Html::encode($icons['expense']) ?>"></i>
+                        </span>
+                    </div>
+                    <div class="stat-row-content">
+                        <span class="stat-row-label">
+                            <?= Yii::t('app', 'Current Month Expenses') ?>
+                        </span>
+                        <span class="stat-row-value text-danger" data-count="<?= $expense ?>">
+                            <?= Yii::$app->currency->format($expense) ?>
+                        </span>
+                    </div>
+                    <div class="stat-row-sparkline">
+                        <div id="sparkline-expense-<?= $widgetId ?>"></div>
+                    </div>
+                </div>
+                <!-- Expense vs Income Progress Bar -->
+                <div class="stat-row-progress">
+                    <?php $expenseRatio = $income > 0 ? min(100, round(($expense / $income) * 100)) : 0; ?>
+                    <div class="progress-micro">
+                        <div class="progress-micro-fill <?= $expenseRatio > 80 ? 'critical' : ($expenseRatio > 60 ? 'warning' : 'healthy') ?>"
+                            style="width: <?= $expenseRatio ?>%"></div>
+                    </div>
+                    <span class="progress-micro-label"><?= $expenseRatio ?>% of income</span>
+                </div>
+            </div>
+
+            <!-- Net Profit/Loss Card -->
+            <div class="stat-row balance-row">
+                <div class="stat-row-main">
+                    <div class="stat-row-icon">
+                        <span class="icon-wrapper <?= $profitLossClass ?>">
+                            <i class="<?= Html::encode($icons['profit']) ?>"></i>
+                        </span>
+                    </div>
+                    <div class="stat-row-content">
+                        <span class="stat-row-label">
+                            <?= Yii::t('app', 'Net {status}', ['status' => $profitLossLabel]) ?>
+                        </span>
+                        <span class="stat-row-value text-<?= $profitLossClass ?>" data-count="<?= abs($profitLoss) ?>">
+                            <?php if (!$isProfit):
+                                ?><span>-</span><?php
+                            endif ?>
+                            <?= Yii::$app->currency->format(abs($profitLoss)) ?>
+                        </span>
+                    </div>
+                    <div class="stat-row-badge">
+                        <span class="savings-badge <?= $isProfit ? 'positive' : 'negative' ?>">
+                            <i class="bi <?= $isProfit ? 'bi-arrow-up-short' : 'bi-arrow-down-short' ?>"></i>
+                            <?= abs($savingsRate) ?>% saved
+                        </span>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
         <!-- Card Footer -->
@@ -144,11 +138,45 @@ $profitLossLabel = $isProfit ? Yii::t('app', 'Profit') : Yii::t('app', 'Loss');
                     <?= Html::encode($currentMonthName) ?>
                 </small>
                 <small class="text-muted">
-                    <i class="bi bi-clock-history me-1"></i>
-                    <?= Yii::t('app', 'Live') ?>
+                    <i class="bi bi-activity me-1"></i>
+                    <?= Yii::t('app', '6-month trend') ?>
                 </small>
             </div>
         </div>
     </div>
 </div>
-<!-- End Current Month Panel Widget -->
+
+<?php
+// Register sparkline charts
+$js = <<<JS
+(function() {
+    var data = {$sparklineJson};
+
+    var sparkOptions = {
+        chart: { type: 'area', height: 40, sparkline: { enabled: true }, animations: { enabled: true, easing: 'easeinout', speed: 800 } },
+        stroke: { curve: 'smooth', width: 2 },
+        fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.4, opacityTo: 0.05 } },
+        tooltip: {
+            fixed: { enabled: false },
+            x: { show: true, formatter: function(val, opts) { return data.labels[opts.dataPointIndex] || ''; } },
+            y: { formatter: function(val) { return val.toLocaleString(); } },
+            theme: 'dark'
+        }
+    };
+
+    // Income sparkline
+    new ApexCharts(document.querySelector('#sparkline-income-{$widgetId}'), Object.assign({}, sparkOptions, {
+        series: [{ name: 'Income', data: data.income }],
+        colors: ['#10b981'],
+    })).render();
+
+    // Expense sparkline
+    new ApexCharts(document.querySelector('#sparkline-expense-{$widgetId}'), Object.assign({}, sparkOptions, {
+        series: [{ name: 'Expense', data: data.expense }],
+        colors: ['#ef4444'],
+    })).render();
+})();
+JS;
+
+$this->registerJs($js, \yii\web\View::POS_END);
+?>
