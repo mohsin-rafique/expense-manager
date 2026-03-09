@@ -31,7 +31,9 @@
 /* ============================================================== */
 
 .stat-card {
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
 .stat-card:hover {
@@ -269,6 +271,465 @@
 
     .period-selector,
     .btn-group {
+        display: none;
+    }
+}
+
+/* ============================================================== */
+/* Fiscal Year Selector                                           */
+/* ============================================================== */
+
+.fy-selector {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.fy-selector select {
+    appearance: none;
+    -webkit-appearance: none;
+    background-color: var(--em-primary);
+    color: #ffffff;
+    border: none;
+    border-radius: var(--em-radius-lg);
+    padding: 0.5rem 2.25rem 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+        background-color 0.2s ease,
+        box-shadow 0.2s ease;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23ffffff' d='M6 8.825a.5.5 0 01-.354-.146l-4-4a.5.5 0 01.708-.708L6 7.617l3.646-3.646a.5.5 0 01.708.708l-4 4A.5.5 0 016 8.825z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 12px;
+}
+
+.fy-selector select:hover {
+    background-color: var(--em-primary-dark, #4338ca);
+    box-shadow: var(--em-shadow-md);
+}
+
+.fy-selector select:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.25);
+}
+
+.fy-selector select option {
+    background-color: #ffffff;
+    color: var(--em-gray-800);
+    font-weight: 500;
+}
+
+.fy-selector .fy-updated {
+    font-size: 0.75rem;
+    color: var(--em-gray-400);
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+@media (max-width: 767.98px) {
+    .fy-selector {
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 0.75rem;
+    }
+
+    .fy-selector .fy-updated {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* ============================================================== */
+/* Fiscal Year Expense Summary - Enhanced                         */
+/* ============================================================== */
+
+.fy-summary-card {
+    border: none;
+    border-radius: var(--em-radius-lg);
+    box-shadow: var(--em-shadow);
+    overflow: hidden;
+}
+
+.fy-summary-card .card-header {
+    background: linear-gradient(135deg, var(--em-primary), #6366f1);
+    color: #ffffff;
+    padding: 1.25rem 1.5rem;
+    border: none;
+}
+
+.fy-summary-card .card-header .fy-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.fy-summary-card .card-header .fy-subtitle {
+    font-size: 0.8rem;
+    opacity: 0.8;
+    margin-top: 0.25rem;
+}
+
+.fy-summary-card .card-header .fy-badge {
+    background: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 2rem;
+    padding: 0.35rem 1rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    backdrop-filter: blur(4px);
+}
+
+.fy-summary-card .card-header .fy-actions .btn {
+    background: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: var(--em-radius);
+    font-size: 0.8rem;
+    font-weight: 500;
+    padding: 0.35rem 0.85rem;
+    transition: all 0.2s ease;
+}
+
+.fy-summary-card .card-header .fy-actions .btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px);
+}
+
+/* ── Table Wrapper ── */
+.fy-table-wrapper {
+    overflow-x: auto;
+    position: relative;
+}
+
+.fy-table-wrapper::-webkit-scrollbar {
+    height: 6px;
+}
+
+.fy-table-wrapper::-webkit-scrollbar-track {
+    background: var(--em-gray-100);
+}
+
+.fy-table-wrapper::-webkit-scrollbar-thumb {
+    background: var(--em-gray-300);
+    border-radius: 3px;
+}
+
+.fy-table-wrapper::-webkit-scrollbar-thumb:hover {
+    background: var(--em-gray-400);
+}
+
+/* ── Table Styles ── */
+.fy-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.85rem;
+}
+
+.fy-table thead th {
+    background: var(--em-gray-50, #f8fafc);
+    color: var(--em-gray-500);
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 0.75rem 1rem;
+    border-bottom: 2px solid var(--em-gray-200);
+    white-space: nowrap;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+.fy-table thead th:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 3;
+    background: var(--em-gray-50, #f8fafc);
+}
+
+.fy-table thead th.sortable {
+    cursor: pointer;
+    user-select: none;
+}
+
+.fy-table thead th.sortable:hover {
+    color: var(--em-primary);
+}
+
+/* ── Table Body ── */
+.fy-table tbody td {
+    padding: 0.65rem 1rem;
+    border-bottom: 1px solid var(--em-gray-100);
+    color: var(--em-gray-700);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    transition: background-color 0.15s ease;
+}
+
+.fy-table tbody td:first-child {
+    position: sticky;
+    left: 0;
+    background: #ffffff;
+    z-index: 1;
+    font-weight: 600;
+    color: var(--em-gray-800);
+}
+
+.fy-table tbody tr:hover td {
+    background-color: var(--em-primary-light, #eef2ff);
+}
+
+.fy-table tbody tr:hover td:first-child {
+    background-color: var(--em-primary-light, #eef2ff);
+}
+
+/* ── Cell Values ── */
+.fy-table .cell-value {
+    display: inline-block;
+    min-width: 60px;
+    text-align: right;
+}
+
+.fy-table .cell-value.positive {
+    color: var(--em-success);
+    font-weight: 500;
+}
+
+.fy-table .cell-value.zero {
+    color: var(--em-gray-300);
+}
+
+.fy-table .cell-value.high {
+    color: var(--em-danger);
+    font-weight: 600;
+}
+
+/* ── Heat Map Effect ── */
+.fy-table td.heat-1 {
+    background-color: rgba(79, 70, 229, 0.03);
+}
+.fy-table td.heat-2 {
+    background-color: rgba(79, 70, 229, 0.06);
+}
+.fy-table td.heat-3 {
+    background-color: rgba(79, 70, 229, 0.1);
+}
+.fy-table td.heat-4 {
+    background-color: rgba(79, 70, 229, 0.15);
+}
+.fy-table td.heat-5 {
+    background-color: rgba(79, 70, 229, 0.22);
+}
+
+.fy-table tbody tr:hover td.heat-1,
+.fy-table tbody tr:hover td.heat-2,
+.fy-table tbody tr:hover td.heat-3,
+.fy-table tbody tr:hover td.heat-4,
+.fy-table tbody tr:hover td.heat-5 {
+    background-color: var(--em-primary-light, #eef2ff);
+}
+
+/* ── Totals Row ── */
+.fy-table tfoot td {
+    padding: 0.85rem 1rem;
+    font-weight: 700;
+    font-size: 0.85rem;
+    border-top: 2px solid var(--em-gray-300);
+    background: var(--em-gray-50, #f8fafc);
+    color: var(--em-gray-800);
+}
+
+.fy-table tfoot td:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    background: var(--em-gray-50, #f8fafc);
+}
+
+.fy-table tfoot tr.grand-total td {
+    background: linear-gradient(135deg, var(--em-primary), #6366f1);
+    color: #ffffff;
+    font-size: 0.95rem;
+    border-top: none;
+}
+
+.fy-table tfoot tr.grand-total td:first-child {
+    background: linear-gradient(135deg, var(--em-primary), #6366f1);
+    color: #ffffff;
+}
+
+/* ── Month Column Styling ── */
+.fy-table .month-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.fy-table .month-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.fy-table .month-dot.current {
+    background: var(--em-primary);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+}
+
+.fy-table .month-dot.past {
+    background: var(--em-gray-300);
+}
+
+.fy-table .month-dot.future {
+    background: transparent;
+    border: 2px dashed var(--em-gray-300);
+}
+
+/* ── Future Month Rows ── */
+.fy-table tbody tr.future-month td {
+    color: var(--em-gray-300);
+    font-style: italic;
+}
+
+.fy-table tbody tr.current-month td {
+    background-color: rgba(79, 70, 229, 0.04);
+}
+
+.fy-table tbody tr.current-month td:first-child {
+    background-color: rgba(79, 70, 229, 0.04);
+    border-left: 3px solid var(--em-primary);
+}
+
+/* ── Card Footer ── */
+.fy-summary-card .card-footer {
+    background: var(--em-gray-50, #f8fafc);
+    border-top: 1px solid var(--em-gray-100);
+    padding: 0.75rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.75rem;
+    color: var(--em-gray-400);
+}
+
+.fy-summary-card .card-footer .footer-stat {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+/* ── Mini Sparkline Bar ── */
+.cell-bar-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 120px;
+}
+
+.cell-bar {
+    flex: 1;
+    height: 4px;
+    background: var(--em-gray-100);
+    border-radius: 2px;
+    overflow: hidden;
+    min-width: 40px;
+}
+
+.cell-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: var(--em-primary);
+    transition: width 0.6s ease;
+}
+
+.cell-bar-fill.high {
+    background: var(--em-danger);
+}
+
+.cell-bar-fill.medium {
+    background: var(--em-warning, #eab308);
+}
+
+.cell-bar-fill.low {
+    background: var(--em-success);
+}
+
+/* ── Toggle View Buttons ── */
+.fy-view-toggle {
+    display: inline-flex;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: var(--em-radius);
+    padding: 2px;
+    gap: 2px;
+}
+
+.fy-view-toggle .btn {
+    background: transparent;
+    color: rgba(255, 255, 255, 0.7);
+    border: none;
+    border-radius: calc(var(--em-radius) - 2px);
+    padding: 0.3rem 0.65rem;
+    font-size: 0.75rem;
+}
+
+.fy-view-toggle .btn.active {
+    background: rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+}
+
+.fy-view-toggle .btn:hover:not(.active) {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* ── Responsive ── */
+@media (max-width: 767.98px) {
+    .fy-summary-card .card-header {
+        padding: 1rem;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .fy-summary-card .card-footer {
+        flex-direction: column;
+        gap: 0.5rem;
+        text-align: center;
+    }
+
+    .fy-table {
+        font-size: 0.8rem;
+    }
+
+    .fy-table thead th,
+    .fy-table tbody td,
+    .fy-table tfoot td {
+        padding: 0.5rem 0.75rem;
+    }
+}
+
+@media print {
+    .fy-summary-card .card-header {
+        background: var(--em-gray-800) !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .fy-table td.heat-1,
+    .fy-table td.heat-2,
+    .fy-table td.heat-3,
+    .fy-table td.heat-4,
+    .fy-table td.heat-5 {
+        background: transparent !important;
+    }
+
+    .fy-summary-card .fy-actions,
+    .fy-view-toggle {
         display: none;
     }
 }
