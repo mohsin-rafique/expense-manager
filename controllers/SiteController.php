@@ -110,7 +110,11 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        $selectedFY = Yii::$app->request->get('fy');
+
+        $vm = new \app\viewmodels\DashboardViewModel($selectedFY);
+
+        return $this->render('index', compact('vm'));
     }
 
     // =========================================================================
