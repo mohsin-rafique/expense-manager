@@ -11,7 +11,6 @@ namespace app\widgets;
 use Yii;
 use yii\base\Widget;
 use yii\base\InvalidConfigException;
-use yii\helpers\Html;
 use yii\helpers\Json;
 use yii\web\View;
 
