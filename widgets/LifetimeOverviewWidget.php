@@ -102,21 +102,21 @@ class LifetimeOverviewWidget extends Widget
     {
         $this->_metricConfig = [
             'grossRevenue' => [
-                'label' => Yii::t('app', 'Cumulative Gross Revenue'),
+                'label' => Yii::t('app', 'Gross Revenue'),
                 'icon' => 'bi-graph-up-arrow',
-                'iconColor' => 'text-success',
+                'colorClass' => 'success',
                 'description' => Yii::t('app', 'Total lifetime earnings before deductions'),
             ],
             'operatingExpenditure' => [
-                'label' => Yii::t('app', 'Aggregate Operating Expenditure'),
+                'label' => Yii::t('app', 'Operating Expenditure'),
                 'icon' => 'bi-graph-down-arrow',
-                'iconColor' => 'text-danger',
+                'colorClass' => 'danger',
                 'description' => Yii::t('app', 'Total lifetime operational costs'),
             ],
             'netPosition' => [
                 'label' => Yii::t('app', 'Net Financial Position'),
                 'icon' => 'bi-wallet2',
-                'iconColor' => 'text-primary',
+                'colorClass' => 'primary',
                 'description' => Yii::t('app', 'Cumulative profit or loss indicator'),
             ],
         ];
@@ -164,6 +164,11 @@ class LifetimeOverviewWidget extends Widget
             ? round(($netPosition / $grossRevenue) * 100, 2)
             : 0;
 
+        // Expense ratio (what % of revenue is spent)
+        $expenseRatio = $grossRevenue > 0
+            ? round(($operatingExpenditure / $grossRevenue) * 100, 1)
+            : 0;
+
         $this->_metrics = [
             'grossRevenue' => [
                 'value' => $grossRevenue,
@@ -174,6 +179,7 @@ class LifetimeOverviewWidget extends Widget
                 'value' => $operatingExpenditure,
                 'formatted' => $this->formatCurrency($operatingExpenditure),
                 'trend' => 'neutral',
+                'expenseRatio' => $expenseRatio,
             ],
             'netPosition' => [
                 'value' => $netPosition,
