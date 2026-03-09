@@ -1138,3 +1138,26 @@
 .evolution-panel-widget tbody tr:hover {
     background-color: rgba(0, 0, 0, 0.015);
 }
+
+/* ============================================================== */
+/* Comparative Analysis — Metric Rows & Polish                    */
+/* ============================================================== */
+
+.ca-metric-row {
+    transition: background-color 0.15s ease;
+}
+
+.ca-metric-row:hover {
+    background-color: rgba(0, 0, 0, 0.012);
+}
+
+.ca-metric-row:hover .metric-icon {
+    transform: scale(1.08);
+}
+
+/* Ensure equal-height columns in comparative analysis */
+.comparative-analysis-widget .row.align-items-stretch > [class*="col-"].d-flex > .card {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+}

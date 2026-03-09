@@ -23,7 +23,7 @@ use yii\web\View;
  * ## Features
  *
  * - Displays fiscal year revenue, expenditure, and net position
- * - Shows expense distribution by category (horizontal bar chart)
+ * - Shows expense distribution by parent category (horizontal bar chart)
  * - Compares with previous fiscal year (optional)
  * - Fully responsive design
  * - Uses Bootstrap Icons for consistency
@@ -70,6 +70,10 @@ class ComparativeAnalysisPanel extends Widget
         '--em-danger',
         '--em-info',
         '--em-secondary',
+        '#8B5CF6',
+        '#EC4899',
+        '#14B8A6',
+        '#F97316',
     ];
 
     /** @var string Widget container CSS class */
@@ -231,7 +235,10 @@ class ComparativeAnalysisPanel extends Widget
     }
 
     /**
-     * Fetch expense categories with totals
+     * Fetch expense categories with totals (parent-level only)
+     *
+     * Aggregates all child category expenses into their parent category.
+     * Categories without a parent are treated as top-level.
      *
      * @param string $startDate
      * @param string $endDate
@@ -240,14 +247,17 @@ class ComparativeAnalysisPanel extends Widget
     protected function fetchExpenseCategory(string $startDate, string $endDate): array
     {
         $rows = Yii::$app->db->createCommand(
-            "SELECT c.name, COALESCE(SUM(e.amount), 0) as total
+            "SELECT COALESCE(parent.name, c.name) as name,
+                    COALESCE(SUM(e.amount), 0) as total
              FROM {$this->expenseCategoryTable} c
+             LEFT JOIN {$this->expenseCategoryTable} parent
+                ON parent.id = c.parent_id
              LEFT JOIN {$this->expenseTable} e
                 ON e.expense_category_id = c.id
                 AND e.user_id = :user
                 AND e.expense_date BETWEEN :start AND :end
              WHERE c.user_id = :user
-             GROUP BY c.id, c.name
+             GROUP BY COALESCE(parent.id, c.id), COALESCE(parent.name, c.name)
              HAVING total > 0
              ORDER BY total DESC
              LIMIT :limit"
@@ -309,6 +319,8 @@ class ComparativeAnalysisPanel extends Widget
     {
         $this->registerAssets();
 
+        $totalExpenditure = array_sum($this->_ExpenseCategory);
+
         return $this->render('comparative-analysis', [
             'widgetId' => $this->_widgetId,
             'title' => Yii::t('app', $this->title),
@@ -320,6 +332,8 @@ class ComparativeAnalysisPanel extends Widget
             'netPosition' => $this->getNetPosition(),
             'isNetPositive' => $this->isNetPositive(),
             'ExpenseCategory' => $this->_ExpenseCategory,
+            'totalCategoryExpenditure' => $totalExpenditure,
+            'categoryCount' => count($this->_ExpenseCategory),
             'showTrendIndicators' => $this->showTrendIndicators,
             'revenueTrend' => $this->getTrendIndicator('revenue'),
             'expenditureTrend' => $this->getTrendIndicator('expenditure'),
@@ -432,6 +446,10 @@ class ComparativeAnalysisPanel extends Widget
      */
     protected function registerAssets(): void
     {
+        if (empty($this->_ExpenseCategory)) {
+            return;
+        }
+
         $view = $this->getView();
         $chartId = 'bar_chart_fiscal_year_' . $this->_widgetId;
 
@@ -440,7 +458,7 @@ class ComparativeAnalysisPanel extends Widget
 
         $categoriesJson = Json::encode($categories);
         $valuesJson = Json::encode($values);
-        $colorsJson = Json::encode($this->chartColors);
+        $colorsJson = Json::encode(array_slice($this->chartColors, 0, count($categories)));
         $seriesLabel = Yii::t('app', 'Expenditure');
 
         $js = <<<JS
@@ -460,7 +478,7 @@ class ComparativeAnalysisPanel extends Widget
             var options = {
                 chart: {
                     type: "bar",
-                    height: 350,
+                    height: '100%',
                     fontFamily: 'Inter, -apple-system, sans-serif',
                     toolbar: { show: false },
                     animations: {
@@ -516,6 +534,7 @@ class ComparativeAnalysisPanel extends Widget
                     }
                 },
                 legend: { show: false },
+                stroke: { width: 0 },
                 tooltip: {
                     y: {
                         formatter: function(val) {
