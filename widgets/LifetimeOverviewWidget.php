@@ -41,6 +41,11 @@ use yii\base\Widget;
 class LifetimeOverviewWidget extends Widget
 {
     /**
+     * @var string|null Start date for lifetime calculations (Y-m-d format)
+     */
+    public ?string $startDate = null;
+
+    /**
      * @var int|null User ID for filtering financial data
      */
     public ?int $userId = null;
@@ -146,15 +151,29 @@ class LifetimeOverviewWidget extends Widget
         $db = Yii::$app->db;
         $userId = (int) $this->userId;
 
+        // Build income query with optional start date
+        $incomeQuery = 'SELECT COALESCE(SUM(amount), 0) FROM {{%incomes}} WHERE user_id = :userId';
+        $incomeParams = [':userId' => $userId];
+
+        if ($this->startDate !== null) {
+            $incomeQuery .= ' AND entry_date >= :startDate';
+            $incomeParams[':startDate'] = $this->startDate;
+        }
+
+        // Build expense query with optional start date
+        $expenseQuery = 'SELECT COALESCE(SUM(amount), 0) FROM {{%expenses}} WHERE user_id = :userId';
+        $expenseParams = [':userId' => $userId];
+
+        if ($this->startDate !== null) {
+            $expenseQuery .= ' AND expense_date >= :startDate';
+            $expenseParams[':startDate'] = $this->startDate;
+        }
+
         // Aggregate Gross Revenue (Lifetime Income)
-        $grossRevenue = (float) $db->createCommand(
-            'SELECT COALESCE(SUM(amount), 0) FROM {{%incomes}} WHERE user_id = :userId'
-        )->bindValue(':userId', $userId)->queryScalar();
+        $grossRevenue = (float) $db->createCommand($incomeQuery, $incomeParams)->queryScalar();
 
         // Aggregate Operating Expenditure (Lifetime Expenses)
-        $operatingExpenditure = (float) $db->createCommand(
-            'SELECT COALESCE(SUM(amount), 0) FROM {{%expenses}} WHERE user_id = :userId'
-        )->bindValue(':userId', $userId)->queryScalar();
+        $operatingExpenditure = (float) $db->createCommand($expenseQuery, $expenseParams)->queryScalar();
 
         // Calculate Net Financial Position (P&L)
         $netPosition = $grossRevenue - $operatingExpenditure;

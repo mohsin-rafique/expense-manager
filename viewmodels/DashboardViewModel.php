@@ -76,6 +76,9 @@ class DashboardViewModel
     /** @var bool Whether to enable previous period comparison */
     public bool $enablePreviousPeriodComparison;
 
+    /** @var string Lifetime calculations start date */
+    public string $lifetimeStartDate = '2023-10-01';
+
     /**
      * Constructs the DashboardViewModel with all data needed by the view.
      *

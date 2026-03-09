@@ -156,6 +156,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <?= LifetimeOverviewWidget::widget([
     'showTrendIndicators' => $vm->showTrendIndicators,
     'currencyCode' => $vm->currencyCode,
+    'startDate' => $vm->lifetimeStartDate,
     'containerClass' => 'mb-4',
 ]) ?>
 
