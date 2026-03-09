@@ -47,11 +47,11 @@ Built on the robust **Yii2 PHP framework** with **Bootstrap 5**, it offers a cle
 
 ### Why Expense Manager?
 
--   🆓 **100% Free & Open Source** — No hidden costs, no subscriptions
--   🔒 **Self-Hosted** — Your financial data stays on your server
--   🚀 **Lightweight** — Runs on minimal server resources
--   🎨 **Modern UI** — Clean Bootstrap 5 design with dark/light themes
--   📱 **Responsive** — Works on desktop, tablet, and mobile
+- 🆓 **100% Free & Open Source** — No hidden costs, no subscriptions
+- 🔒 **Self-Hosted** — Your financial data stays on your server
+- 🚀 **Lightweight** — Runs on minimal server resources
+- 🎨 **Modern UI** — Clean Bootstrap 5 design with dark/light themes
+- 📱 **Responsive** — Works on desktop, tablet, and mobile
 
 ---
 
@@ -59,55 +59,55 @@ Built on the robust **Yii2 PHP framework** with **Bootstrap 5**, it offers a cle
 
 ### 💰 Income Management
 
--   Record and track all income sources
--   Categorize income with custom categories
--   Attach receipts and invoices (PDF, images)
--   Search and filter by date, category, reference
--   Export income data to Excel
+- Record and track all income sources
+- Categorize income with custom categories
+- Attach receipts and invoices (PDF, images)
+- Search and filter by date, category, reference
+- Export income data to Excel
 
 ### 💸 Expense Management
 
--   Track expenses with detailed information
--   Hierarchical expense categories (parent/child)
--   Multiple payment methods (Cash, Card, Bank)
--   File attachments for receipts
--   Advanced filtering and search
--   Export expense data to Excel
+- Track expenses with detailed information
+- Hierarchical expense categories (parent/child)
+- Multiple payment methods (Cash, Card, Bank)
+- File attachments for receipts
+- Advanced filtering and search
+- Export expense data to Excel
 
 ### 📊 Dashboard & Reports
 
--   Financial overview dashboard
--   Income vs Expense summary cards
--   Monthly/yearly statistics
--   Category-wise breakdown
--   Visual charts and graphs
--   Balance tracking
+- Financial overview dashboard
+- Income vs Expense summary cards
+- Monthly/yearly statistics
+- Category-wise breakdown
+- Visual charts and graphs
+- Balance tracking
 
 ### 👤 User Management
 
--   Secure authentication system
--   User profile management
--   Password reset functionality
--   Remember me option
--   Session management
+- Secure authentication system
+- User profile management
+- Password reset functionality
+- Remember me option
+- Session management
 
 ### ⚙️ Settings & Customization
 
--   Multi-currency support (50+ currencies)
--   Customizable currency formatting
--   Date and time format preferences
--   Company/business branding
--   Logo and favicon upload
--   Timezone configuration
+- Multi-currency support (50+ currencies)
+- Customizable currency formatting
+- Date and time format preferences
+- Company/business branding
+- Logo and favicon upload
+- Timezone configuration
 
 ### 🎨 Modern UI/UX
 
--   Clean, responsive Bootstrap 5 design
--   Dark/Light theme toggle
--   Mobile-friendly interface
--   AJAX-powered interactions (PJAX)
--   Toast notifications
--   Modal-based forms
+- Clean, responsive Bootstrap 5 design
+- Dark/Light theme toggle
+- Mobile-friendly interface
+- AJAX-powered interactions (PJAX)
+- Toast notifications
+- Modal-based forms
 
 ---
 
@@ -161,12 +161,12 @@ Built on the robust **Yii2 PHP framework** with **Bootstrap 5**, it offers a cle
 
 ### PHP Extensions Required
 
--   `pdo_mysql`
--   `mbstring`
--   `intl`
--   `gd` or `imagick`
--   `json`
--   `openssl`
+- `pdo_mysql`
+- `mbstring`
+- `intl`
+- `gd` or `imagick`
+- `json`
+- `openssl`
 
 ---
 
@@ -258,7 +258,22 @@ php yii migrate
 # - expenses
 ```
 
-### 3. Configure Application
+### 3. Seed Demo Data (Optional)
+
+```bash
+php yii seed/demo
+```
+
+This creates a demo account with sample data so you can explore the app immediately.
+
+| Field    | Value            |
+| -------- | ---------------- |
+| Email    | demo@example.com |
+| Password | demo123          |
+
+> ⚠️ **Important:** Change or remove the demo account before using in production.
+
+### 4. Configure Application
 
 Update `config/web.php` with a unique cookie validation key:
 
@@ -268,7 +283,7 @@ Update `config/web.php` with a unique cookie validation key:
 ],
 ```
 
-### 4. Web Server Configuration
+### 5. Web Server Configuration
 
 #### Apache (.htaccess)
 
@@ -312,7 +327,8 @@ server {
 
 1. **Access the application**: Navigate to `http://your-domain.com` or `http://localhost/expense-manager/web/`
 
-2. **Register an account**: Create your first user account
+2. **Login with demo account** or **Register a new account**
+    - Demo: `demo@example.com` / `demo123` (if you ran `php yii seed/demo`)
 
 3. **Configure settings**: Set up your currency, timezone, and company details
 
@@ -351,22 +367,22 @@ server {
 
 **Income Categories:**
 
--   Navigate to **Income → Categories**
--   Add, edit, or delete categories
--   Customize with icons and colors
+- Navigate to **Income → Categories**
+- Add, edit, or delete categories
+- Customize with icons and colors
 
 **Expense Categories:**
 
--   Navigate to **Expenses → Categories**
--   Supports hierarchical structure (parent/child)
--   Drag-and-drop organization
--   Customize with icons and colors
+- Navigate to **Expenses → Categories**
+- Supports hierarchical structure (parent/child)
+- Drag-and-drop organization
+- Customize with icons and colors
 
 ### Dashboard & Reports
 
--   **Dashboard**: Overview of financial status with summary cards
--   **Reports**: Detailed financial reports with charts
--   **Widgets**: Quick stats for income, expenses, and balance
+- **Dashboard**: Overview of financial status with summary cards
+- **Reports**: Detailed financial reports with charts
+- **Widgets**: Quick stats for income, expenses, and balance
 
 ---
 
@@ -455,20 +471,20 @@ Contributions are welcome and greatly appreciated!
 
 ### Contribution Guidelines
 
--   Follow [Yii2 coding standards](https://github.com/yiisoft/yii2-coding-standards)
--   Write meaningful commit messages
--   Update documentation as needed
--   Be respectful in discussions
+- Follow [Yii2 coding standards](https://github.com/yiisoft/yii2-coding-standards)
+- Write meaningful commit messages
+- Update documentation as needed
+- Be respectful in discussions
 
 ### Reporting Issues
 
 Found a bug? Please [open an issue](https://github.com/mohsin-rafique/expense-manager/issues/new) with:
 
--   Clear description of the problem
--   Steps to reproduce
--   Expected vs actual behavior
--   Screenshots (if applicable)
--   Environment details (PHP version, OS, etc.)
+- Clear description of the problem
+- Steps to reproduce
+- Expected vs actual behavior
+- Screenshots (if applicable)
+- Environment details (PHP version, OS, etc.)
 
 ---
 
@@ -484,22 +500,22 @@ If this project helps you, consider supporting its development:
 
 ### Other Ways to Support
 
--   ⭐ **Star** this repository
--   🐛 **Report bugs** and suggest features
--   📖 **Improve documentation**
--   📢 **Share** with others who might find it useful
+- ⭐ **Star** this repository
+- 🐛 **Report bugs** and suggest features
+- 📖 **Improve documentation**
+- 📢 **Share** with others who might find it useful
 
 ---
 
 ## Roadmap
 
--   [ ] Multi-language support (i18n)
--   [ ] Data import from CSV/Excel
--   [ ] Advanced reporting with PDF export
--   [ ] Budget management module
--   [ ] Multi-user/team support
--   [ ] API Development (Yii2 REST)
--   [ ] Mobile app (React Native)
+- [ ] Multi-language support (i18n)
+- [ ] Data import from CSV/Excel
+- [ ] Advanced reporting with PDF export
+- [ ] Budget management module
+- [ ] Multi-user/team support
+- [ ] API Development (Yii2 REST)
+- [ ] Mobile app (React Native)
 
 ---
 
@@ -527,10 +543,10 @@ copies or substantial portions of the Software.
 
 ## Acknowledgments
 
--   [Yii Framework](https://www.yiiframework.com/) — The fast, secure, and professional PHP framework
--   [Bootstrap](https://getbootstrap.com/) — The world's most popular front-end toolkit
--   [Bootstrap Icons](https://icons.getbootstrap.com/) — Free, high-quality icons
--   All [contributors](https://github.com/mohsin-rafique/expense-manager/graphs/contributors) who help improve this project
+- [Yii Framework](https://www.yiiframework.com/) — The fast, secure, and professional PHP framework
+- [Bootstrap](https://getbootstrap.com/) — The world's most popular front-end toolkit
+- [Bootstrap Icons](https://icons.getbootstrap.com/) — Free, high-quality icons
+- All [contributors](https://github.com/mohsin-rafique/expense-manager/graphs/contributors) who help improve this project
 
 ---
 
