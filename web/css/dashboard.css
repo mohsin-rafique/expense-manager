@@ -1075,3 +1075,66 @@
         font-size: 0.75rem;
     }
 }
+
+/* ============================================================== */
+/* Financial Trends — Equal Height & Polish                       */
+/* ============================================================== */
+
+/* Metric icon containers */
+.metric-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    flex-shrink: 0;
+    transition: transform 0.15s ease;
+}
+
+.metric-icon--success {
+    background: rgba(var(--bs-success-rgb, 25, 135, 84), 0.1);
+}
+.metric-icon--danger {
+    background: rgba(var(--bs-danger-rgb, 220, 53, 69), 0.1);
+}
+.metric-icon--primary {
+    background: rgba(var(--bs-primary-rgb, 13, 110, 253), 0.1);
+}
+
+.evolution-panel-widget tr:hover .metric-icon {
+    transform: scale(1.08);
+}
+
+/* Trend indicator hover effect */
+.trend-indicator {
+    transition: opacity 0.15s ease;
+}
+
+.evolution-panel-widget tr:hover .trend-indicator {
+    opacity: 0.85;
+}
+
+/* Ensure both cards in a row stretch equally */
+.row.align-items-stretch > [class*="col-"].d-flex > .evolution-panel-widget,
+.row.align-items-stretch > [class*="col-"].d-flex > .expenses-by-category-widget {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.row.align-items-stretch > [class*="col-"].d-flex > .evolution-panel-widget > .card,
+.row.align-items-stretch > [class*="col-"].d-flex > .expenses-by-category-widget > .card {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Subtle row hover on evolution table */
+.evolution-panel-widget tbody tr {
+    transition: background-color 0.15s ease;
+}
+
+.evolution-panel-widget tbody tr:hover {
+    background-color: rgba(0, 0, 0, 0.015);
+}

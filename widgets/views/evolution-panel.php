@@ -54,7 +54,7 @@ $balanceText = $isPositiveBalance ? Yii::t('app', 'Surplus') : Yii::t('app', 'De
 <!-- Evolution Panel Widget                                         -->
 <!-- ============================================================== -->
 <div class="<?= implode(' ', $containerClasses) ?>" id="<?= Html::encode($widgetId) ?>">
-    <div class="card h-100 shadow-sm">
+    <div class="card h-100 shadow-sm d-flex flex-column">
 
         <!-- Card Header -->
         <div class="card-header d-flex align-items-center justify-content-between">
@@ -70,20 +70,20 @@ $balanceText = $isPositiveBalance ? Yii::t('app', 'Surplus') : Yii::t('app', 'De
         </div>
 
         <!-- Card Body -->
-        <div class="card-body">
-            <div class="table-responsive">
+        <div class="card-body d-flex flex-column flex-grow-1">
+            <div class="table-responsive flex-grow-1 d-flex flex-column justify-content-center">
                 <table class="table table-borderless align-middle mb-0">
 
                     <!-- Table Header -->
                     <thead>
                         <tr class="text-muted small">
-                            <th class="ps-0" style="width: 30%;">
+                            <th class="ps-0" style="width: 28%;">
                                 <i class="bi bi-bar-chart me-1"></i>
                                 <?= Yii::t('app', 'Metric') ?>
                             </th>
                             <th class="text-end"><?= Html::encode($previousMonthName) ?></th>
                             <th class="text-end"><?= Html::encode($currentMonthName) ?></th>
-                            <th class="text-center" style="width: 80px;"><?= Yii::t('app', 'Trend') ?></th>
+                            <th class="text-center" style="width: 90px;"><?= Yii::t('app', 'Trend') ?></th>
                         </tr>
                     </thead>
 
@@ -91,19 +91,18 @@ $balanceText = $isPositiveBalance ? Yii::t('app', 'Surplus') : Yii::t('app', 'De
                     <tbody>
                         <!-- Income Row -->
                         <tr>
-                            <td class="ps-0">
+                            <td class="ps-0 py-3">
                                 <div class="d-flex align-items-center">
-                                    <span class="d-inline-flex align-items-center justify-content-center bg-success bg-opacity-10 rounded me-2"
-                                        style="width: 32px; height: 32px;">
+                                    <span class="metric-icon metric-icon--success me-2">
                                         <i class="bi bi-graph-up-arrow text-success"></i>
                                     </span>
                                     <span class="fw-medium"><?= Yii::t('app', 'Income') ?></span>
                                 </div>
                             </td>
-                            <td class="text-end text-success fw-medium">
+                            <td class="text-end text-success fw-medium py-3">
                                 <?= Yii::$app->currency->format($previousMonthIncome) ?>
                             </td>
-                            <td class="text-end text-success fw-medium">
+                            <td class="text-end text-success fw-medium py-3">
                                 <?= Yii::$app->currency->format($currentMonthIncomeWithCarryover) ?>
                                 <?php if ($balancePreviousMonth != 0): ?>
                                     <br>
@@ -114,8 +113,8 @@ $balanceText = $isPositiveBalance ? Yii::t('app', 'Surplus') : Yii::t('app', 'De
                                     </small>
                                 <?php endif ?>
                             </td>
-                            <td class="text-center">
-                                <span class="<?= $incomeTrend['class'] ?>" title="<?= $incomeTrend['percent'] ?>%">
+                            <td class="text-center py-3">
+                                <span class="trend-indicator <?= $incomeTrend['class'] ?>" title="<?= $incomeTrend['percent'] ?>%">
                                     <i class="<?= $incomeTrend['icon'] ?>"></i>
                                     <?php if ($incomeTrend['percent'] != 0): ?>
                                         <small class="ms-1"><?= $incomeTrend['percent'] > 0 ? '+' : '' ?><?= $incomeTrend['percent'] ?>%</small>
@@ -126,23 +125,22 @@ $balanceText = $isPositiveBalance ? Yii::t('app', 'Surplus') : Yii::t('app', 'De
 
                         <!-- Expense Row -->
                         <tr>
-                            <td class="ps-0">
+                            <td class="ps-0 py-3">
                                 <div class="d-flex align-items-center">
-                                    <span class="d-inline-flex align-items-center justify-content-center bg-danger bg-opacity-10 rounded me-2"
-                                        style="width: 32px; height: 32px;">
+                                    <span class="metric-icon metric-icon--danger me-2">
                                         <i class="bi bi-graph-down-arrow text-danger"></i>
                                     </span>
                                     <span class="fw-medium"><?= Yii::t('app', 'Expense') ?></span>
                                 </div>
                             </td>
-                            <td class="text-end text-danger fw-medium">
+                            <td class="text-end text-danger fw-medium py-3">
                                 <?= Yii::$app->currency->format($previousMonthExpense) ?>
                             </td>
-                            <td class="text-end text-danger fw-medium">
+                            <td class="text-end text-danger fw-medium py-3">
                                 <?= Yii::$app->currency->format($currentMonthExpense) ?>
                             </td>
-                            <td class="text-center">
-                                <span class="<?= $expenseTrend['class'] ?>" title="<?= $expenseTrend['percent'] ?>%">
+                            <td class="text-center py-3">
+                                <span class="trend-indicator <?= $expenseTrend['class'] ?>" title="<?= $expenseTrend['percent'] ?>%">
                                     <i class="<?= $expenseTrend['icon'] ?>"></i>
                                     <?php if ($expenseTrend['percent'] != 0): ?>
                                         <small class="ms-1"><?= $expenseTrend['percent'] > 0 ? '+' : '' ?><?= $expenseTrend['percent'] ?>%</small>
@@ -153,29 +151,28 @@ $balanceText = $isPositiveBalance ? Yii::t('app', 'Surplus') : Yii::t('app', 'De
 
                         <!-- Balance Row -->
                         <tr class="border-top">
-                            <td class="ps-0">
+                            <td class="ps-0 py-3">
                                 <div class="d-flex align-items-center">
-                                    <span class="d-inline-flex align-items-center justify-content-center bg-primary bg-opacity-10 rounded me-2"
-                                        style="width: 32px; height: 32px;">
+                                    <span class="metric-icon metric-icon--primary me-2">
                                         <i class="bi bi-wallet2 text-primary"></i>
                                     </span>
                                     <span class="fw-bold"><?= Yii::t('app', 'Balance') ?></span>
                                 </div>
                             </td>
-                            <td class="text-end fw-bold <?= $balancePreviousMonth >= 0 ? 'text-success' : 'text-danger' ?>">
+                            <td class="text-end fw-bold py-3 <?= $balancePreviousMonth >= 0 ? 'text-success' : 'text-danger' ?>">
                                 <?php if ($balancePreviousMonth < 0):
                                     ?><span>-</span><?php
                                 endif ?>
                                 <?= Yii::$app->currency->format(abs($balancePreviousMonth)) ?>
                             </td>
-                            <td class="text-end fw-bold <?= $isPositiveBalance ? 'text-success' : 'text-danger' ?>">
+                            <td class="text-end fw-bold py-3 <?= $isPositiveBalance ? 'text-success' : 'text-danger' ?>">
                                 <?php if (!$isPositiveBalance):
                                     ?><span>-</span><?php
                                 endif ?>
                                 <?= Yii::$app->currency->format(abs($balanceCurrentMonth)) ?>
                             </td>
-                            <td class="text-center">
-                                <span class="<?= $balanceTrend['class'] ?>" title="<?= $balanceTrend['percent'] ?>%">
+                            <td class="text-center py-3">
+                                <span class="trend-indicator <?= $balanceTrend['class'] ?>" title="<?= $balanceTrend['percent'] ?>%">
                                     <i class="<?= $balanceTrend['icon'] ?>"></i>
                                 </span>
                             </td>
@@ -187,7 +184,7 @@ $balanceText = $isPositiveBalance ? Yii::t('app', 'Surplus') : Yii::t('app', 'De
         </div>
 
         <!-- Card Footer -->
-        <div class="card-footer bg-transparent py-2">
+        <div class="card-footer bg-transparent py-2 mt-auto">
             <div class="d-flex justify-content-between align-items-center">
                 <small class="text-muted">
                     <i class="bi bi-arrow-left-right me-1"></i>

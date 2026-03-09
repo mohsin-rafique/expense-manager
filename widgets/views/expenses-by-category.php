@@ -41,7 +41,7 @@ $categoryCount = count($categories);
 <!-- Expenses by Category Widget                                    -->
 <!-- ============================================================== -->
 <div class="<?= implode(' ', $containerClasses) ?>" id="<?= Html::encode($widgetId) ?>">
-    <div class="card h-100 shadow-sm">
+    <div class="card h-100 shadow-sm d-flex flex-column">
 
         <!-- Card Header -->
         <div class="card-header d-flex align-items-center justify-content-between">
@@ -54,18 +54,17 @@ $categoryCount = count($categories);
         </div>
 
         <!-- Card Body -->
-        <div class="card-body">
+        <div class="card-body d-flex flex-column flex-grow-1">
             <?php if ($hasData): ?>
                 <!-- Chart Container -->
                 <div id="<?= Html::encode($chartId) ?>"
-                    class="chart-container"
+                    class="chart-container flex-grow-1"
                     style="min-height: <?= $chartHeight ?>px;"
                     role="img"
                     aria-label="<?= Yii::t('app', 'Horizontal bar chart showing expenses by category') ?>">
                 </div>
             <?php else: ?>
-                <!-- Empty State -->
-                <div class="text-center py-5">
+                <div class="text-center py-5 flex-grow-1 d-flex flex-column align-items-center justify-content-center">
                     <i class="bi bi-bar-chart-horizontal text-muted" style="font-size: 3rem;"></i>
                     <p class="text-muted mt-3 mb-0">
                         <?= Yii::t('app', 'No expense data for this period') ?>
@@ -78,8 +77,7 @@ $categoryCount = count($categories);
         </div>
 
         <?php if ($hasData): ?>
-            <!-- Card Footer with Summary -->
-            <div class="card-footer bg-transparent py-2">
+            <div class="card-footer bg-transparent py-2 mt-auto">
                 <div class="d-flex justify-content-between align-items-center small">
                     <span class="text-muted">
                         <i class="bi bi-tags me-1"></i>
@@ -88,7 +86,7 @@ $categoryCount = count($categories);
                     <span class="fw-semibold">
                         <?= Yii::t('app', 'Total') ?>:
                         <span class="text-danger">
-                            <?= Yii::$app->formatter->asDecimal($totalExpense, 0) ?>
+                            <?= Yii::$app->currency->format($totalExpense) ?>
                         </span>
                     </span>
                 </div>

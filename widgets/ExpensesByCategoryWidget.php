@@ -121,13 +121,22 @@ class ExpensesByCategoryWidget extends Widget
     }
 
     /**
-     * Load expense category data
+     * Load expense category data (parent-level only)
+     *
+     * Aggregates all child category expenses into their parent category.
+     * Categories without a parent are treated as top-level.
      */
     protected function loadData(): void
     {
+        // Get expenses grouped by top-level (parent) category
+        // If a category has a parent_id, roll its expenses up to the parent
         $rows = (new Query())
-            ->select(['c.name', 'COALESCE(SUM(e.amount), 0) as total'])
+            ->select([
+                'COALESCE(parent.name, c.name) as name',
+                'COALESCE(SUM(e.amount), 0) as total',
+            ])
             ->from('{{%expense_categories}} c')
+            ->leftJoin('{{%expense_categories}} parent', 'parent.id = c.parent_id')
             ->leftJoin('{{%expenses}} e', [
                 'and',
                 'e.expense_category_id = c.id',
@@ -135,7 +144,7 @@ class ExpensesByCategoryWidget extends Widget
                 ['BETWEEN', 'e.expense_date', $this->startDate, $this->endDate],
             ])
             ->where(['c.user_id' => $this->userId])
-            ->groupBy(['c.id', 'c.name'])
+            ->groupBy(['COALESCE(parent.id, c.id)', 'COALESCE(parent.name, c.name)'])
             ->having(['>', 'total', 0])
             ->orderBy(['total' => SORT_DESC])
             ->limit($this->maxCategories)

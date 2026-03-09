@@ -101,18 +101,20 @@ $this->params['breadcrumbs'][] = $this->title;
         </h2>
     </div>
 
-    <div class="row g-4">
+    <div class="row g-4 align-items-stretch">
         <!-- Evolution Chart -->
-        <div class="col-xl-6">
+        <div class="col-xl-6 d-flex">
             <?= CurrentMonthPanelWidget::widget([
-                'mode' => 'evolution'
+                'mode' => 'evolution',
+                'containerClass' => 'w-100',
             ]) ?>
         </div>
 
         <!-- Category Breakdown -->
-        <div class="col-xl-6">
+        <div class="col-xl-6 d-flex">
             <?= ExpensesByCategoryWidget::widget([
                 'maxCategories' => $vm->maxCategories,
+                'containerClass' => 'w-100',
             ]) ?>
         </div>
     </div>
