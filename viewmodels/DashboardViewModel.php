@@ -61,8 +61,8 @@ class DashboardViewModel
 
     // ─── Widget Config ───────────────────────────
 
-    /** @var int Maximum categories to show in chart widgets */
-    public int $maxCategories;
+    /** @var int|null Maximum categories to show in chart widgets (null = show all) */
+    public ?int $maxCategories;
 
     /** @var bool Whether to show trend indicators in widgets */
     public bool $showTrendIndicators;
@@ -95,7 +95,7 @@ class DashboardViewModel
     public function __construct(?string $fiscalYearLabel = null, array $options = [])
     {
         // ── Options with defaults ────────────────
-        $this->maxCategories = $options['maxCategories'] ?? 10;
+        $this->maxCategories = $options['maxCategories'] ?? 999;
         $this->showTrendIndicators = $options['showTrendIndicators'] ?? true;
         $this->enableExport = $options['enableExport'] ?? true;
         $this->enableFiltering = $options['enableFiltering'] ?? true;
