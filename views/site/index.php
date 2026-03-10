@@ -10,6 +10,11 @@
  * Dashboard View
  *
  * Main dashboard displaying financial overview, trends, and analytics.
+ * Organized into three logical sections:
+ *   1. Current Month  — snapshot of this month's activity
+ *   2. Fiscal Year     — year-to-date breakdowns and comparisons
+ *   3. Lifetime        — all-time cumulative metrics
+ *
  * All data comes from the DashboardViewModel — no business logic here.
  *
  * @var yii\web\View $this
@@ -26,6 +31,7 @@ use app\widgets\MonthlyPerformanceWidget;
 use app\widgets\ExpensesByCategoryWidget;
 use app\widgets\FiscalYearExpenseSummaryByMonth;
 use app\widgets\ComparativeAnalysisPanel;
+use app\widgets\FiscalYearIncomeExpenseWidget;
 use app\widgets\LifetimeOverviewWidget;
 use app\assets\DashboardAsset;
 
@@ -67,10 +73,22 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
 </div>
 
-<!-- ============================================================== -->
-<!-- Current Month Panel                                            -->
-<!-- Quick overview of this month's financial status                -->
-<!-- ============================================================== -->
+
+<!-- ================================================================ -->
+<!-- SECTION 1: CURRENT MONTH                                         -->
+<!-- This month's income, expenses, performance, and trends           -->
+<!-- ================================================================ -->
+<div class="dashboard-section-divider">
+    <div class="dashboard-section-divider__line"></div>
+    <div class="dashboard-section-divider__label">
+        <i class="bi bi-calendar-month me-2"></i>
+        <?= Yii::t('app', 'Current Month') ?>
+        <span class="dashboard-section-divider__badge"><?= Html::encode($vm->currentMonth) ?></span>
+    </div>
+    <div class="dashboard-section-divider__line"></div>
+</div>
+
+<!-- Current Month Overview -->
 <section class="dashboard-section mb-4">
     <div class="d-flex align-items-center justify-content-between mb-3">
         <h2 class="h5 mb-0"><?= Yii::t('app', 'Current Month Overview') ?></h2>
@@ -90,10 +108,7 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
 </section>
 
-<!-- ============================================================== -->
-<!-- Financial Trends Panel                                         -->
-<!-- Month-over-month financial evolution                           -->
-<!-- ============================================================== -->
+<!-- Financial Trends -->
 <section class="dashboard-section mb-4">
     <div class="d-flex align-items-center justify-content-between mb-3">
         <h2 class="h5 mb-0">
@@ -120,10 +135,22 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
 </section>
 
-<!-- ============================================================== -->
-<!-- Fiscal Year Summary                                            -->
-<!-- Year-to-date expense breakdown by month                        -->
-<!-- ============================================================== -->
+
+<!-- ================================================================ -->
+<!-- SECTION 2: FISCAL YEAR                                           -->
+<!-- Year-to-date expense breakdown, comparisons, and income vs exp.  -->
+<!-- ================================================================ -->
+<div class="dashboard-section-divider">
+    <div class="dashboard-section-divider__line"></div>
+    <div class="dashboard-section-divider__label">
+        <i class="bi bi-calendar-range me-2"></i>
+        <?= Yii::t('app', 'Fiscal Year') ?>
+        <span class="dashboard-section-divider__badge"><?= Html::encode($vm->getFiscalYearLabel()) ?></span>
+    </div>
+    <div class="dashboard-section-divider__line"></div>
+</div>
+
+<!-- Fiscal Year Expense Summary -->
 <?= FiscalYearExpenseSummaryByMonth::widget([
     'fiscalStartDate' => $vm->getFiscalStartDate(),
     'fiscalEndDate' => $vm->getFiscalEndDate(),
@@ -135,10 +162,17 @@ $this->params['breadcrumbs'][] = $this->title;
     'containerClass' => 'mb-4',
 ]) ?>
 
-<!-- ============================================================== -->
-<!-- Comparative Analysis Panel                                     -->
-<!-- Period-over-period comparison and insights                     -->
-<!-- ============================================================== -->
+<!-- Fiscal Year Income vs Expenses -->
+<?= FiscalYearIncomeExpenseWidget::widget([
+    'fiscalStartDate' => $vm->getFiscalStartDate(),
+    'fiscalEndDate' => $vm->getFiscalEndDate(),
+    'fiscalYearLabel' => $vm->getFiscalYearLabel(),
+    'showTrendIndicators' => $vm->showTrendIndicators,
+    'currencyCode' => $vm->currencyCode,
+    'containerClass' => 'mb-4',
+]) ?>
+
+<!-- Comparative Analysis -->
 <?= ComparativeAnalysisPanel::widget([
     'fiscalStartDate' => $vm->getFiscalStartDate(),
     'fiscalEndDate' => $vm->getFiscalEndDate(),
@@ -149,10 +183,22 @@ $this->params['breadcrumbs'][] = $this->title;
     'maxCategories' => $vm->maxCategories,
 ]) ?>
 
-<!-- ============================================================== -->
-<!-- Lifetime Overview Panel                                        -->
-<!-- All-time financial statistics                                  -->
-<!-- ============================================================== -->
+
+<!-- ================================================================ -->
+<!-- SECTION 3: LIFETIME                                              -->
+<!-- All-time cumulative financial statistics                         -->
+<!-- ================================================================ -->
+<div class="dashboard-section-divider">
+    <div class="dashboard-section-divider__line"></div>
+    <div class="dashboard-section-divider__label">
+        <i class="bi bi-infinity me-2"></i>
+        <?= Yii::t('app', 'Lifetime') ?>
+        <span class="dashboard-section-divider__badge"><?= Yii::t('app', 'All Time') ?></span>
+    </div>
+    <div class="dashboard-section-divider__line"></div>
+</div>
+
+<!-- Lifetime Financial Overview -->
 <?= LifetimeOverviewWidget::widget([
     'showTrendIndicators' => $vm->showTrendIndicators,
     'currencyCode' => $vm->currencyCode,

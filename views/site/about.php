@@ -194,12 +194,12 @@ $issuesUrl = 'https://github.com/mohsin-rafique/expense-manager/issues';
                     </p>
                     <div class="d-flex flex-wrap gap-2">
                         <?= Html::a(
-                            '<img src="https://github.com/yourusername.png" width="40" height="40" class="rounded-circle" alt="Your Name"> ',
-                            'https://github.com/yourusername',
+                            '<img src="https://github.com/mohsin-rafique.png" width="40" height="40" class="rounded-circle" alt="Mohsin Rafique"> ',
+                            'https://github.com/mohsin-rafique',
                             [
                                 'target' => '_blank',
                                 'rel' => 'noopener noreferrer',
-                                'title' => 'Your Name',
+                                'title' => 'Mohsin Rafique',
                                 'data-bs-toggle' => 'tooltip',
                             ]
                         ) ?>
