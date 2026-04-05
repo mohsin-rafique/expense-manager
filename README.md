@@ -12,7 +12,7 @@
   <a href="https://github.com/mohsin-rafique/expense-manager/releases">
     <img src="https://img.shields.io/github/v/release/mohsin-rafique/expense-manager?style=flat-square" alt="Latest Release" />
   </a>
-  <a href="https://github.com/mohsin-rafique/expense-manager/blob/main/LICENSE">
+  <a href="https://github.com/mohsin-rafique/expense-manager/blob/master/LICENSE">
     <img src="https://img.shields.io/badge/license-MIT-green?style=flat-square" alt="License" />
   </a>
   <a href="https://github.com/mohsin-rafique/expense-manager/stargazers">
@@ -571,12 +571,14 @@ If this project helps you, consider supporting its development:
 ### v1.0.1 — 2026-04-05
 
 #### Security
+
 - **Debug mode** now controlled via `.env` (`YII_DEBUG`, `YII_ENV`) — defaults to production-safe `false` for self-hosted deployments
 - **Session cookies** hardened — `secure` and `sameSite` now configurable via `.env` (`SESSION_SECURE`, `SESSION_SAMESITE`)
 - **Login rate limiting** — max 5 failed attempts per IP per 15 minutes to prevent brute-force attacks
 - **Database credentials** moved to `.env` — no more hardcoded values in `config/db.php`
 
 #### Code Quality
+
 - Added PHPDoc class-level and method-level comments across all components, models, widgets, and controllers following Yii2 coding standards
 - Added PHP 8.1 type declarations (property types, parameter types, return types) throughout the codebase
 - Fixed `BalanceHelper::getBalance()` — casts `queryScalar()` result to `float` to handle users with no transactions
