@@ -47,9 +47,9 @@ use yii\web\UploadedFile;
 class Expense extends ActiveRecord
 {
     /**
-     * @var UploadedFile File upload instance
+     * @var UploadedFile|null File upload instance
      */
-    public $myFile;
+    public ?UploadedFile $myFile = null;
 
     /**
      * Available payment methods
@@ -61,7 +61,7 @@ class Expense extends ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return '{{%expenses}}';
     }
@@ -69,7 +69,7 @@ class Expense extends ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function behaviors()
+    public function behaviors(): array
     {
         return [
             [
@@ -90,7 +90,7 @@ class Expense extends ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function beforeValidate()
+    public function beforeValidate(): bool
     {
         // Clean amount format before validation
         if (!empty($this->amount) && is_string($this->amount)) {
@@ -103,7 +103,7 @@ class Expense extends ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             // Required fields
@@ -140,7 +140,7 @@ class Expense extends ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => Yii::t('app', 'ID'),
@@ -166,7 +166,7 @@ class Expense extends ActiveRecord
      *
      * @return array
      */
-    public static function getPaymentMethods()
+    public static function getPaymentMethods(): array
     {
         return [
             self::PAYMENT_CASH => Yii::t('app', 'Cash'),
@@ -180,7 +180,7 @@ class Expense extends ActiveRecord
      *
      * @return string
      */
-    public function getPaymentMethodBadgeClass()
+    public function getPaymentMethodBadgeClass(): string
     {
         $classes = [
             self::PAYMENT_CASH => 'badge-cash',
@@ -196,7 +196,7 @@ class Expense extends ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getCreatedBy()
+    public function getCreatedBy(): \yii\db\ActiveQuery
     {
         return $this->hasOne(User::class, ['id' => 'created_by']);
     }
@@ -206,7 +206,7 @@ class Expense extends ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getExpenseCategory()
+    public function getExpenseCategory(): \yii\db\ActiveQuery
     {
         return $this->hasOne(ExpenseCategory::class, ['id' => 'expense_category_id']);
     }
@@ -216,7 +216,7 @@ class Expense extends ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getUpdatedBy()
+    public function getUpdatedBy(): \yii\db\ActiveQuery
     {
         return $this->hasOne(User::class, ['id' => 'updated_by']);
     }
@@ -226,7 +226,7 @@ class Expense extends ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getUser()
+    public function getUser(): \yii\db\ActiveQuery
     {
         return $this->hasOne(User::class, ['id' => 'user_id']);
     }
@@ -236,7 +236,7 @@ class Expense extends ActiveRecord
      *
      * @return string|null
      */
-    public function getImageFile()
+    public function getImageFile(): ?string
     {
         return isset($this->filename) ? $this->filepath : null;
     }
@@ -246,7 +246,7 @@ class Expense extends ActiveRecord
      *
      * @return string|null
      */
-    public function getFileExtension()
+    public function getFileExtension(): ?string
     {
         if (empty($this->filepath)) {
             return null;
@@ -259,7 +259,7 @@ class Expense extends ActiveRecord
      *
      * @return bool
      */
-    public function isImageFile()
+    public function isImageFile(): bool
     {
         $ext = $this->getFileExtension();
         return in_array($ext, ['png', 'jpg', 'jpeg', 'gif', 'webp']);
@@ -270,7 +270,7 @@ class Expense extends ActiveRecord
      *
      * @return bool
      */
-    public function isPdfFile()
+    public function isPdfFile(): bool
     {
         return $this->getFileExtension() === 'pdf';
     }
@@ -280,7 +280,7 @@ class Expense extends ActiveRecord
      *
      * @return string
      */
-    public function getFormattedAmount()
+    public function getFormattedAmount(): string
     {
         if (extension_loaded('intl')) {
             return Yii::$app->currency->format($this->amount);
@@ -294,7 +294,7 @@ class Expense extends ActiveRecord
      *
      * @return bool
      */
-    public function hasAttachment()
+    public function hasAttachment(): bool
     {
         return !empty($this->filename) && !empty($this->filepath);
     }
@@ -304,7 +304,7 @@ class Expense extends ActiveRecord
      *
      * @return string
      */
-    public function getFileIcon()
+    public function getFileIcon(): string
     {
         $ext = $this->getFileExtension();
 
@@ -325,7 +325,7 @@ class Expense extends ActiveRecord
      *
      * @return string
      */
-    public function getFileSizeFormatted()
+    public function getFileSizeFormatted(): string
     {
         if (empty($this->filepath)) {
             return 'N/A';
@@ -353,7 +353,7 @@ class Expense extends ActiveRecord
      *
      * @return string|null
      */
-    public function getFileUrl()
+    public function getFileUrl(): ?string
     {
         if (empty($this->filepath)) {
             return null;
@@ -369,7 +369,7 @@ class Expense extends ActiveRecord
      * @param string $value The attribute whose values should be summed
      * @return string The total value formatted as currency
      */
-    public static function pageTotal($provider, $value)
+    public static function pageTotal(\yii\data\DataProviderInterface $provider, string $value): string
     {
         $total = 0;
 
@@ -387,7 +387,7 @@ class Expense extends ActiveRecord
      * @param string $endDate
      * @return array
      */
-    public static function getSummary($startDate = null, $endDate = null)
+    public static function getSummary(?string $startDate = null, ?string $endDate = null): array
     {
         $query = self::find()
             ->where(['user_id' => Yii::$app->user->id]);

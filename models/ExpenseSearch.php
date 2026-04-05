@@ -50,7 +50,7 @@ class ExpenseSearch extends Expense
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             // Integer fields

@@ -29,6 +29,7 @@ use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
+use yii\web\TooManyRequestsHttpException;
 
 /**
  * SiteController - Handles core application functionality
@@ -428,21 +429,37 @@ class SiteController extends Controller
      *
      * Handles user authentication:
      * - Redirects authenticated users to home
-     * - Validates login credentials
+     * - Validates login credentials with rate limiting (max 5 attempts per 15 min)
      * - Uses dedicated auth layout
      *
      * @return Response|string Redirect or rendered login form
+     * @throws TooManyRequestsHttpException If login attempts exceed the limit
      */
-    public function actionLogin()
+    public function actionLogin(): Response|string
     {
+        // Rate limiting: max 5 failed attempts per IP per 15 minutes
+        $cache = Yii::$app->cache;
+        $ip = Yii::$app->request->userIP;
+        $cacheKey = 'login_attempts_' . $ip;
+        $attempts = (int) $cache->get($cacheKey);
+
+        if ($attempts >= 5) {
+            throw new TooManyRequestsHttpException('Too many login attempts. Please try again in 15 minutes.');
+        }
+
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();
         }
 
         $model = new LoginForm();
 
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
+        if ($model->load(Yii::$app->request->post())) {
+            if ($model->login()) {
+                $cache->delete($cacheKey);
+                return $this->goBack();
+            }
+            // Increment failed attempt counter, expires in 15 minutes
+            $cache->set($cacheKey, $attempts + 1, 900);
         }
 
         $model->password = '';

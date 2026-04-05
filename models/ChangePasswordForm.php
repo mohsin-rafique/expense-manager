@@ -74,7 +74,7 @@ class ChangePasswordForm extends Model
      *
      * @return array The validation rules
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             // All fields are required
@@ -147,6 +147,7 @@ class ChangePasswordForm extends Model
             return false;
         }
 
+        /** @var User $user */
         $user = Yii::$app->user->identity;
 
         if (!$user || !$user->validatePassword($this->oldPassword)) {
@@ -183,6 +184,7 @@ class ChangePasswordForm extends Model
             return false;
         }
 
+        /** @var User $user */
         $user = Yii::$app->user->identity;
         $user->setPassword($this->newPassword);
 

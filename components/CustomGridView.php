@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * @link https://github.com/mohsin-rafique/expense-manager
+ * @copyright Copyright (c) 2025 Mohsin Rafique
+ * @license https://opensource.org/licenses/MIT MIT License
+ */
+
 namespace app\components;
 
 use yii\bootstrap5\ActiveForm;
@@ -7,24 +13,29 @@ use yii\bootstrap5\Html;
 use yii\grid\GridView;
 
 /**
- * Component for Detecting language automatically
- * Idea from https://github.com/samdark/yii2-cookbook/blob/master/book/i18n-selecting-application-language.md#detecting-language-automatically
+ * CustomGridView extends Yii2's GridView with custom thead styling,
+ * a page-size dropdown, and an inline search field.
+ *
+ * @package app\components
  */
-
 class CustomGridView extends GridView
 {
-    public $tbodyOptions = [];
-    public $searchModel;
+    /** @var array HTML options for the tbody element */
+    public array $tbodyOptions = [];
+
+    /** @var \yii\base\Model|null The search model used for the page-size and search fields */
+    public $searchModel = null;
 
     /**
      * Renders the table header.
-     * @return string the rendering result.
+     *
+     * @return string the rendering result
      */
-    public function renderTableHeader()
+    public function renderTableHeader(): string
     {
         $cells = [];
         foreach ($this->columns as $column) {
-            /* @var $column Column */
+            /* @var $column \yii\grid\Column */
             $cells[] = $column->renderHeaderCell();
         }
         $content = Html::tag('tr', implode('', $cells), $this->headerRowOptions);
@@ -39,9 +50,10 @@ class CustomGridView extends GridView
 
     /**
      * Renders the table body.
-     * @return string the rendering result.
+     *
+     * @return string the rendering result
      */
-    public function renderTableBody()
+    public function renderTableBody(): string
     {
         $models = array_values($this->dataProvider->getModels());
         $keys = $this->dataProvider->getKeys();
@@ -77,18 +89,18 @@ class CustomGridView extends GridView
     /**
      * Renders the number of entries dropdown.
      *
-     * @return string
+     * @return string the rendering result
      */
-    public function renderNumberOfEntries()
+    public function renderNumberOfEntries(): string
     {
-        ob_start(); // Start output buffering
+        ob_start();
 
         $form = ActiveForm::begin([
             'action' => ['index'],
             'id' => 'pageSizeForm',
             'method' => 'get',
             'options' => [
-                'data-pjax' => 1
+                'data-pjax' => 1,
             ],
         ]);
         echo $form->field($this->searchModel, 'pageSize', [
@@ -97,7 +109,7 @@ class CustomGridView extends GridView
                     <span class="text-muted">Show:</span> {input} <span class="text-muted">Entries</span>
                 </div>',
             'options' => [
-                'tag' => false, // Disable the default div wrapper
+                'tag' => false,
             ],
         ])->dropDownList([
             '100' => '100',
@@ -107,49 +119,47 @@ class CustomGridView extends GridView
         ], ['id' => 'pageSizeDropdown', 'class' => 'form-select d-inline'])->label(false);
         ActiveForm::end();
 
-        return ob_get_clean(); // Return the captured output
+        return ob_get_clean();
     }
 
     /**
      * Renders the search input field.
      *
-     * @return string
+     * @return string the rendering result
      */
-    public function renderSearch()
+    public function renderSearch(): string
     {
-        ob_start(); // Start output buffering
+        ob_start();
 
         $form = ActiveForm::begin([
             'action' => ['index'],
             'method' => 'get',
             'options' => [
-                'data-pjax' => 1
+                'data-pjax' => 1,
             ],
         ]);
 
         echo '<div class="search-box">';
-        echo $form->field($this->searchModel, 's')->textInput(['Placeholder' => 'Search for name or something...', 'class' => 'form-control search'])->label(false);
+        echo $form->field($this->searchModel, 's')->textInput(['placeholder' => 'Search for name or something...', 'class' => 'form-control search'])->label(false);
         echo '<i class="ri-search-line search-icon"></i>';
         echo '</div>';
 
         ActiveForm::end();
 
-        return ob_get_clean(); // Return the captured output
+        return ob_get_clean();
     }
 
     /**
-     * Renders the GridView.
+     * Renders the GridView with custom layout tokens.
      *
-     * @return string
+     * @return void
      */
-    public function run()
+    public function run(): void
     {
-        $layout = strtr($this->layout, [
+        $this->layout = strtr($this->layout, [
             '{numberofentries}' => $this->renderNumberOfEntries(),
             '{search}' => $this->renderSearch(),
         ]);
-
-        $this->layout = $layout;
 
         parent::run();
     }

@@ -1,54 +1,57 @@
 <?php
 
+/**
+ * @link https://github.com/mohsin-rafique/expense-manager
+ * @copyright Copyright (c) 2025 Mohsin Rafique
+ * @license https://opensource.org/licenses/MIT MIT License
+ */
+
 namespace app\widgets;
 
 use Yii;
+use yii\bootstrap5\Widget;
 
 /**
- * Alert widget renders a message from session flash. All flash messages are displayed
- * in the sequence they were assigned using setFlash. You can set message as following:
+ * Alert widget renders Bootstrap flash messages from the session.
+ *
+ * Flash messages are displayed in the order they were set using `setFlash()`.
  *
  * ```php
- * Yii::$app->session->setFlash('error', 'This is the message');
- * Yii::$app->session->setFlash('success', 'This is the message');
- * Yii::$app->session->setFlash('info', 'This is the message');
- * ```
+ * Yii::$app->session->setFlash('error', 'Something went wrong.');
+ * Yii::$app->session->setFlash('success', 'Saved successfully.');
+ * Yii::$app->session->setFlash('info', 'For your information.');
+ * Yii::$app->session->setFlash('warning', 'Please double-check.');
  *
- * Multiple messages could be set as follows:
- *
- * ```php
+ * // Multiple messages:
  * Yii::$app->session->setFlash('error', ['Error 1', 'Error 2']);
  * ```
  *
- * @author Kartik Visweswaran <kartikv2@gmail.com>
- * @author Alexander Makarov <sam@rmcreative.ru>
+ * @package app\widgets
  */
-class Alert extends \yii\bootstrap5\Widget
+class Alert extends Widget
 {
     /**
-     * @var array the alert types configuration for the flash messages.
-     * This array is setup as $key => $value, where:
-     * - key: the name of the session flash variable
-     * - value: the bootstrap alert type (i.e. danger, success, info, warning)
+     * @var array Mapping of flash type keys to Bootstrap alert CSS classes.
      */
-    public $alertTypes = [
+    public array $alertTypes = [
         'error'   => 'alert-danger',
         'danger'  => 'alert-danger',
         'success' => 'alert-success',
         'info'    => 'alert-info',
-        'warning' => 'alert-warning'
+        'warning' => 'alert-warning',
     ];
-    /**
-     * @var array the options for rendering the close button tag.
-     * Array will be passed to [[\yii\bootstrap\Alert::closeButton]].
-     */
-    public $closeButton = [];
-
 
     /**
-     * {@inheritdoc}
+     * @var array Options passed to the close button of each alert.
      */
-    public function run()
+    public array $closeButton = [];
+
+    /**
+     * Renders all pending flash messages and clears them from the session.
+     *
+     * @return void
+     */
+    public function run(): void
     {
         $session = Yii::$app->session;
         $appendClass = isset($this->options['class']) ? ' ' . $this->options['class'] : '';

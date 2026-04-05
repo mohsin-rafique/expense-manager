@@ -1,45 +1,55 @@
 <?php
+
+/**
+ * @link https://github.com/mohsin-rafique/expense-manager
+ * @copyright Copyright (c) 2025 Mohsin Rafique
+ * @license https://opensource.org/licenses/MIT MIT License
+ */
+
 namespace app\models;
 
-use app\models\User;
 use Yii;
 use yii\base\Model;
 
 /**
- * Password reset request form
+ * ResetPasswordForm handles the password reset request flow.
+ *
+ * Validates the submitted email address and sends a password reset
+ * link to the user if the account exists and is active.
+ *
+ * @package app\models
  */
 class ResetPasswordForm extends Model
 {
-    public $email;
-
+    /** @var string|null The email address submitted by the user */
+    public ?string $email = null;
 
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             ['email', 'trim'],
             ['email', 'required'],
             ['email', 'email'],
-            ['email', 'exist',
-                'targetClass' => '\app\models\User',
-                'filter' => [
-                    'status' => User::STATUS_ACTIVE
-                ],
-                'message' => 'Couldn\'t find your Account'
+            [
+                'email',
+                'exist',
+                'targetClass' => User::class,
+                'filter' => ['status' => User::STATUS_ACTIVE],
+                'message' => 'Couldn\'t find your Account',
             ],
         ];
     }
 
     /**
-     * Sends an email with a link, for resetting the password.
+     * Sends an email with a password reset link.
      *
-     * @return bool whether the email was send
+     * @return string|false The password reset token on success, false on failure
      */
-    public function sendEmail()
+    public function sendEmail(): string|false
     {
-        /* @var $user User */
         $user = User::findOne([
             'status' => User::STATUS_ACTIVE,
             'email' => $this->email,
@@ -56,7 +66,7 @@ class ResetPasswordForm extends Model
             }
         }
 
-        $status = Yii::$app
+        $sent = Yii::$app
             ->mailer
             ->compose(
                 ['html' => 'passwordResetToken-html', 'text' => 'passwordResetToken-text'],
@@ -67,8 +77,6 @@ class ResetPasswordForm extends Model
             ->setSubject('Password reset for ' . Yii::$app->name)
             ->send();
 
-        if ($status) {
-            return $user->password_reset_token;
-        }
+        return $sent ? $user->password_reset_token : false;
     }
 }

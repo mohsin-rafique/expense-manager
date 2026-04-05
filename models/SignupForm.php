@@ -59,7 +59,7 @@ class SignupForm extends Model
      *
      * @return array The validation rules
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             // Required fields

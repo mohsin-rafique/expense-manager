@@ -48,28 +48,28 @@ use yii\web\View;
 class ExpensesByCategoryWidget extends Widget
 {
     /** @var int|null User ID for filtering data */
-    public $userId;
+    public ?int $userId = null;
 
     /** @var string Widget title */
-    public $title = 'Expenses by Category';
+    public string $title = 'Expenses by Category';
 
     /** @var string|null Start date for filtering (Y-m-d format, null = current month) */
-    public $startDate;
+    public ?string $startDate = null;
 
     /** @var string|null End date for filtering (Y-m-d format, null = current month) */
-    public $endDate;
+    public ?string $endDate = null;
 
     /** @var int Maximum number of categories to display */
-    public $maxCategories = 10;
+    public int $maxCategories = 10;
 
     /** @var string|null Custom CSS class for the widget container */
-    public $containerClass = null;
+    public ?string $containerClass = null;
 
     /** @var int Chart height in pixels */
-    public $chartHeight = 350;
+    public int $chartHeight = 350;
 
     /** @var array Chart colors */
-    public $chartColors = [
+    public array $chartColors = [
         '--em-primary',
         '--em-success',
         '--em-warning',
@@ -82,17 +82,17 @@ class ExpensesByCategoryWidget extends Widget
         '#6366F1',
     ];
 
-    /** @var string Unique widget ID */
-    private $_widgetId;
+    /** @var string|null Unique widget ID */
+    private ?string $_widgetId = null;
 
     /** @var array Category data [name => amount] */
-    private $_categories = [];
+    private array $_categories = [];
 
     /** @var float Total expense amount */
-    private $_totalExpense = 0;
+    private float $_totalExpense = 0;
 
-    /** @var string Period label for display */
-    private $_periodLabel;
+    /** @var string|null Period label for display */
+    private ?string $_periodLabel = null;
 
     /**
      * {@inheritdoc}

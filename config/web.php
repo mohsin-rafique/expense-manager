@@ -113,7 +113,8 @@ $config = [
             'name' => 'EXPENSE_MANAGER_SESSION',
             'cookieParams' => [
                 'httpOnly' => true,
-                'secure' => false, // Set to true in production with HTTPS
+                'secure' => (bool)($_ENV['SESSION_SECURE'] ?? false),
+                'sameSite' => $_ENV['SESSION_SAMESITE'] ?? 'Lax',
             ],
         ],
 

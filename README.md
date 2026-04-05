@@ -223,26 +223,46 @@ Create a new MySQL database:
 CREATE DATABASE expense_manager CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
-Configure database connection:
+Configure database connection — copy the example env file and fill in your credentials:
 
 ```bash
-# Copy example config file
-cp config/db.example.php config/db.php
+cp .env.example .env
 ```
 
-Edit `config/db.php` with your database credentials:
+Edit `.env` with your database credentials:
 
-```php
-return [
-    'class' => 'yii\db\Connection',
-    'dsn' => 'mysql:host=localhost;dbname=expense_manager',
-    'username' => 'your_username',
-    'password' => 'your_password',
-    'charset' => 'utf8mb4',
-];
+```env
+DB_DSN=mysql:host=localhost;dbname=expense_manager
+DB_USERNAME=your_username
+DB_PASSWORD=your_password
+DB_CHARSET=utf8mb4
 ```
 
-### 2. Run Migrations
+> Your `.env` file is gitignored — your credentials are never committed to the repository.
+
+### 2. Environment Configuration
+
+Configure the full `.env` file for your environment:
+
+```env
+# Application
+YII_DEBUG=false
+YII_ENV=prod
+
+# Database
+DB_DSN=mysql:host=localhost;dbname=expense_manager
+DB_USERNAME=your_username
+DB_PASSWORD=your_password
+DB_CHARSET=utf8mb4
+
+# Session Security (set SESSION_SECURE=true when using HTTPS)
+SESSION_SECURE=false
+SESSION_SAMESITE=Lax
+```
+
+> ⚠️ Never set `YII_DEBUG=true` in production — it exposes stack traces and file paths.
+
+### 3. Run Migrations
 
 ```bash
 # Run all migrations
@@ -258,7 +278,7 @@ php yii migrate
 # - expenses
 ```
 
-### 3. Seed Demo Data (Optional)
+### 4. Seed Demo Data (Optional)
 
 ```bash
 php yii seed/demo
@@ -273,7 +293,7 @@ This creates a demo account with sample data so you can explore the app immediat
 
 > ⚠️ **Important:** Change or remove the demo account before using in production.
 
-### 4. Configure Application
+### 5. Configure Application
 
 Update `config/web.php` with a unique cookie validation key:
 
@@ -283,7 +303,7 @@ Update `config/web.php` with a unique cookie validation key:
 ],
 ```
 
-### 5. Web Server Configuration
+### 6. Web Server Configuration
 
 #### Apache (.htaccess)
 
@@ -447,12 +467,14 @@ php vendor/bin/phpcbf --standard=Yii2 controllers models components widgets
 
 ### Debug Mode
 
-Enable debug mode in `web/index.php` for development:
+Debug mode is controlled via your `.env` file — it defaults to production-safe values:
 
-```php
-defined('YII_DEBUG') or define('YII_DEBUG', true);
-defined('YII_ENV') or define('YII_ENV', 'dev');
+```env
+YII_DEBUG=true
+YII_ENV=dev
 ```
+
+> ⚠️ Never set `YII_DEBUG=true` in production — it exposes stack traces and internal file paths.
 
 ---
 
@@ -516,6 +538,54 @@ If this project helps you, consider supporting its development:
 - [ ] Multi-user/team support
 - [ ] API Development (Yii2 REST)
 - [ ] Mobile app (React Native)
+
+---
+
+## Changelog
+
+### v1.0.1 — 2026-04-05
+
+#### Security
+
+- **Debug mode** now controlled via `.env` (`YII_DEBUG`, `YII_ENV`) — defaults to production-safe `false` for self-hosted deployments
+- **Session cookies** hardened — `secure` and `sameSite` now configurable via `.env` (`SESSION_SECURE`, `SESSION_SAMESITE`)
+- **Login rate limiting** — max 5 failed attempts per IP per 15 minutes to prevent brute-force attacks
+- **Database credentials** moved to `.env` — no more hardcoded values in `config/db.php`
+
+#### Code Quality
+
+- Added PHPDoc class-level and method-level comments across all components, models, widgets, and controllers following Yii2 coding standards
+- Added PHP 8.1 type declarations (property types, parameter types, return types) throughout the codebase
+- Fixed `BalanceHelper::getBalance()` — now casts `queryScalar()` result to `float` to handle new users with no data
+- Fixed `ResetPasswordForm::sendEmail()` — corrected return type inconsistency
+- Removed Gii-generated noise from `User` model `@property` annotations
+
+### v1.0.0 — Initial Release
+
+- Initial public release
+
+---
+
+## Changelog
+
+### v1.0.1 — 2026-04-05
+
+#### Security
+- **Debug mode** now controlled via `.env` (`YII_DEBUG`, `YII_ENV`) — defaults to production-safe `false` for self-hosted deployments
+- **Session cookies** hardened — `secure` and `sameSite` now configurable via `.env` (`SESSION_SECURE`, `SESSION_SAMESITE`)
+- **Login rate limiting** — max 5 failed attempts per IP per 15 minutes to prevent brute-force attacks
+- **Database credentials** moved to `.env` — no more hardcoded values in `config/db.php`
+
+#### Code Quality
+- Added PHPDoc class-level and method-level comments across all components, models, widgets, and controllers following Yii2 coding standards
+- Added PHP 8.1 type declarations (property types, parameter types, return types) throughout the codebase
+- Fixed `BalanceHelper::getBalance()` — casts `queryScalar()` result to `float` to handle users with no transactions
+- Fixed `ResetPasswordForm::sendEmail()` — corrected return type inconsistency
+- Cleaned up Gii-generated noise from `User` model `@property` annotations
+
+### v1.0.0 — Initial Release
+
+- Initial public release
 
 ---
 

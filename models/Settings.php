@@ -1,11 +1,21 @@
 <?php
 
+/**
+ * @link https://github.com/mohsin-rafique/expense-manager
+ * @copyright Copyright (c) 2025 Mohsin Rafique
+ * @license https://opensource.org/licenses/MIT MIT License
+ */
+
 namespace app\models;
 
 use Yii;
+use yii\db\ActiveRecord;
 
 /**
- * This is the model class for table "{{%settings}}".
+ * Settings model for the "{{%settings}}" table.
+ *
+ * Stores per-user application preferences including currency formatting,
+ * date/time formats, timezone, and branding assets.
  *
  * @property int $id
  * @property int $user_id
@@ -25,13 +35,16 @@ use Yii;
  * @property string|null $favicon
  *
  * @property User $user
+ *
+ * @author Mohsin Rafique <mohsin.rafique@gmail.com>
+ * @since 1.0.0
  */
-class Settings extends \yii\db\ActiveRecord
+class Settings extends ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return '{{%settings}}';
     }
@@ -39,7 +52,7 @@ class Settings extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['user_id', 'company_name'], 'required'],
@@ -55,25 +68,25 @@ class Settings extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
-            'id' => Yii::t('app', 'ID'),
-            'user_id' => Yii::t('app', 'User ID'),
-            'company_name' => Yii::t('app', 'Company Name'),
-            'site_title' => Yii::t('app', 'Site Title'),
-            'phone' => Yii::t('app', 'Phone'),
-            'email' => Yii::t('app', 'Email'),
-            'timezone' => Yii::t('app', 'Timezone'),
-            'date_format' => Yii::t('app', 'Date Format'),
-            'time_format' => Yii::t('app', 'Time Format'),
-            'currency' => Yii::t('app', 'Currency'),
+            'id'                => Yii::t('app', 'ID'),
+            'user_id'           => Yii::t('app', 'User ID'),
+            'company_name'      => Yii::t('app', 'Company Name'),
+            'site_title'        => Yii::t('app', 'Site Title'),
+            'phone'             => Yii::t('app', 'Phone'),
+            'email'             => Yii::t('app', 'Email'),
+            'timezone'          => Yii::t('app', 'Timezone'),
+            'date_format'       => Yii::t('app', 'Date Format'),
+            'time_format'       => Yii::t('app', 'Time Format'),
+            'currency'          => Yii::t('app', 'Currency'),
             'currency_position' => Yii::t('app', 'Currency Position'),
             'thousand_separator' => Yii::t('app', 'Thousand Separator'),
             'decimal_separator' => Yii::t('app', 'Decimal Separator'),
-            'decimal_places' => Yii::t('app', 'Decimal Places'),
-            'logo' => Yii::t('app', 'Logo'),
-            'favicon' => Yii::t('app', 'Favicon'),
+            'decimal_places'    => Yii::t('app', 'Decimal Places'),
+            'logo'              => Yii::t('app', 'Logo'),
+            'favicon'           => Yii::t('app', 'Favicon'),
         ];
     }
 
@@ -82,7 +95,7 @@ class Settings extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getUser()
+    public function getUser(): \yii\db\ActiveQuery
     {
         return $this->hasOne(User::class, ['id' => 'user_id']);
     }

@@ -50,3 +50,10 @@ Vagrantfile
 /.vscode
 
 codeception.yml
+
+# Claude Code
+/.claude
+
+# environment variables
+/.env
+/.env.local
