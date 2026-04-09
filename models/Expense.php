@@ -49,7 +49,7 @@ class Expense extends ActiveRecord
     /**
      * @var UploadedFile|null File upload instance
      */
-    public ?UploadedFile $myFile = null;
+    public $myFile = null;
 
     /**
      * Available payment methods
