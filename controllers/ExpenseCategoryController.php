@@ -9,6 +9,7 @@
 namespace app\controllers;
 
 use Yii;
+use app\components\ApiResponse;
 use app\models\ExpenseCategory;
 use app\models\ExpenseCategorySearch;
 use yii\web\Controller;
@@ -20,7 +21,7 @@ use yii\filters\AccessControl;
 /**
  * ExpenseCategoryController implements the CRUD actions for ExpenseCategory model.
  *
- * This controller handles all expense category management operations including:
+ * This controller handles atatusll expense category management operations including:
  * - Hierarchical tree view of categories
  * - Creating new categories (root or child)
  * - Viewing category details with children
@@ -147,9 +148,7 @@ class ExpenseCategoryController extends Controller
             if ($model->save()) {
                 if (Yii::$app->request->isAjax) {
                     Yii::$app->response->format = Response::FORMAT_JSON;
-                    return [
-                        'success' => true,
-                        'message' => Yii::t('app', 'Category created successfully.'),
+                    return ApiResponse::success(Yii::t('app', 'Category created successfully.'), [
                         'id' => $model->id,
                         'category' => [
                             'id' => $model->id,
@@ -158,7 +157,7 @@ class ExpenseCategoryController extends Controller
                             'icon' => $model->icon,
                             'color' => $model->color,
                         ],
-                    ];
+                    ]);
                 }
 
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Category created successfully.'));
@@ -167,11 +166,7 @@ class ExpenseCategoryController extends Controller
 
             if (Yii::$app->request->isAjax) {
                 Yii::$app->response->format = Response::FORMAT_JSON;
-                return [
-                    'success' => false,
-                    'message' => Yii::t('app', 'Failed to create category.'),
-                    'errors' => $model->errors,
-                ];
+                return ApiResponse::error(Yii::t('app', 'Failed to create category.'), $model->errors);
             }
         }
 
@@ -206,9 +201,7 @@ class ExpenseCategoryController extends Controller
             if ($model->save()) {
                 if (Yii::$app->request->isAjax) {
                     Yii::$app->response->format = Response::FORMAT_JSON;
-                    return [
-                        'success' => true,
-                        'message' => Yii::t('app', 'Category updated successfully.'),
+                    return ApiResponse::success(Yii::t('app', 'Category updated successfully.'), [
                         'category' => [
                             'id' => $model->id,
                             'name' => $model->name,
@@ -216,7 +209,7 @@ class ExpenseCategoryController extends Controller
                             'icon' => $model->icon,
                             'color' => $model->color,
                         ],
-                    ];
+                    ]);
                 }
 
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Category updated successfully.'));
@@ -225,11 +218,7 @@ class ExpenseCategoryController extends Controller
 
             if (Yii::$app->request->isAjax) {
                 Yii::$app->response->format = Response::FORMAT_JSON;
-                return [
-                    'success' => false,
-                    'message' => Yii::t('app', 'Failed to update category.'),
-                    'errors' => $model->errors,
-                ];
+                return ApiResponse::error(Yii::t('app', 'Failed to update category.'), $model->errors);
             }
         }
 
@@ -292,10 +281,7 @@ class ExpenseCategoryController extends Controller
 
             if (Yii::$app->request->isAjax) {
                 Yii::$app->response->format = Response::FORMAT_JSON;
-                return $this->asJson([
-                    'success' => true,
-                    'message' => $message,
-                ]);
+                return $this->asJson(ApiResponse::success($message));
             }
 
             Yii::$app->session->setFlash('success', $message);
@@ -304,10 +290,7 @@ class ExpenseCategoryController extends Controller
 
             if (Yii::$app->request->isAjax) {
                 Yii::$app->response->format = Response::FORMAT_JSON;
-                return $this->asJson([
-                    'success' => false,
-                    'message' => Yii::t('app', 'Failed to delete category.'),
-                ]);
+                return $this->asJson(ApiResponse::error(Yii::t('app', 'Failed to delete category.')));
             }
 
             Yii::$app->session->setFlash('error', Yii::t('app', 'Failed to delete category.'));
@@ -329,10 +312,7 @@ class ExpenseCategoryController extends Controller
         $newParentId = Yii::$app->request->post('parent_id');
 
         if (empty($id)) {
-            return $this->asJson([
-                'success' => false,
-                'message' => Yii::t('app', 'Invalid category ID.'),
-            ]);
+            return $this->asJson(ApiResponse::error(Yii::t('app', 'Invalid category ID.')));
         }
 
         try {
@@ -347,22 +327,12 @@ class ExpenseCategoryController extends Controller
             }
 
             if ($model->moveTo($newParentId)) {
-                return $this->asJson([
-                    'success' => true,
-                    'message' => Yii::t('app', 'Category moved successfully.'),
-                ]);
+                return $this->asJson(ApiResponse::success(Yii::t('app', 'Category moved successfully.')));
             }
 
-            return $this->asJson([
-                'success' => false,
-                'message' => Yii::t('app', 'Failed to move category.'),
-                'errors' => $model->errors,
-            ]);
+            return $this->asJson(ApiResponse::error(Yii::t('app', 'Failed to move category.'), $model->errors));
         } catch (\Exception $e) {
-            return $this->asJson([
-                'success' => false,
-                'message' => $e->getMessage(),
-            ]);
+            return $this->asJson(ApiResponse::error($e->getMessage()));
         }
     }
 
@@ -383,18 +353,13 @@ class ExpenseCategoryController extends Controller
             : ExpenseCategory::STATUS_ACTIVE;
 
         if ($model->save(false, ['status', 'updated_at', 'updated_by'])) {
-            return $this->asJson([
-                'success' => true,
-                'message' => Yii::t('app', 'Status updated successfully.'),
+            return $this->asJson(ApiResponse::success(Yii::t('app', 'Status updated successfully.'), [
                 'status' => $model->status,
                 'statusLabel' => $model->getStatusLabel(),
-            ]);
+            ]));
         }
 
-        return $this->asJson([
-            'success' => false,
-            'message' => Yii::t('app', 'Failed to update status.'),
-        ]);
+        return $this->asJson(ApiResponse::error(Yii::t('app', 'Failed to update status.')));
     }
 
     /**
@@ -410,10 +375,7 @@ class ExpenseCategoryController extends Controller
         $deleteChildren = Yii::$app->request->post('deleteChildren', false);
 
         if (empty($ids)) {
-            return $this->asJson([
-                'success' => false,
-                'message' => Yii::t('app', 'No categories selected.'),
-            ]);
+            return $this->asJson(ApiResponse::error(Yii::t('app', 'No categories selected.')));
         }
 
         $deleted = 0;
@@ -449,10 +411,9 @@ class ExpenseCategoryController extends Controller
             $messages[] = Yii::t('app', '{count} category(s) failed.', ['count' => $failed]);
         }
 
-        return $this->asJson([
-            'success' => $failed === 0,
-            'message' => implode(' ', $messages),
-        ]);
+        $summary = implode(' ', $messages);
+        $response = $failed === 0 ? ApiResponse::success($summary) : ApiResponse::error($summary);
+        return $this->asJson($response);
     }
 
     /**

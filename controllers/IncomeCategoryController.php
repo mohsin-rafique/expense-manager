@@ -9,6 +9,7 @@
 namespace app\controllers;
 
 use Yii;
+use app\components\ApiResponse;
 use app\models\IncomeCategory;
 use app\models\IncomeCategorySearch;
 use yii\web\Controller;
@@ -16,6 +17,11 @@ use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
 
 /**
  * IncomeCategoryController implements the CRUD actions for IncomeCategory model.
@@ -150,11 +156,10 @@ class IncomeCategoryController extends Controller
             if ($model->save()) {
                 if (Yii::$app->request->isAjax) {
                     Yii::$app->response->format = Response::FORMAT_JSON;
-                    return [
-                        'success' => true,
-                        'message' => Yii::t('app', 'Income category created successfully.'),
-                        'id' => $model->id,
-                    ];
+                    return ApiResponse::success(
+                        Yii::t('app', 'Income category created successfully.'),
+                        ['id' => $model->id]
+                    );
                 }
 
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Income category created successfully.'));
@@ -163,11 +168,7 @@ class IncomeCategoryController extends Controller
 
             if (Yii::$app->request->isAjax) {
                 Yii::$app->response->format = Response::FORMAT_JSON;
-                return [
-                    'success' => false,
-                    'message' => Yii::t('app', 'Failed to create category.'),
-                    'errors' => $model->errors,
-                ];
+                return ApiResponse::error(Yii::t('app', 'Failed to create category.'), $model->errors);
             }
         }
 
@@ -200,10 +201,7 @@ class IncomeCategoryController extends Controller
             if ($model->save()) {
                 if (Yii::$app->request->isAjax) {
                     Yii::$app->response->format = Response::FORMAT_JSON;
-                    return [
-                        'success' => true,
-                        'message' => Yii::t('app', 'Income category updated successfully.'),
-                    ];
+                    return ApiResponse::success(Yii::t('app', 'Income category updated successfully.'));
                 }
 
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Income category updated successfully.'));
@@ -212,11 +210,7 @@ class IncomeCategoryController extends Controller
 
             if (Yii::$app->request->isAjax) {
                 Yii::$app->response->format = Response::FORMAT_JSON;
-                return [
-                    'success' => false,
-                    'message' => Yii::t('app', 'Failed to update category.'),
-                    'errors' => $model->errors,
-                ];
+                return ApiResponse::error(Yii::t('app', 'Failed to update category.'), $model->errors);
             }
         }
 
@@ -262,10 +256,7 @@ class IncomeCategoryController extends Controller
 
             if (Yii::$app->request->isAjax) {
                 Yii::$app->response->format = Response::FORMAT_JSON;
-                return [
-                    'success' => true,
-                    'message' => $message,
-                ];
+                return ApiResponse::success($message);
             }
 
             Yii::$app->session->setFlash('success', $message);
@@ -274,10 +265,7 @@ class IncomeCategoryController extends Controller
 
             if (Yii::$app->request->isAjax) {
                 Yii::$app->response->format = Response::FORMAT_JSON;
-                return [
-                    'success' => false,
-                    'message' => Yii::t('app', 'Failed to delete category. Please try again.'),
-                ];
+                return ApiResponse::error(Yii::t('app', 'Failed to delete category. Please try again.'));
             }
 
             Yii::$app->session->setFlash('error', Yii::t('app', 'Failed to delete category.'));
@@ -301,10 +289,7 @@ class IncomeCategoryController extends Controller
         $ids = Yii::$app->request->post('ids', []);
 
         if (empty($ids)) {
-            return [
-                'success' => false,
-                'message' => Yii::t('app', 'No categories selected.'),
-            ];
+            return $this->asJson(ApiResponse::error(Yii::t('app', 'No categories selected.')));
         }
 
         $deleted = 0;
@@ -340,50 +325,147 @@ class IncomeCategoryController extends Controller
             $messages[] = Yii::t('app', '{count} category(s) failed to process.', ['count' => $failed]);
         }
 
-        return [
-            'success' => $failed === 0,
-            'message' => implode(' ', $messages),
-            'deleted' => $deleted,
-            'deactivated' => $deactivated,
-            'failed' => $failed,
-        ];
+        $summary = implode(' ', $messages);
+        $extra = ['deleted' => $deleted, 'deactivated' => $deactivated, 'failed' => $failed];
+        $result = $failed === 0 ? ApiResponse::success($summary, $extra) : ApiResponse::error($summary, [], $extra);
+        return $this->asJson($result);
     }
 
     /**
-     * Exports income categories to CSV format.
+     * Exports income categories to Excel (XLSX) format.
      *
-     * Generates a downloadable CSV file containing all user's categories.
+     * Generates a downloadable XLSX file with professional styling.
+     * Columns: Category Name, Status, Records, Created At
      *
-     * @return Response The CSV file download response
+     * @return Response The XLSX file download response
      */
     public function actionExport(): Response
     {
-        $categories = IncomeCategory::find()
-            ->where(['user_id' => Yii::$app->user->id])
-            ->orderBy(['name' => SORT_ASC])
-            ->all();
+        $searchModel = new IncomeCategorySearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, true);
 
-        $csv = "ID,Name,Description,Status,Created At,Updated At\n";
+        // Restrict to authenticated user
+        $dataProvider->query->andWhere(['user_id' => Yii::$app->user->id]);
+
+        $categories = $dataProvider->getModels();
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setTitle('Income Categories');
+
+        // Title block (rows 1–2)
+        $sheet->setCellValue('A1', 'Income Category Report');
+        $sheet->setCellValue('A2', 'Generated: ' . Yii::$app->formatter->asDatetime(time()));
+
+        $sheet->mergeCells('A1:E1');
+        $sheet->mergeCells('A2:E2');
+
+        $sheet->getStyle('A1')->applyFromArray([
+            'font' => ['bold' => true, 'size' => 16, 'color' => ['argb' => 'FF198754']],
+            'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT],
+        ]);
+        $sheet->getStyle('A2')->applyFromArray([
+            'font' => ['italic' => true, 'size' => 10, 'color' => ['argb' => 'FF888888']],
+        ]);
+
+        $sheet->getRowDimension(1)->setRowHeight(22);
+        $sheet->getRowDimension(3)->setRowHeight(6); // spacer row
+
+        // Column headers (row 4)
+        $headerRow = 4;
+        $sheet->fromArray(['Category Name', 'Description', 'Status', 'Records', 'Created At'], null, 'A' . $headerRow);
+
+        $sheet->getStyle('A' . $headerRow . ':E' . $headerRow)->applyFromArray([
+            'fill' => ['fillType' => Fill::FILL_SOLID, 'color' => ['argb' => 'FF198754']],
+            'font' => ['bold' => true, 'color' => ['argb' => 'FFFFFFFF'], 'size' => 11],
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_LEFT,
+                'vertical'   => Alignment::VERTICAL_CENTER,
+            ],
+            'borders' => [
+                'allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => 'FF198754']],
+            ],
+        ]);
+        $sheet->getStyle('D' . $headerRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $sheet->getRowDimension($headerRow)->setRowHeight(20);
+
+        // Freeze pane below header
+        $sheet->freezePane('A' . ($headerRow + 1));
+
+        // Data rows
+        $firstDataRow = $headerRow + 1;
+        $row = $firstDataRow;
 
         foreach ($categories as $category) {
-            $csv .= sprintf(
-                "%d,\"%s\",\"%s\",%s,%s,%s\n",
-                $category->id,
-                str_replace('"', '""', $category->name),
-                str_replace('"', '""', $category->description ?? ''),
-                $category->status ? 'Active' : 'Inactive',
-                $category->created_at,
-                $category->updated_at
-            );
+            $recordCount = $category->getIncomes()->count();
+            $status      = $category->status ? 'Active' : 'Inactive';
+            $createdAt   = Yii::$app->formatter->asDate($category->created_at, 'MMM d, yyyy');
+
+            $name        = trim(str_replace(["\r\n", "\r", "\n"], ' ', strip_tags($category->name)));
+            $description = trim(strip_tags($category->description ?? ''));
+
+            $sheet->setCellValue('A' . $row, $name);
+            $sheet->setCellValue('B' . $row, $description);
+            $sheet->setCellValue('C' . $row, $status);
+            $sheet->setCellValue('D' . $row, $recordCount);
+            $sheet->setCellValue('E' . $row, $createdAt);
+
+            // Zebra striping on even rows
+            if (($row % 2) === 0) {
+                $sheet->getStyle('A' . $row . ':E' . $row)->applyFromArray([
+                    'fill' => ['fillType' => Fill::FILL_SOLID, 'color' => ['argb' => 'FFEAFAF1']],
+                ]);
+            }
+
+            $row++;
         }
 
-        $filename = 'income-category-' . date('Y-m-d') . '.csv';
+        $lastDataRow = $row - 1;
 
-        return Yii::$app->response->sendContentAsFile(
-            $csv,
-            $filename,
-            ['mimeType' => 'text/csv']
-        );
+        // Apply to all data rows: thin borders, top vertical align, no wrap
+        $sheet->getStyle('A' . $firstDataRow . ':E' . $lastDataRow)->applyFromArray([
+            'alignment' => [
+                'vertical'   => Alignment::VERTICAL_TOP,
+                'horizontal' => Alignment::HORIZONTAL_LEFT,
+                'wrapText'   => false,
+            ],
+            'borders' => [
+                'allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => 'FFD5D8DC']],
+            ],
+        ]);
+
+        // Wrap text in Description column
+        $sheet->getStyle('B' . $firstDataRow . ':B' . $lastDataRow)
+            ->getAlignment()->setWrapText(true)->setVertical(Alignment::VERTICAL_TOP);
+
+        // Center-align Records column
+        $sheet->getStyle('D' . $firstDataRow . ':D' . $lastDataRow)
+            ->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+        // Column widths
+        $sheet->getColumnDimension('A')->setAutoSize(true);        // Category Name
+        $sheet->getColumnDimension('B')->setAutoSize(false)->setWidth(40); // Description (capped)
+        $sheet->getColumnDimension('C')->setAutoSize(true);        // Status
+        $sheet->getColumnDimension('D')->setAutoSize(true);        // Records
+        $sheet->getColumnDimension('E')->setAutoSize(true);        // Created At
+
+        // Output as XLSX
+        $filename = 'income-categories-' . date('Y-m-d') . '.xlsx';
+
+        Yii::$app->response->format = Response::FORMAT_RAW;
+        Yii::$app->response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        Yii::$app->response->headers->set('Content-Disposition', 'attachment;filename="' . $filename . '"');
+        Yii::$app->response->headers->set('Cache-Control', 'max-age=0');
+
+        $writer = new Xlsx($spreadsheet);
+        $tmpFile = tempnam(sys_get_temp_dir(), 'income_cat_export_');
+        $writer->save($tmpFile);
+        $content = file_get_contents($tmpFile);
+        unlink($tmpFile);
+
+        Yii::$app->response->content = $content;
+
+        return Yii::$app->response;
     }
 
     /**

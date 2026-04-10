@@ -52,9 +52,10 @@ class IncomeCategorySearch extends IncomeCategory
      * Creates data provider instance with search query applied
      *
      * @param array $params Search parameters from request
+     * @param bool $isExport Whether this is for export (disables pagination)
      * @return ActiveDataProvider
      */
-    public function search(array $params): ActiveDataProvider
+    public function search(array $params, bool $isExport = false): ActiveDataProvider
     {
         $query = IncomeCategory::find();
 
@@ -71,7 +72,7 @@ class IncomeCategorySearch extends IncomeCategory
                     'updated_at',
                 ],
             ],
-            'pagination' => [
+            'pagination' => $isExport ? false : [
                 'pageSize' => Yii::$app->request->get('per-page', 10),
                 'pageSizeParam' => 'per-page',
             ],

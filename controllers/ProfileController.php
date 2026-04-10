@@ -9,6 +9,7 @@
 namespace app\controllers;
 
 use Yii;
+use app\components\ApiResponse;
 use app\models\User;
 use app\models\Profile;
 use app\models\Settings;
@@ -178,28 +179,20 @@ class ProfileController extends Controller
         $profile->avatarFile = UploadedFile::getInstanceByName('avatarFile');
 
         if (!$profile->avatarFile) {
-            return $this->asJson([
-                'success' => false,
-                'message' => Yii::t('app', 'No file was uploaded.'),
-            ]);
+            return $this->asJson(ApiResponse::error(Yii::t('app', 'No file was uploaded.')));
         }
 
         if ($profile->uploadAvatar()) {
-            return $this->asJson([
-                'success' => true,
-                'message' => Yii::t('app', 'Avatar uploaded successfully.'),
-                'avatarUrl' => $profile->getAvatarUrl(200),
-            ]);
+            return $this->asJson(ApiResponse::success(
+                Yii::t('app', 'Avatar uploaded successfully.'),
+                ['avatarUrl' => $profile->getAvatarUrl(200)]
+            ));
         }
 
-        // Get validation errors
         $errors = $profile->getErrors('avatarFile');
         $errorMessage = !empty($errors) ? reset($errors) : Yii::t('app', 'Failed to upload avatar.');
 
-        return $this->asJson([
-            'success' => false,
-            'message' => $errorMessage,
-        ]);
+        return $this->asJson(ApiResponse::error($errorMessage));
     }
 
     /**
@@ -216,17 +209,13 @@ class ProfileController extends Controller
         $profile = $this->findModel(Yii::$app->user->identity->id);
 
         if ($profile->deleteAvatar()) {
-            return $this->asJson([
-                'success' => true,
-                'message' => Yii::t('app', 'Avatar deleted successfully.'),
-                'avatarUrl' => $profile->getAvatarUrl(200),
-            ]);
+            return $this->asJson(ApiResponse::success(
+                Yii::t('app', 'Avatar deleted successfully.'),
+                ['avatarUrl' => $profile->getAvatarUrl(200)]
+            ));
         }
 
-        return $this->asJson([
-            'success' => false,
-            'message' => Yii::t('app', 'Failed to delete avatar.'),
-        ]);
+        return $this->asJson(ApiResponse::error(Yii::t('app', 'Failed to delete avatar.')));
     }
 
     /*
@@ -251,28 +240,20 @@ class ProfileController extends Controller
         $profile->bannerFile = UploadedFile::getInstanceByName('bannerFile');
 
         if (!$profile->bannerFile) {
-            return $this->asJson([
-                'success' => false,
-                'message' => Yii::t('app', 'No file was uploaded.'),
-            ]);
+            return $this->asJson(ApiResponse::error(Yii::t('app', 'No file was uploaded.')));
         }
 
         if ($profile->uploadBanner()) {
-            return $this->asJson([
-                'success' => true,
-                'message' => Yii::t('app', 'Banner uploaded successfully.'),
-                'bannerUrl' => $profile->getBannerUrl(),
-            ]);
+            return $this->asJson(ApiResponse::success(
+                Yii::t('app', 'Banner uploaded successfully.'),
+                ['bannerUrl' => $profile->getBannerUrl()]
+            ));
         }
 
-        // Get validation errors
         $errors = $profile->getErrors('bannerFile');
         $errorMessage = !empty($errors) ? reset($errors) : Yii::t('app', 'Failed to upload banner.');
 
-        return $this->asJson([
-            'success' => false,
-            'message' => $errorMessage,
-        ]);
+        return $this->asJson(ApiResponse::error($errorMessage));
     }
 
     /**
@@ -289,16 +270,10 @@ class ProfileController extends Controller
         $profile = $this->findModel(Yii::$app->user->identity->id);
 
         if ($profile->deleteBanner()) {
-            return $this->asJson([
-                'success' => true,
-                'message' => Yii::t('app', 'Banner deleted successfully.'),
-            ]);
+            return $this->asJson(ApiResponse::success(Yii::t('app', 'Banner deleted successfully.')));
         }
 
-        return $this->asJson([
-            'success' => false,
-            'message' => Yii::t('app', 'Failed to delete banner.'),
-        ]);
+        return $this->asJson(ApiResponse::error(Yii::t('app', 'Failed to delete banner.')));
     }
 
     /*
@@ -354,6 +329,10 @@ class ProfileController extends Controller
         }
 
         $user = Yii::$app->user->identity;
+
+        if (!$user instanceof User) {
+            return false;
+        }
 
         if ($user->validatePassword($changePasswordModel->oldPassword)) {
             $user->setPassword($changePasswordModel->newPassword);

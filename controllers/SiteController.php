@@ -29,6 +29,7 @@ use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use yii\web\TooManyRequestsHttpException;
 
 /**
@@ -54,7 +55,7 @@ class SiteController extends Controller
      *
      * @return array The behavior configurations
      */
-    public function behaviors()
+    public function behaviors(): array
     {
         return [
             'access' => [
@@ -86,7 +87,7 @@ class SiteController extends Controller
      *
      * @return array The action configurations
      */
-    public function actions()
+    public function actions(): array
     {
         return [
             'error' => [
@@ -109,7 +110,7 @@ class SiteController extends Controller
      *
      * @return string The rendered dashboard view
      */
-    public function actionIndex()
+    public function actionIndex(): string
     {
         $selectedFY = Yii::$app->request->get('fy');
 
@@ -137,7 +138,7 @@ class SiteController extends Controller
      *
      * @return void Outputs Excel file directly to browser for download
      */
-    public function actionExportExpenses()
+    public function actionExportExpenses(): void
     {
         $this->disableDebugModule();
         $this->clearOutputBuffers();
@@ -159,7 +160,7 @@ class SiteController extends Controller
      *
      * @return void
      */
-    protected function disableDebugModule()
+    protected function disableDebugModule(): void
     {
         if (Yii::$app->hasModule('debug')) {
             Yii::$app->getModule('debug')->instance = null;
@@ -173,7 +174,7 @@ class SiteController extends Controller
      *
      * @return void
      */
-    protected function clearOutputBuffers()
+    protected function clearOutputBuffers(): void
     {
         while (ob_get_level() > 0) {
             ob_end_clean();
@@ -187,7 +188,7 @@ class SiteController extends Controller
      * @param string $endDate Fiscal year end date (Y-m-d)
      * @return array Associative array [Y-m => 'Month Year']
      */
-    protected function buildMonthsArray($startDate, $endDate)
+    protected function buildMonthsArray(string $startDate, string $endDate): array
     {
         $months = [];
         $start = new \DateTime($startDate);
@@ -207,7 +208,7 @@ class SiteController extends Controller
      *
      * @return array Associative array [category_id => category_name]
      */
-    protected function getCategoryMap()
+    protected function getCategoryMap(): array
     {
         $categories = ExpenseCategory::find()
             ->select(['id', 'name'])
@@ -233,16 +234,16 @@ class SiteController extends Controller
      * @param array $categoryMap Category mapping from getCategoryMap()
      * @return array Pivot data [pivot, totals, grandTotal]
      */
-    protected function buildPivotTableData($months, $categoryMap)
+    protected function buildPivotTableData(array $months, array $categoryMap): array
     {
         $pivot = [];
         $totals = [];
 
-        foreach ($months as $ym => $label) {
+        foreach ($months as $ym => $_label) {
             $firstDay = "{$ym}-01";
             $lastDay = date('Y-m-t', strtotime($firstDay));
 
-            foreach ($categoryMap as $catId => $catName) {
+            foreach ($categoryMap as $catId => $_catName) {
                 $pivot[$ym][$catId] = 0;
             }
 
@@ -281,7 +282,7 @@ class SiteController extends Controller
      * @param array $pivotData Pivot table data
      * @return void Outputs file to browser
      */
-    protected function generateExpenseExcel($months, $categoryMap, $pivotData)
+    protected function generateExpenseExcel(array $months, array $categoryMap, array $pivotData): void
     {
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
@@ -341,7 +342,7 @@ class SiteController extends Controller
      * @param int $lastColumn Last column index
      * @return void
      */
-    protected function applyHeaderStyle($sheet, $lastColumn)
+    protected function applyHeaderStyle(Worksheet $sheet, int $lastColumn): void
     {
         $lastColLetter = Coordinate::stringFromColumnIndex($lastColumn);
 
@@ -368,7 +369,7 @@ class SiteController extends Controller
      * @param int $lastColumn Last column index
      * @return void
      */
-    protected function applyTotalsStyle($sheet, $rowIndex, $lastColumn)
+    protected function applyTotalsStyle(Worksheet $sheet, int $rowIndex, int $lastColumn): void
     {
         $lastColLetter = Coordinate::stringFromColumnIndex($lastColumn);
 
@@ -391,7 +392,7 @@ class SiteController extends Controller
      * @param int $lastColumn Last column index
      * @return void
      */
-    protected function autoSizeColumns($sheet, $lastColumn)
+    protected function autoSizeColumns(Worksheet $sheet, int $lastColumn): void
     {
         for ($col = 1; $col <= $lastColumn; $col++) {
             $colLetter = Coordinate::stringFromColumnIndex($col);
@@ -406,7 +407,7 @@ class SiteController extends Controller
      * @param string $filename The output filename
      * @return void
      */
-    protected function outputExcelFile($spreadsheet, $filename)
+    protected function outputExcelFile(Spreadsheet $spreadsheet, string $filename): void
     {
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header("Content-Disposition: attachment; filename=\"{$filename}\"");
@@ -482,7 +483,7 @@ class SiteController extends Controller
      *
      * @return Response|string Redirect or rendered signup form
      */
-    public function actionSignup()
+    public function actionSignup(): Response|string
     {
         // Redirect if already logged in
         if (!Yii::$app->user->isGuest) {
@@ -521,7 +522,7 @@ class SiteController extends Controller
      *
      * @return Response Redirect to home page
      */
-    public function actionLogout()
+    public function actionLogout(): Response
     {
         Yii::$app->user->logout();
 
@@ -538,7 +539,7 @@ class SiteController extends Controller
      *
      * @return Response|string Redirect or rendered form
      */
-    public function actionForgotPassword()
+    public function actionForgotPassword(): Response|string
     {
         $this->layout = 'auth';
 
@@ -575,7 +576,7 @@ class SiteController extends Controller
      * @return Response|string Redirect on success or rendered form
      * @throws BadRequestHttpException If token is invalid or expired
      */
-    public function actionVerifyPassword($token)
+    public function actionVerifyPassword(string $token): Response|string
     {
         $this->layout = 'auth';
 
@@ -607,7 +608,7 @@ class SiteController extends Controller
      *
      * @return string The rendered about view
      */
-    public function actionAbout()
+    public function actionAbout(): string
     {
         return $this->render('about');
     }

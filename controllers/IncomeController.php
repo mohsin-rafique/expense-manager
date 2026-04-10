@@ -9,6 +9,7 @@
 namespace app\controllers;
 
 use Yii;
+use app\components\ApiResponse;
 use app\models\Income;
 use app\models\IncomeSearch;
 use yii\web\Controller;
@@ -208,22 +209,15 @@ class IncomeController extends Controller
                 }
             }
 
-            return [
-                'status' => 'success',
-                'type' => 'success',
-                'id' => $model->id,
-                'message' => $model->isNewRecord
+            return ApiResponse::success(
+                $model->isNewRecord
                     ? Yii::t('app', 'Income created successfully.')
                     : Yii::t('app', 'Income updated successfully.'),
-            ];
+                ['id' => $model->id]
+            );
         }
 
-        return [
-            'status' => 'error',
-            'type' => 'danger',
-            'message' => Yii::t('app', 'Failed to save income.'),
-            'errors' => $model->errors,
-        ];
+        return ApiResponse::error(Yii::t('app', 'Failed to save income.'), $model->errors);
     }
 
     /**
@@ -244,10 +238,7 @@ class IncomeController extends Controller
             if ($model->delete()) {
                 if (Yii::$app->request->isAjax) {
                     Yii::$app->response->format = Response::FORMAT_JSON;
-                    return $this->asJson([
-                        'success' => true,
-                        'message' => Yii::t('app', 'Income deleted successfully.'),
-                    ]);
+                    return $this->asJson(ApiResponse::success(Yii::t('app', 'Income deleted successfully.')));
                 }
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Income deleted successfully.'));
             }
@@ -256,10 +247,7 @@ class IncomeController extends Controller
 
             if (Yii::$app->request->isAjax) {
                 Yii::$app->response->format = Response::FORMAT_JSON;
-                return $this->asJson([
-                    'success' => false,
-                    'message' => Yii::t('app', 'Failed to delete income.'),
-                ]);
+                return $this->asJson(ApiResponse::error(Yii::t('app', 'Failed to delete income.')));
             }
             Yii::$app->session->setFlash('error', Yii::t('app', 'Failed to delete income.'));
         }
@@ -279,10 +267,7 @@ class IncomeController extends Controller
         $ids = Yii::$app->request->post('ids', []);
 
         if (empty($ids)) {
-            return $this->asJson([
-                'success' => false,
-                'message' => Yii::t('app', 'No records selected.'),
-            ]);
+            return $this->asJson(ApiResponse::error(Yii::t('app', 'No records selected.')));
         }
 
         $deleted = 0;
@@ -303,13 +288,13 @@ class IncomeController extends Controller
             }
         }
 
-        return $this->asJson([
-            'success' => $failed === 0,
-            'message' => Yii::t('app', '{deleted} record(s) deleted, {failed} failed.', [
-                'deleted' => $deleted,
-                'failed' => $failed,
-            ]),
+        $message = Yii::t('app', '{deleted} record(s) deleted, {failed} failed.', [
+            'deleted' => $deleted,
+            'failed' => $failed,
         ]);
+
+        $response = $failed === 0 ? ApiResponse::success($message) : ApiResponse::error($message);
+        return $this->asJson($response);
     }
 
     /**
@@ -322,7 +307,7 @@ class IncomeController extends Controller
         $params = Yii::$app->request->queryParams['IncomeSearch'] ?? [];
 
         $searchModel = new IncomeSearch();
-        $dataProvider = $searchModel->search(['IncomeSearch' => $params], true);
+        $dataProvider = $searchModel->search($params, true);
         $incomes = $dataProvider->getModels();
 
         return $this->exportToExcel($incomes, $searchModel);
@@ -348,82 +333,124 @@ class IncomeController extends Controller
                 Yii::$app->formatter->asDate($searchModel->end_date);
         }
 
+        // Title block (rows 1–3)
         $sheet->setCellValue('A1', 'Income Report');
         $sheet->setCellValue('A2', 'Generated: ' . Yii::$app->formatter->asDatetime(time()));
         if ($dateRange) {
             $sheet->setCellValue('A3', 'Period: ' . $dateRange);
         }
 
-        $sheet->mergeCells('A1:F1');
-        $sheet->mergeCells('A2:F2');
-        $sheet->mergeCells('A3:F3');
+        $sheet->mergeCells('A1:E1');
+        $sheet->mergeCells('A2:E2');
+        $sheet->mergeCells('A3:E3');
 
-        $sheet->getStyle('A1')->getFont()->setBold(true)->setSize(14);
-        $sheet->getStyle('A2:A3')->getFont()->setItalic(true)->setColor(new \PhpOffice\PhpSpreadsheet\Style\Color('666666'));
+        $sheet->getStyle('A1')->applyFromArray([
+            'font' => ['bold' => true, 'size' => 16, 'color' => ['argb' => '198754']],
+            'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT],
+        ]);
+        $sheet->getStyle('A2:A3')->applyFromArray([
+            'font' => ['italic' => true, 'size' => 10, 'color' => ['argb' => '888888']],
+        ]);
 
-        // Column headers (row 5)
+        $sheet->getRowDimension(1)->setRowHeight(22);
+        $sheet->getRowDimension(4)->setRowHeight(6); // spacer row
+
+        // Column headers (row 5): Date | Category | Reference | Description | Amount
         $headerRow = 5;
-        $headers = ['#', 'Category', 'Date', 'Reference', 'Description', 'Amount'];
+        $sheet->fromArray(['Date', 'Category', 'Reference', 'Description', 'Amount'], null, 'A' . $headerRow);
 
-        foreach ($headers as $col => $header) {
-            $sheet->setCellValueByColumnAndRow($col + 1, $headerRow, $header);
-        }
-
-        // Header styling
-        $headerStyle = [
-            'fill' => [
-                'fillType' => Fill::FILL_SOLID,
-                'color' => ['argb' => '16a34a'],
-            ],
-            'font' => [
-                'bold' => true,
-                'color' => ['argb' => 'FFFFFF'],
-            ],
+        $sheet->getStyle('A' . $headerRow . ':E' . $headerRow)->applyFromArray([
+            'fill' => ['fillType' => Fill::FILL_SOLID, 'color' => ['argb' => '198754']],
+            'font' => ['bold' => true, 'color' => ['argb' => 'FFFFFF'], 'size' => 11],
             'alignment' => [
-                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'horizontal' => Alignment::HORIZONTAL_LEFT,
+                'vertical' => Alignment::VERTICAL_CENTER,
             ],
-        ];
-        $sheet->getStyle('A' . $headerRow . ':F' . $headerRow)->applyFromArray($headerStyle);
+            'borders' => [
+                'allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => '198754']],
+            ],
+        ]);
+        $sheet->getStyle('E' . $headerRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
+        $sheet->getRowDimension($headerRow)->setRowHeight(20);
+
+        // Freeze pane: keep header visible when scrolling
+        $sheet->freezePane('A' . ($headerRow + 1));
 
         // Data rows
-        $row = $headerRow + 1;
+        $firstDataRow = $headerRow + 1;
+        $row = $firstDataRow;
         $totalAmount = 0;
 
-        foreach ($incomes as $index => $income) {
-            $sheet->setCellValue('A' . $row, $index + 1);
+        foreach ($incomes as $income) {
+            // Format date as "Feb 25, 2026"
+            $date = Yii::$app->formatter->asDate($income->entry_date, 'MMM d, yyyy');
+
+            // Normalize line breaks in Reference and Description
+            $reference    = str_ireplace(['<br />', '<br>'], "\n", $income->reference ?? '');
+            $description  = str_ireplace(['<br />', '<br>'], "\n", $income->description ?? '');
+
+            // Currency-formatted amount string
+            $amountFormatted = Yii::$app->currency->format($income->amount);
+
+            $sheet->setCellValue('A' . $row, $date);
             $sheet->setCellValue('B' . $row, $income->incomeCategory->name ?? 'N/A');
-            $sheet->setCellValue('C' . $row, $income->entry_date);
-            $sheet->setCellValue('D' . $row, $income->reference ?? '');
-            $sheet->setCellValue('E' . $row, $income->description ?? '');
-            $sheet->setCellValue('F' . $row, (float) $income->amount);
+            $sheet->setCellValue('C' . $row, $reference);
+            $sheet->setCellValue('D' . $row, $description);
+            $sheet->setCellValue('E' . $row, $amountFormatted);
+
+            // Zebra striping: light blue-grey on even rows
+            if (($row % 2) === 0) {
+                $sheet->getStyle('A' . $row . ':E' . $row)->applyFromArray([
+                    'fill' => ['fillType' => Fill::FILL_SOLID, 'color' => ['argb' => 'EAFAF1']],
+                ]);
+            }
 
             $totalAmount += (float) $income->amount;
             $row++;
         }
 
+        $lastDataRow = $row - 1;
+
+        // Apply to all data rows: thin borders, top vertical align, left-align text
+        $sheet->getStyle('A' . $firstDataRow . ':E' . $lastDataRow)->applyFromArray([
+            'alignment' => [
+                'vertical'   => Alignment::VERTICAL_TOP,
+                'horizontal' => Alignment::HORIZONTAL_LEFT,
+            ],
+            'borders' => [
+                'allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => 'D5D8DC']],
+            ],
+        ]);
+
+        // Wrap + vertical top for Reference (C) and Description (D)
+        $sheet->getStyle('C' . $firstDataRow . ':D' . $lastDataRow)->getAlignment()
+            ->setWrapText(true)->setVertical(Alignment::VERTICAL_TOP);
+
+        // Right-align Amount column data
+        $sheet->getStyle('E' . $firstDataRow . ':E' . $lastDataRow)
+            ->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
+
         // Total row
-        $sheet->setCellValue('E' . $row, 'Total:');
-        $sheet->setCellValue('F' . $row, $totalAmount);
-        $sheet->getStyle('E' . $row . ':F' . $row)->getFont()->setBold(true);
-        $sheet->getStyle('E' . $row . ':F' . $row)->getBorders()->getTop()->setBorderStyle(Border::BORDER_THIN);
+        $sheet->setCellValue('D' . $row, 'Total:');
+        $sheet->setCellValue('E' . $row, Yii::$app->currency->format($totalAmount));
+        $sheet->getStyle('D' . $row . ':E' . $row)->applyFromArray([
+            'font' => ['bold' => true, 'size' => 11],
+            'alignment' => ['vertical' => Alignment::VERTICAL_CENTER],
+            'borders' => [
+                'top'    => ['borderStyle' => Border::BORDER_MEDIUM, 'color' => ['argb' => '198754']],
+                'bottom' => ['borderStyle' => Border::BORDER_MEDIUM, 'color' => ['argb' => '198754']],
+            ],
+            'fill' => ['fillType' => Fill::FILL_SOLID, 'color' => ['argb' => 'D5F5E3']],
+        ]);
+        $sheet->getStyle('E' . $row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
+        $sheet->getRowDimension($row)->setRowHeight(18);
 
-        // Format amount column
-        $sheet->getStyle('F' . ($headerRow + 1) . ':F' . $row)
-            ->getNumberFormat()
-            ->setFormatCode('#,##0.00');
-        $sheet->getStyle('F' . ($headerRow + 1) . ':F' . $row)
-            ->getAlignment()
-            ->setHorizontal(Alignment::HORIZONTAL_RIGHT);
-
-        // Center ID column
-        $sheet->getStyle('A' . $headerRow . ':A' . $row)
-            ->getAlignment()
-            ->setHorizontal(Alignment::HORIZONTAL_CENTER);
-
-        // Auto-fit columns
-        foreach (range('A', 'F') as $col) {
-            $sheet->getColumnDimension($col)->setAutoSize(true);
-        }
+        // Column widths
+        $sheet->getColumnDimension('A')->setAutoSize(true);  // Date
+        $sheet->getColumnDimension('B')->setAutoSize(true);  // Category
+        $sheet->getColumnDimension('C')->setAutoSize(false)->setWidth(42); // Reference (capped)
+        $sheet->getColumnDimension('D')->setAutoSize(false)->setWidth(38); // Description (capped)
+        $sheet->getColumnDimension('E')->setAutoSize(true);  // Amount
 
         // Output
         $filename = 'income-report-' . date('Y-m-d-His') . '.xlsx';
@@ -435,9 +462,12 @@ class IncomeController extends Controller
 
         $writer = new Xlsx($spreadsheet);
 
-        ob_start();
-        $writer->save('php://output');
-        Yii::$app->response->content = ob_get_clean();
+        $tmpFile = tempnam(sys_get_temp_dir(), 'income_export_');
+        $writer->save($tmpFile);
+        $content = file_get_contents($tmpFile);
+        unlink($tmpFile);
+
+        Yii::$app->response->content = $content;
 
         return Yii::$app->response;
     }
@@ -450,9 +480,6 @@ class IncomeController extends Controller
     public function actionSummary(): Response
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
-
-        $currentMonth = date('Y-m');
-        $lastMonth = date('Y-m', strtotime('-1 month'));
 
         $currentMonthTotal = Income::getTotalIncome(
             null,

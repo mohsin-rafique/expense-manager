@@ -480,7 +480,7 @@ $js = <<<JS
             success: function(response) {
                 NEM.Modal.hide('#deleteModal');
 
-                if (response.success) {
+                if (response.status === 'success') {
                     NEM.Toast.success(response.message || 'Category deleted successfully');
                     // Reload PJAX to refresh stats and tree
                     reloadPjax();

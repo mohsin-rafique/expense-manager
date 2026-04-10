@@ -9,6 +9,7 @@
 namespace app\controllers;
 
 use Yii;
+use app\components\ApiResponse;
 use app\models\Expense;
 use app\models\ExpenseSearch;
 use yii\web\Response;
@@ -193,21 +194,14 @@ class ExpenseController extends Controller
                 $file->saveAs($path);
             }
 
-            return [
-                'status' => 'success',
-                'type' => 'success',
-                'message' => $model->isNewRecord
+            return ApiResponse::success(
+                $model->isNewRecord
                     ? Yii::t('app', 'Expense created successfully.')
-                    : Yii::t('app', 'Expense updated successfully.'),
-            ];
+                    : Yii::t('app', 'Expense updated successfully.')
+            );
         }
 
-        return [
-            'status' => 'error',
-            'type' => 'danger',
-            'message' => Yii::t('app', 'Failed to save expense.'),
-            'errors' => $model->errors,
-        ];
+        return ApiResponse::error(Yii::t('app', 'Failed to save expense.'), $model->errors);
     }
 
     /**
@@ -232,18 +226,10 @@ class ExpenseController extends Controller
         }
 
         if ($model->delete()) {
-            return [
-                'status' => 'success',
-                'type' => 'success',
-                'message' => Yii::t('app', 'Expense deleted successfully.'),
-            ];
+            return ApiResponse::success(Yii::t('app', 'Expense deleted successfully.'));
         }
 
-        return [
-            'status' => 'error',
-            'type' => 'danger',
-            'message' => Yii::t('app', 'Failed to delete expense.'),
-        ];
+        return ApiResponse::error(Yii::t('app', 'Failed to delete expense.'));
     }
 
     /**
