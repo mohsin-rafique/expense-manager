@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <!-- Gradient for icon -->
+    <linearGradient id="iconGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2563eb"/>
+      <stop offset="50%" style="stop-color:#3b82f6"/>
+      <stop offset="100%" style="stop-color:#22c55e"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Wallet base -->
+  <rect x="6" y="18" width="52" height="42" rx="8" fill="url(#iconGrad)"/>
+  
+  <!-- Wallet flap -->
+  <path d="M12 18 Q12 8 22 8 L42 8 Q52 8 52 18" fill="none" stroke="url(#iconGrad)" stroke-width="5" stroke-linecap="round"/>
+  
+  <!-- Card slot -->
+  <rect x="36" y="30" width="16" height="12" rx="3" fill="#ffffff" opacity="0.9"/>
+  
+  <!-- Upward arrow (growth indicator) -->
+  <path d="M16 52 L26 38 L36 46 L50 28" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M42 28 L50 28 L50 36" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

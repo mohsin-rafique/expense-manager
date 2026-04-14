@@ -1,0 +1,1282 @@
+/**
+ * Dashboard Styles
+ *
+ * Custom styles for the Expense Manager dashboard.
+ * Complements the main site.css with dashboard-specific rules.
+ *
+ * @author Your Name
+ * @since 1.0.0
+ */
+
+/* ============================================================== */
+/* Dashboard Layout                                               */
+/* ============================================================== */
+
+.dashboard-header {
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--em-gray-200);
+}
+
+.dashboard-section {
+    padding-top: 0.5rem;
+}
+
+.dashboard-section h2 {
+    color: var(--em-gray-800);
+    font-weight: 600;
+}
+
+/* ============================================================== */
+/* Stat Cards                                                     */
+/* ============================================================== */
+
+.stat-card {
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--em-shadow-md);
+}
+
+.stat-card .stat-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--em-radius-lg);
+    font-size: 1.5rem;
+}
+
+.stat-card .stat-icon.income {
+    background-color: var(--em-success-light);
+    color: var(--em-success);
+}
+
+.stat-card .stat-icon.expense {
+    background-color: var(--em-danger-light);
+    color: var(--em-danger);
+}
+
+.stat-card .stat-icon.balance {
+    background-color: var(--em-primary-light);
+    color: var(--em-primary);
+}
+
+.stat-card .stat-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    line-height: 1.2;
+    font-variant-numeric: tabular-nums;
+}
+
+.stat-card .stat-label {
+    font-size: 0.875rem;
+    color: var(--em-gray-500);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.stat-card .stat-change {
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.stat-card .stat-change.positive {
+    color: var(--em-success);
+}
+
+.stat-card .stat-change.negative {
+    color: var(--em-danger);
+}
+
+/* ============================================================== */
+/* Chart Containers                                               */
+/* ============================================================== */
+
+.chart-container {
+    position: relative;
+    width: 100%;
+}
+
+/* ApexCharts overrides */
+.apexcharts-canvas {
+    margin: 0 auto;
+}
+
+.apexcharts-tooltip {
+    border-radius: var(--em-radius) !important;
+    box-shadow: var(--em-shadow-lg) !important;
+}
+
+.apexcharts-tooltip-title {
+    background: var(--em-gray-100) !important;
+    border-bottom: 1px solid var(--em-gray-200) !important;
+}
+
+.apexcharts-xaxistooltip,
+.apexcharts-yaxistooltip {
+    border-radius: var(--em-radius) !important;
+}
+
+/* ============================================================== */
+/* Card Enhancements                                              */
+/* ============================================================== */
+
+.dashboard-section .card {
+    border: none;
+    box-shadow: var(--em-shadow);
+    transition: box-shadow 0.2s ease;
+}
+
+.dashboard-section .card:hover {
+    box-shadow: var(--em-shadow-md);
+}
+
+.dashboard-section .card-header {
+    background-color: transparent;
+    border-bottom: 1px solid var(--em-gray-100);
+    padding: 1rem 1.25rem;
+}
+
+.dashboard-section .card-title {
+    font-weight: 600;
+    color: var(--em-gray-800);
+    margin-bottom: 0;
+}
+
+/* ============================================================== */
+/* Trend Indicators                                               */
+/* ============================================================== */
+
+.trend-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--em-radius);
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.trend-indicator.up {
+    background-color: var(--em-success-light);
+    color: var(--em-success);
+}
+
+.trend-indicator.down {
+    background-color: var(--em-danger-light);
+    color: var(--em-danger);
+}
+
+.trend-indicator.neutral {
+    background-color: var(--em-gray-100);
+    color: var(--em-gray-600);
+}
+
+/* ============================================================== */
+/* Period Selector                                                */
+/* ============================================================== */
+
+.period-selector {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.period-selector .btn {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.875rem;
+}
+
+.period-selector .btn.active {
+    background-color: var(--em-primary);
+    border-color: var(--em-primary);
+    color: white;
+}
+
+/* ============================================================== */
+/* Empty State                                                    */
+/* ============================================================== */
+
+.dashboard-empty-state {
+    text-align: center;
+    padding: 3rem 1.5rem;
+    color: var(--em-gray-500);
+}
+
+.dashboard-empty-state svg {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.dashboard-empty-state p {
+    margin-bottom: 1rem;
+}
+
+/* ============================================================== */
+/* Loading State                                                  */
+/* ============================================================== */
+
+.chart-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+}
+
+.chart-loading .spinner-border {
+    width: 2rem;
+    height: 2rem;
+    color: var(--em-primary);
+}
+
+/* ============================================================== */
+/* Responsive Adjustments                                         */
+/* ============================================================== */
+
+@media (max-width: 767.98px) {
+    .dashboard-header {
+        text-align: center;
+    }
+
+    .dashboard-header .text-md-end {
+        text-align: center !important;
+        margin-top: 0.5rem;
+    }
+
+    .stat-card .stat-value {
+        font-size: 1.5rem;
+    }
+
+    .period-selector {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}
+
+/* ============================================================== */
+/* Print Styles                                                   */
+/* ============================================================== */
+
+@media print {
+    .dashboard-section .card {
+        box-shadow: none;
+        border: 1px solid var(--em-gray-200);
+    }
+
+    .period-selector,
+    .btn-group {
+        display: none;
+    }
+}
+
+/* ============================================================== */
+/* Fiscal Year Selector                                           */
+/* ============================================================== */
+
+.fy-selector {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.fy-selector select {
+    appearance: none;
+    -webkit-appearance: none;
+    background-color: var(--em-primary);
+    color: #ffffff;
+    border: none;
+    border-radius: var(--em-radius-lg);
+    padding: 0.5rem 2.25rem 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+        background-color 0.2s ease,
+        box-shadow 0.2s ease;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23ffffff' d='M6 8.825a.5.5 0 01-.354-.146l-4-4a.5.5 0 01.708-.708L6 7.617l3.646-3.646a.5.5 0 01.708.708l-4 4A.5.5 0 016 8.825z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 12px;
+}
+
+.fy-selector select:hover {
+    background-color: var(--em-primary-dark, #4338ca);
+    box-shadow: var(--em-shadow-md);
+}
+
+.fy-selector select:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.25);
+}
+
+.fy-selector select option {
+    background-color: #ffffff;
+    color: var(--em-gray-800);
+    font-weight: 500;
+}
+
+.fy-selector .fy-updated {
+    font-size: 0.75rem;
+    color: var(--em-gray-400);
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+@media (max-width: 767.98px) {
+    .fy-selector {
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 0.75rem;
+    }
+
+    .fy-selector .fy-updated {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* ============================================================== */
+/* Fiscal Year Expense Summary - Enhanced                         */
+/* ============================================================== */
+
+.fy-summary-card {
+    border: none;
+    border-radius: var(--em-radius-lg);
+    box-shadow: var(--em-shadow);
+    overflow: hidden;
+}
+
+.fy-summary-card .card-header {
+    background: linear-gradient(135deg, var(--em-primary), #6366f1);
+    color: #ffffff;
+    padding: 1.25rem 1.5rem;
+    border: none;
+}
+
+.fy-summary-card .card-header .fy-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.fy-summary-card .card-header .fy-subtitle {
+    font-size: 0.8rem;
+    opacity: 0.8;
+    margin-top: 0.25rem;
+}
+
+.fy-summary-card .card-header .fy-badge {
+    background: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 2rem;
+    padding: 0.35rem 1rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    backdrop-filter: blur(4px);
+}
+
+.fy-summary-card .card-header .fy-actions .btn {
+    background: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: var(--em-radius);
+    font-size: 0.8rem;
+    font-weight: 500;
+    padding: 0.35rem 0.85rem;
+    transition: all 0.2s ease;
+}
+
+.fy-summary-card .card-header .fy-actions .btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px);
+}
+
+/* ── Table Wrapper ── */
+.fy-table-wrapper {
+    overflow-x: auto;
+    position: relative;
+}
+
+.fy-table-wrapper::-webkit-scrollbar {
+    height: 6px;
+}
+
+.fy-table-wrapper::-webkit-scrollbar-track {
+    background: var(--em-gray-100);
+}
+
+.fy-table-wrapper::-webkit-scrollbar-thumb {
+    background: var(--em-gray-300);
+    border-radius: 3px;
+}
+
+.fy-table-wrapper::-webkit-scrollbar-thumb:hover {
+    background: var(--em-gray-400);
+}
+
+/* ── Table Styles ── */
+.fy-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.85rem;
+}
+
+.fy-table thead th {
+    background: var(--em-gray-50, #f8fafc);
+    color: var(--em-gray-500);
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 0.75rem 1rem;
+    border-bottom: 2px solid var(--em-gray-200);
+    white-space: nowrap;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+.fy-table thead th:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 3;
+    background: var(--em-gray-50, #f8fafc);
+}
+
+.fy-table thead th.sortable {
+    cursor: pointer;
+    user-select: none;
+}
+
+.fy-table thead th.sortable:hover {
+    color: var(--em-primary);
+}
+
+/* ── Table Body ── */
+.fy-table tbody td {
+    padding: 0.65rem 1rem;
+    border-bottom: 1px solid var(--em-gray-100);
+    color: var(--em-gray-700);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    transition: background-color 0.15s ease;
+}
+
+.fy-table tbody td:first-child {
+    position: sticky;
+    left: 0;
+    background: #ffffff;
+    z-index: 1;
+    font-weight: 600;
+    color: var(--em-gray-800);
+}
+
+.fy-table tbody tr:hover td {
+    background-color: var(--em-primary-light, #eef2ff);
+}
+
+.fy-table tbody tr:hover td:first-child {
+    background-color: var(--em-primary-light, #eef2ff);
+}
+
+/* ── Cell Values ── */
+.fy-table .cell-value {
+    display: inline-block;
+    min-width: 60px;
+    text-align: right;
+}
+
+.fy-table .cell-value.positive {
+    color: var(--em-success);
+    font-weight: 500;
+}
+
+.fy-table .cell-value.zero {
+    color: var(--em-gray-300);
+}
+
+.fy-table .cell-value.high {
+    color: var(--em-danger);
+    font-weight: 600;
+}
+
+/* ── Heat Map Effect ── */
+.fy-table td.heat-1 {
+    background-color: rgba(79, 70, 229, 0.03);
+}
+.fy-table td.heat-2 {
+    background-color: rgba(79, 70, 229, 0.06);
+}
+.fy-table td.heat-3 {
+    background-color: rgba(79, 70, 229, 0.1);
+}
+.fy-table td.heat-4 {
+    background-color: rgba(79, 70, 229, 0.15);
+}
+.fy-table td.heat-5 {
+    background-color: rgba(79, 70, 229, 0.22);
+}
+
+.fy-table tbody tr:hover td.heat-1,
+.fy-table tbody tr:hover td.heat-2,
+.fy-table tbody tr:hover td.heat-3,
+.fy-table tbody tr:hover td.heat-4,
+.fy-table tbody tr:hover td.heat-5 {
+    background-color: var(--em-primary-light, #eef2ff);
+}
+
+/* ── Totals Row ── */
+.fy-table tfoot td {
+    padding: 0.85rem 1rem;
+    font-weight: 700;
+    font-size: 0.85rem;
+    border-top: 2px solid var(--em-gray-300);
+    background: var(--em-gray-50, #f8fafc);
+    color: var(--em-gray-800);
+}
+
+.fy-table tfoot td:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    background: var(--em-gray-50, #f8fafc);
+}
+
+.fy-table tfoot tr.grand-total td {
+    background: linear-gradient(135deg, var(--em-primary), #6366f1);
+    color: #ffffff;
+    font-size: 0.95rem;
+    border-top: none;
+}
+
+.fy-table tfoot tr.grand-total td:first-child {
+    background: linear-gradient(135deg, var(--em-primary), #6366f1);
+    color: #ffffff;
+}
+
+/* ── Month Column Styling ── */
+.fy-table .month-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.fy-table .month-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.fy-table .month-dot.current {
+    background: var(--em-primary);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+}
+
+.fy-table .month-dot.past {
+    background: var(--em-gray-300);
+}
+
+.fy-table .month-dot.future {
+    background: transparent;
+    border: 2px dashed var(--em-gray-300);
+}
+
+/* ── Future Month Rows ── */
+.fy-table tbody tr.future-month td {
+    color: var(--em-gray-300);
+    font-style: italic;
+}
+
+.fy-table tbody tr.current-month td {
+    background-color: rgba(79, 70, 229, 0.04);
+}
+
+.fy-table tbody tr.current-month td:first-child {
+    background-color: rgba(79, 70, 229, 0.04);
+    border-left: 3px solid var(--em-primary);
+}
+
+/* ── Card Footer ── */
+.fy-summary-card .card-footer {
+    background: var(--em-gray-50, #f8fafc);
+    border-top: 1px solid var(--em-gray-100);
+    padding: 0.75rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.75rem;
+    color: var(--em-gray-400);
+}
+
+.fy-summary-card .card-footer .footer-stat {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+/* ── Mini Sparkline Bar ── */
+.cell-bar-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 120px;
+}
+
+.cell-bar {
+    flex: 1;
+    height: 4px;
+    background: var(--em-gray-100);
+    border-radius: 2px;
+    overflow: hidden;
+    min-width: 40px;
+}
+
+.cell-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: var(--em-primary);
+    transition: width 0.6s ease;
+}
+
+.cell-bar-fill.high {
+    background: var(--em-danger);
+}
+
+.cell-bar-fill.medium {
+    background: var(--em-warning, #eab308);
+}
+
+.cell-bar-fill.low {
+    background: var(--em-success);
+}
+
+/* ── Toggle View Buttons ── */
+.fy-view-toggle {
+    display: inline-flex;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: var(--em-radius);
+    padding: 2px;
+    gap: 2px;
+}
+
+.fy-view-toggle .btn {
+    background: transparent;
+    color: rgba(255, 255, 255, 0.7);
+    border: none;
+    border-radius: calc(var(--em-radius) - 2px);
+    padding: 0.3rem 0.65rem;
+    font-size: 0.75rem;
+}
+
+.fy-view-toggle .btn.active {
+    background: rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+}
+
+.fy-view-toggle .btn:hover:not(.active) {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* ── Responsive ── */
+@media (max-width: 767.98px) {
+    .fy-summary-card .card-header {
+        padding: 1rem;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .fy-summary-card .card-footer {
+        flex-direction: column;
+        gap: 0.5rem;
+        text-align: center;
+    }
+
+    .fy-table {
+        font-size: 0.8rem;
+    }
+
+    .fy-table thead th,
+    .fy-table tbody td,
+    .fy-table tfoot td {
+        padding: 0.5rem 0.75rem;
+    }
+}
+
+@media print {
+    .fy-summary-card .card-header {
+        background: var(--em-gray-800) !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .fy-table td.heat-1,
+    .fy-table td.heat-2,
+    .fy-table td.heat-3,
+    .fy-table td.heat-4,
+    .fy-table td.heat-5 {
+        background: transparent !important;
+    }
+
+    .fy-summary-card .fy-actions,
+    .fy-view-toggle {
+        display: none;
+    }
+}
+
+/* ============================================================== */
+/* Enhanced Stat Cards with Sparklines                            */
+/* ============================================================== */
+
+.enhanced-stat-card {
+    border: none;
+    border-radius: var(--em-radius-lg);
+    overflow: hidden;
+}
+
+.enhanced-stat-card .stat-row {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--em-gray-100);
+    transition: background-color 0.2s ease;
+}
+
+.enhanced-stat-card .stat-row:last-of-type {
+    border-bottom: none;
+}
+
+.enhanced-stat-card .stat-row:hover {
+    background-color: var(--em-gray-50, #f8fafc);
+}
+
+.enhanced-stat-card .stat-row-main {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+}
+
+/* ── Icon Wrapper ── */
+.enhanced-stat-card .icon-wrapper {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--em-radius-lg);
+    font-size: 1.25rem;
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+}
+
+.enhanced-stat-card .stat-row:hover .icon-wrapper {
+    transform: scale(1.08);
+}
+
+.enhanced-stat-card .icon-wrapper.income {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.2));
+    color: #10b981;
+}
+
+.enhanced-stat-card .icon-wrapper.expense {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.2));
+    color: #ef4444;
+}
+
+.enhanced-stat-card .icon-wrapper.success {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.2));
+    color: #10b981;
+}
+
+.enhanced-stat-card .icon-wrapper.danger {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.2));
+    color: #ef4444;
+}
+
+/* ── Content ── */
+.enhanced-stat-card .stat-row-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.enhanced-stat-card .stat-row-label {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--em-gray-400);
+    margin-bottom: 0.15rem;
+}
+
+.enhanced-stat-card .stat-row-value {
+    display: block;
+    font-size: 1.35rem;
+    font-weight: 700;
+    line-height: 1.2;
+    font-variant-numeric: tabular-nums;
+}
+
+/* ── Sparkline ── */
+.enhanced-stat-card .stat-row-sparkline {
+    flex-shrink: 0;
+    width: 100px;
+    opacity: 0.9;
+}
+
+.enhanced-stat-card .stat-row:hover .stat-row-sparkline {
+    opacity: 1;
+}
+
+/* ── Expense Progress Bar ── */
+.enhanced-stat-card .stat-row-progress {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    padding-left: 3.5rem;
+}
+
+.progress-micro {
+    flex: 1;
+    height: 4px;
+    background: var(--em-gray-100);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.progress-micro-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 1s ease;
+}
+
+.progress-micro-fill.healthy {
+    background: linear-gradient(90deg, #10b981, #34d399);
+}
+
+.progress-micro-fill.warning {
+    background: linear-gradient(90deg, #f59e0b, #fbbf24);
+}
+
+.progress-micro-fill.critical {
+    background: linear-gradient(90deg, #ef4444, #f87171);
+}
+
+.progress-micro-label {
+    font-size: 0.65rem;
+    color: var(--em-gray-400);
+    white-space: nowrap;
+    font-weight: 500;
+}
+
+/* ── Savings Badge ── */
+.enhanced-stat-card .stat-row-badge {
+    flex-shrink: 0;
+}
+
+.savings-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.65rem;
+    border-radius: 2rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+.savings-badge.positive {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+}
+
+.savings-badge.negative {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+.savings-badge i {
+    font-size: 1rem;
+    margin-right: 0.1rem;
+}
+
+/* ── Responsive ── */
+@media (max-width: 575.98px) {
+    .enhanced-stat-card .stat-row-sparkline {
+        display: none;
+    }
+
+    .enhanced-stat-card .stat-row-value {
+        font-size: 1.15rem;
+    }
+
+    .enhanced-stat-card .stat-row-progress {
+        padding-left: 0;
+    }
+}
+
+/* ============================================================== */
+/* Enhanced Monthly Performance Widget                            */
+/* ============================================================== */
+
+.enhanced-performance-card {
+    border: none;
+    border-radius: var(--em-radius-lg);
+}
+
+.enhanced-performance-card .card-body {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem 1.25rem;
+}
+
+/* ── Radial Chart ── */
+.perf-chart-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 0.5rem;
+}
+
+/* ── Metric Cards ── */
+.perf-metrics {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.perf-metric-item {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 0.75rem;
+    border-radius: var(--em-radius);
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.perf-metric-item:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--em-shadow);
+}
+
+.perf-metric-item.income {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.06), rgba(16, 185, 129, 0.12));
+}
+
+.perf-metric-item.expense {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.06), rgba(239, 68, 68, 0.12));
+}
+
+.perf-metric-item.savings {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.06), rgba(99, 102, 241, 0.12));
+}
+
+.perf-metric-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.perf-metric-item.income .perf-metric-dot {
+    background: #10b981;
+}
+.perf-metric-item.expense .perf-metric-dot {
+    background: #ef4444;
+}
+.perf-metric-item.savings .perf-metric-dot {
+    background: #6366f1;
+}
+
+.perf-metric-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.perf-metric-label {
+    font-size: 0.6rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--em-gray-400);
+    line-height: 1;
+    margin-bottom: 0.15rem;
+}
+
+.perf-metric-value {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--em-gray-800);
+    font-variant-numeric: tabular-nums;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ── Trend Section ── */
+.perf-trend {
+    border-top: 1px solid var(--em-gray-100);
+    padding-top: 0.65rem;
+    margin-top: auto;
+}
+
+.perf-trend-header {
+    margin-bottom: 0.25rem;
+}
+
+.perf-trend-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--em-gray-400);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+/* ── Equal Height Fix ── */
+.dashboard-section .row.g-4 > [class*="col-"] > .monthly-performance-widget,
+.dashboard-section .row.g-4 > [class*="col-"] > .current-month-panel-widget {
+    height: 100%;
+}
+
+.dashboard-section .row.g-4 > [class*="col-"] > .monthly-performance-widget > .card,
+.dashboard-section .row.g-4 > [class*="col-"] > .current-month-panel-widget > .card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.dashboard-section .row.g-4 > [class*="col-"] > .monthly-performance-widget > .card > .card-body,
+.dashboard-section .row.g-4 > [class*="col-"] > .current-month-panel-widget > .card > .card-body {
+    flex: 1;
+}
+
+/* ── Responsive ── */
+@media (max-width: 575.98px) {
+    .perf-metrics {
+        flex-direction: column;
+    }
+
+    .perf-metric-item {
+        padding: 0.5rem;
+    }
+
+    .perf-metric-value {
+        font-size: 0.75rem;
+    }
+}
+
+/* ============================================================== */
+/* Financial Trends — Equal Height & Polish                       */
+/* ============================================================== */
+
+/* Metric icon containers */
+.metric-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    flex-shrink: 0;
+    transition: transform 0.15s ease;
+}
+
+.metric-icon--success {
+    background: rgba(var(--bs-success-rgb, 25, 135, 84), 0.1);
+}
+.metric-icon--danger {
+    background: rgba(var(--bs-danger-rgb, 220, 53, 69), 0.1);
+}
+.metric-icon--primary {
+    background: rgba(var(--bs-primary-rgb, 13, 110, 253), 0.1);
+}
+
+.evolution-panel-widget tr:hover .metric-icon {
+    transform: scale(1.08);
+}
+
+/* Trend indicator hover effect */
+.trend-indicator {
+    transition: opacity 0.15s ease;
+}
+
+.evolution-panel-widget tr:hover .trend-indicator {
+    opacity: 0.85;
+}
+
+/* Ensure both cards in a row stretch equally */
+.row.align-items-stretch > [class*="col-"].d-flex > .evolution-panel-widget,
+.row.align-items-stretch > [class*="col-"].d-flex > .expenses-by-category-widget {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.row.align-items-stretch > [class*="col-"].d-flex > .evolution-panel-widget > .card,
+.row.align-items-stretch > [class*="col-"].d-flex > .expenses-by-category-widget > .card {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Subtle row hover on evolution table */
+.evolution-panel-widget tbody tr {
+    transition: background-color 0.15s ease;
+}
+
+.evolution-panel-widget tbody tr:hover {
+    background-color: rgba(0, 0, 0, 0.015);
+}
+
+/* ============================================================== */
+/* Comparative Analysis — Metric Rows & Polish                    */
+/* ============================================================== */
+
+.ca-metric-row {
+    transition: background-color 0.15s ease;
+}
+
+.ca-metric-row:hover {
+    background-color: rgba(0, 0, 0, 0.012);
+}
+
+.ca-metric-row:hover .metric-icon {
+    transform: scale(1.08);
+}
+
+/* Ensure equal-height columns in comparative analysis */
+.comparative-analysis-widget .row.align-items-stretch > [class*="col-"].d-flex > .card {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ============================================================== */
+/* Lifetime Overview — Metric Cells & Polish                      */
+/* ============================================================== */
+
+.lo-metric-cell {
+    transition: background-color 0.15s ease;
+}
+
+.lo-metric-cell:hover {
+    background-color: rgba(0, 0, 0, 0.012);
+}
+
+.lo-metric-cell:hover .metric-icon {
+    transform: scale(1.08);
+}
+
+/* Responsive: stack borders on mobile */
+@media (max-width: 767.98px) {
+    .lifetime-overview-widget .row.g-0 > [class*="col-"].border-end {
+        border-right: 0 !important;
+        border-bottom: 1px solid var(--bs-border-color);
+    }
+}
+
+/* ============================================================== */
+/* Dashboard Section Dividers                                     */
+/* Visual separators between Current Month, Fiscal Year, Lifetime */
+/* ============================================================== */
+
+.dashboard-section-divider {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 2.5rem 0 1.75rem;
+    user-select: none;
+}
+
+.dashboard-section-divider__line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--em-gray-300) 20%, var(--em-gray-300) 80%, transparent);
+}
+
+.dashboard-section-divider__label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.5rem 1.25rem;
+    background: var(--em-gray-50, #f8fafc);
+    border: 1px solid var(--em-gray-200);
+    border-radius: 2rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--em-gray-500);
+    white-space: nowrap;
+    transition: all 0.2s ease;
+}
+
+.dashboard-section-divider__label i {
+    font-size: 0.9rem;
+    color: var(--em-primary);
+}
+
+.dashboard-section-divider__badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.15rem 0.6rem;
+    margin-left: 0.35rem;
+    background: var(--em-primary);
+    color: #ffffff;
+    border-radius: 1rem;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: none;
+}
+
+/* Hover effect on divider */
+.dashboard-section-divider:hover .dashboard-section-divider__label {
+    border-color: var(--em-primary);
+    color: var(--em-primary);
+    background: rgba(79, 70, 229, 0.04);
+}
+
+/* ── Responsive ── */
+@media (max-width: 767.98px) {
+    .dashboard-section-divider {
+        margin: 2rem 0 1.25rem;
+        gap: 0.75rem;
+    }
+
+    .dashboard-section-divider__label {
+        padding: 0.4rem 1rem;
+        font-size: 0.7rem;
+    }
+
+    .dashboard-section-divider__badge {
+        font-size: 0.6rem;
+        padding: 0.1rem 0.5rem;
+    }
+}
+
+@media print {
+    .dashboard-section-divider {
+        margin: 1.5rem 0 1rem;
+    }
+
+    .dashboard-section-divider__line {
+        background: var(--em-gray-300);
+    }
+
+    .dashboard-section-divider__label {
+        background: transparent;
+        border-color: var(--em-gray-300);
+    }
+}

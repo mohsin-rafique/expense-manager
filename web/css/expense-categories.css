@@ -1,0 +1,450 @@
+/* ============================================================== */
+/* Expense Categories - Additional Styles                         */
+/* Append these styles to your existing site.css                 */
+/* ============================================================== */
+
+/* Page Header */
+.expense-categories-index h1,
+.expense-categories-create h1,
+.expense-categories-update h1 {
+    color: var(--em-gray-800);
+    font-weight: 600;
+}
+
+/* Statistics Cards */
+.expense-categories-index .stats-card {
+    border: none;
+    border-radius: 12px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.expense-categories-index .stats-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.expense-categories-index .stats-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    font-size: 1.5rem;
+}
+
+/* Tree Container */
+.expense-categories-index .tree-container {
+    min-height: 400px;
+    border: 1px solid var(--em-gray-200, #e5e7eb);
+    border-radius: 8px;
+    padding: 1rem;
+    background: var(--em-white, #fff);
+}
+
+/* jsTree Customization */
+.expense-categories-index .jstree-default .jstree-node {
+    margin-left: 24px;
+}
+
+.expense-categories-index .jstree-default .jstree-anchor {
+    padding: 6px 8px;
+    border-radius: 6px;
+    transition: background-color 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+}
+
+.expense-categories-index .jstree-default .jstree-hovered {
+    background: rgba(220, 38, 38, 0.05);
+    box-shadow: none;
+}
+
+.expense-categories-index .jstree-default .jstree-clicked {
+    background: rgba(220, 38, 38, 0.1);
+    box-shadow: none;
+    color: inherit;
+}
+
+.expense-categories-index .jstree-default .jstree-icon.jstree-themeicon {
+    font-size: 1rem;
+    margin-right: 6px;
+}
+
+/* Tree Node Actions (shown on hover) */
+.expense-categories-index .category-actions {
+    display: none;
+    margin-left: 8px;
+    gap: 4px;
+}
+
+.expense-categories-index .jstree-anchor:hover .category-actions {
+    display: inline-flex;
+}
+
+.expense-categories-index .category-actions .btn {
+    padding: 2px 6px;
+    font-size: 0.75rem;
+    line-height: 1;
+}
+
+/* Tree Toolbar */
+.expense-categories-index .tree-toolbar {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+/* Empty Tree State */
+.expense-categories-index .empty-tree {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--em-gray-500);
+}
+
+.expense-categories-index .empty-tree-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1.5rem;
+    background: linear-gradient(135deg, var(--em-danger-light, #fee2e2) 0%, var(--em-warning-light, #fef3c7) 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.expense-categories-index .empty-tree h5 {
+    color: var(--em-gray-800);
+    font-weight: 600;
+}
+
+/* Category Badge */
+.expense-categories-index .category-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.875rem;
+}
+
+.expense-categories-index .category-color-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+/* Inactive Status Style */
+.expense-categories-index .status-inactive {
+    opacity: 0.5;
+    text-decoration: line-through;
+}
+
+/* View Toggle Buttons */
+.expense-categories-index .view-toggle .btn {
+    padding: 0.375rem 0.75rem;
+}
+
+.expense-categories-index .view-toggle .btn.active {
+    background-color: var(--em-danger);
+    border-color: var(--em-danger);
+    color: white;
+}
+
+/* Search Highlight */
+.expense-categories-index .search-highlight,
+.jstree-search {
+    background-color: #fff3cd !important;
+    padding: 0 2px;
+    border-radius: 2px;
+}
+
+/* Context Menu Styling */
+.jstree-contextmenu {
+    border: none !important;
+    border-radius: var(--em-radius, 0.375rem) !important;
+    box-shadow: var(--em-shadow-lg, 0 10px 15px -3px rgba(0, 0, 0, 0.1)) !important;
+    padding: 0.5rem !important;
+}
+
+.jstree-contextmenu li {
+    margin: 0 !important;
+}
+
+.jstree-contextmenu li a {
+    padding: 0.5rem 0.75rem !important;
+    border-radius: 4px !important;
+    transition: background-color 0.15s ease !important;
+}
+
+.jstree-contextmenu li a:hover {
+    background-color: var(--em-gray-50, #f9fafb) !important;
+}
+
+.jstree-contextmenu li.vakata-context-separator {
+    margin: 0.25rem 0 !important;
+}
+
+/* Category Icon Styles */
+.category-icon-small {
+    font-size: 1rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.category-icon-preview {
+    transition: all 0.15s ease;
+}
+
+/* Form Styles */
+.expense-categories-form .icon-option {
+    cursor: pointer;
+}
+
+.expense-categories-form .icon-option .icon-box {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--em-gray-200, #e5e7eb);
+    border-radius: 8px;
+    font-size: 1.125rem;
+    color: var(--em-gray-500, #6b7280);
+    background-color: var(--em-white, #fff);
+    transition: all 0.15s ease;
+}
+
+.expense-categories-form .icon-option:hover .icon-box {
+    border-color: var(--em-danger, #dc2626);
+    color: var(--em-danger, #dc2626);
+    background-color: rgba(220, 38, 38, 0.05);
+}
+
+.expense-categories-form .icon-option.selected .icon-box {
+    border-color: var(--em-danger, #dc2626);
+    color: var(--em-danger, #dc2626);
+    background-color: var(--em-danger-light, #fee2e2);
+}
+
+.expense-categories-form .color-option {
+    cursor: pointer;
+}
+
+.expense-categories-form .color-option .color-box {
+    width: 32px;
+    height: 32px;
+    display: block;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    transition: all 0.15s ease;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+}
+
+.expense-categories-form .color-option:hover .color-box {
+    transform: scale(1.15);
+}
+
+.expense-categories-form .color-option.selected .color-box {
+    border-color: var(--em-gray-800, #1f2937);
+    box-shadow: 0 0 0 2px var(--em-white, #fff), 0 0 0 4px var(--em-gray-800, #1f2937);
+}
+
+/* Icon Selector Scrollbar */
+.expense-categories-form .icon-selector::-webkit-scrollbar {
+    width: 6px;
+}
+
+.expense-categories-form .icon-selector::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.expense-categories-form .icon-selector::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 3px;
+}
+
+.expense-categories-form .icon-selector::-webkit-scrollbar-thumb:hover {
+    background: #999;
+}
+
+/* View Modal Styles */
+.expense-category-view .category-icon-large {
+    transition: transform 0.15s ease;
+}
+
+.expense-category-view:hover .category-icon-large {
+    transform: scale(1.05);
+}
+
+.expense-category-view .breadcrumb-sm {
+    font-size: 0.8rem;
+}
+
+.expense-category-view .breadcrumb-sm .breadcrumb-item + .breadcrumb-item::before {
+    content: "›";
+}
+
+.expense-category-view .list-group-item {
+    border-left: none;
+    border-right: none;
+}
+
+.expense-category-view .list-group-item:first-child {
+    border-top: none;
+}
+
+/* Modal Enhancements */
+.modal-content {
+    border: none;
+    border-radius: var(--em-radius-lg, 0.75rem);
+    box-shadow: var(--em-shadow-lg);
+}
+
+.modal-header {
+    padding: 1.25rem 1.5rem;
+    background-color: var(--em-white, #fff);
+}
+
+.modal-header .modal-title {
+    font-weight: 600;
+    color: var(--em-gray-800);
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+/* Toast Container */
+.toast-container {
+    z-index: 1100;
+}
+
+.toast {
+    border-radius: var(--em-radius, 0.375rem);
+    box-shadow: var(--em-shadow-lg);
+}
+
+/* Table Styles for List View */
+.expense-categories-index .table > thead {
+    background-color: var(--em-gray-50, #f8f9fa);
+}
+
+.expense-categories-index .table > thead th {
+    border-bottom: 2px solid var(--em-gray-200, #e9ecef);
+    font-weight: 600;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--em-gray-600, #6c757d);
+    padding: 0.875rem 0.75rem;
+}
+
+.expense-categories-index .table > tbody td {
+    padding: 1rem 0.75rem;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--em-gray-100, #f3f4f6);
+}
+
+.expense-categories-index .table-hover > tbody > tr:hover {
+    background-color: rgba(220, 38, 38, 0.02);
+}
+
+/* Drag & Drop Visual Feedback */
+.jstree-default .jstree-node.jstree-drag {
+    opacity: 0.7;
+}
+
+.jstree-default .jstree-node.jstree-drop-target::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: var(--em-danger, #dc2626);
+}
+
+/* Animation for tree nodes */
+.jstree-default .jstree-node {
+    transition: all 0.2s ease;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .expense-categories-index .stats-card .card-body {
+        padding: 1rem;
+    }
+
+    .expense-categories-index .stats-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1.25rem;
+    }
+
+    .expense-categories-index .tree-container {
+        min-height: 300px;
+        padding: 0.75rem;
+    }
+
+    .expense-categories-index .tree-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .expense-categories-index .tree-toolbar .btn {
+        width: 100%;
+    }
+
+    .expense-categories-index .view-toggle {
+        display: flex;
+    }
+
+    .expense-categories-index .view-toggle .btn {
+        flex: 1;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .expense-categories-index .btn,
+    .expense-categories-index .tree-toolbar,
+    .expense-categories-index .view-toggle,
+    .expense-categories-index .stats-card:hover {
+        transform: none !important;
+        box-shadow: none !important;
+    }
+
+    .expense-categories-index .card {
+        box-shadow: none;
+        border: 1px solid #ddd;
+    }
+}
+
+/* Dark Mode Support (if needed) */
+@media (prefers-color-scheme: dark) {
+    .expense-categories-index .tree-container {
+        background: var(--em-gray-800, #1f2937);
+        border-color: var(--em-gray-700, #374151);
+    }
+
+    .jstree-default .jstree-anchor {
+        color: var(--em-gray-100, #f3f4f6);
+    }
+
+    .jstree-contextmenu {
+        background: var(--em-gray-800, #1f2937) !important;
+    }
+
+    .jstree-contextmenu li a {
+        color: var(--em-gray-100, #f3f4f6) !important;
+    }
+
+    .jstree-contextmenu li a:hover {
+        background-color: var(--em-gray-700, #374151) !important;
+    }
+}

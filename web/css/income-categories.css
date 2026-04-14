@@ -1,0 +1,463 @@
+/* ============================================================== */
+/* Income Categories - Additional Styles                          */
+/* Append these styles to your existing site.css                 */
+/* ============================================================== */
+
+/* Page Header Styles */
+.income-category-index h1,
+.income-category-create h1,
+.income-category-update h1 {
+    color: var(--em-gray-800);
+    font-weight: 600;
+}
+
+/* Card Enhancements */
+.income-category-index .card {
+    border: none;
+    border-radius: var(--em-radius-lg);
+    box-shadow: var(--em-shadow);
+}
+
+.income-category-index .card-body {
+    padding: 1.5rem;
+}
+
+/* Search Box Enhancement */
+.search-box {
+    position: relative;
+}
+
+.search-box .search-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--em-gray-400);
+    pointer-events: none;
+    z-index: 4;
+}
+
+.search-box input.form-control {
+    padding-left: 42px;
+    border-color: var(--em-gray-200);
+    transition: border-color var(--em-transition), box-shadow var(--em-transition);
+}
+
+.search-box input.form-control:focus {
+    border-color: var(--em-primary);
+    box-shadow: 0 0 0 3px rgba(var(--em-primary-rgb), 0.1);
+}
+
+/* Table Styles */
+.income-category-index .table {
+    margin-bottom: 0;
+}
+
+.income-category-index .table > thead {
+    background-color: var(--em-gray-50);
+}
+
+.income-category-index .table > thead th {
+    border-bottom: 2px solid var(--em-gray-200);
+    font-weight: 600;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--em-gray-600);
+    padding: 0.875rem 0.75rem;
+    white-space: nowrap;
+}
+
+.income-category-index .table > tbody td {
+    padding: 1rem 0.75rem;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--em-gray-100);
+}
+
+.income-category-index .table > tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.income-category-index .table-hover > tbody > tr:hover {
+    background-color: rgba(var(--em-primary-rgb), 0.02);
+}
+
+/* Category Icon in Table */
+.category-icon {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    font-size: 1.125rem;
+    transition: transform var(--em-transition);
+}
+
+.table > tbody > tr:hover .category-icon {
+    transform: scale(1.05);
+}
+
+/* Status Badge */
+.status-badge {
+    font-size: 0.7rem;
+    font-weight: 500;
+    padding: 0.35em 0.65em;
+    border-radius: 4px;
+}
+
+.badge.bg-success-subtle {
+    background-color: var(--em-success-light) !important;
+    color: var(--em-success) !important;
+}
+
+.badge.bg-secondary-subtle {
+    background-color: var(--em-gray-100) !important;
+    color: var(--em-gray-600) !important;
+}
+
+/* Action Buttons */
+.btn-action {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    border: 1px solid var(--em-gray-200);
+    background-color: var(--em-white);
+    color: var(--em-gray-600);
+    transition: all var(--em-transition);
+}
+
+.btn-action:hover {
+    background-color: var(--em-gray-50);
+    border-color: var(--em-gray-300);
+    color: var(--em-gray-800);
+}
+
+.btn-action.text-danger:hover {
+    background-color: var(--em-danger-light);
+    border-color: var(--em-danger);
+    color: var(--em-danger);
+}
+
+/* Empty State */
+.empty-state {
+    padding: 4rem 2rem;
+}
+
+.empty-state-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1.5rem;
+    background: linear-gradient(135deg, var(--em-primary-light) 0%, var(--em-success-light) 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.empty-state h5 {
+    color: var(--em-gray-800);
+    font-weight: 600;
+}
+
+/* Bulk Actions Bar */
+.bulk-actions-bar {
+    border-radius: 0 0 var(--em-radius-lg) var(--em-radius-lg);
+    margin: 0 -1.5rem -1.5rem;
+    animation: slideUp 0.2s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Form Styles */
+.income-category-form .form-label {
+    font-weight: 500;
+    color: var(--em-gray-700);
+    margin-bottom: 0.5rem;
+}
+
+.income-category-form .form-control,
+.income-category-form .form-select {
+    border-color: var(--em-gray-200);
+    border-radius: var(--em-radius);
+    padding: 0.625rem 0.875rem;
+    transition: border-color var(--em-transition), box-shadow var(--em-transition);
+}
+
+.income-category-form .form-control:focus,
+.income-category-form .form-select:focus {
+    border-color: var(--em-primary);
+    box-shadow: 0 0 0 3px rgba(var(--em-primary-rgb), 0.1);
+}
+
+/* Icon Selector */
+.icon-selector {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.icon-option {
+    cursor: pointer;
+}
+
+.icon-option .icon-box {
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--em-gray-200);
+    border-radius: 8px;
+    font-size: 1.25rem;
+    color: var(--em-gray-500);
+    background-color: var(--em-white);
+    transition: all var(--em-transition);
+}
+
+.icon-option:hover .icon-box {
+    border-color: var(--em-primary);
+    color: var(--em-primary);
+    background-color: rgba(var(--em-primary-rgb), 0.05);
+}
+
+.icon-option.selected .icon-box {
+    border-color: var(--em-primary);
+    color: var(--em-primary);
+    background-color: var(--em-primary-light);
+}
+
+/* Color Selector */
+.color-selector {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.color-option {
+    cursor: pointer;
+}
+
+.color-option .color-box {
+    width: 32px;
+    height: 32px;
+    display: block;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    transition: all var(--em-transition);
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+}
+
+.color-option:hover .color-box {
+    transform: scale(1.15);
+}
+
+.color-option.selected .color-box {
+    border-color: var(--em-gray-800);
+    box-shadow: 0 0 0 2px var(--em-white), 0 0 0 4px var(--em-gray-800);
+}
+
+/* Preview Box */
+.income-category-form .bg-light {
+    background-color: var(--em-gray-50) !important;
+}
+
+.category-icon-preview {
+    transition: all var(--em-transition);
+}
+
+/* Modal Enhancements */
+.modal-content {
+    border: none;
+    border-radius: var(--em-radius-lg);
+    box-shadow: var(--em-shadow-lg);
+}
+
+.modal-header {
+    padding: 1.25rem 1.5rem;
+    background-color: var(--em-white);
+}
+
+.modal-header .modal-title {
+    font-weight: 600;
+    color: var(--em-gray-800);
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.modal-footer {
+    padding: 1rem 1.5rem;
+    background-color: var(--em-gray-50);
+}
+
+/* Toast Container */
+.toast-container {
+    z-index: 1100;
+}
+
+.toast {
+    border-radius: var(--em-radius);
+    box-shadow: var(--em-shadow-lg);
+}
+
+/* View Modal Styles */
+.income-category-view .category-icon-large {
+    transition: transform var(--em-transition);
+}
+
+.income-category-view:hover .category-icon-large {
+    transform: scale(1.05);
+}
+
+/* Pagination Enhancement */
+.pagination {
+    gap: 0.25rem;
+}
+
+.pagination .page-link {
+    border-radius: var(--em-radius);
+    border: 1px solid var(--em-gray-200);
+    color: var(--em-gray-700);
+    padding: 0.375rem 0.75rem;
+    transition: all var(--em-transition);
+}
+
+.pagination .page-link:hover {
+    background-color: var(--em-gray-50);
+    border-color: var(--em-gray-300);
+    color: var(--em-primary);
+}
+
+.pagination .page-item.active .page-link {
+    background-color: var(--em-primary);
+    border-color: var(--em-primary);
+    color: var(--em-white);
+}
+
+.pagination .page-item.disabled .page-link {
+    background-color: var(--em-gray-50);
+    border-color: var(--em-gray-100);
+    color: var(--em-gray-400);
+}
+
+/* Form Check/Switch Enhancement */
+.form-check-input:checked {
+    background-color: var(--em-primary);
+    border-color: var(--em-primary);
+}
+
+.form-check-input:focus {
+    border-color: var(--em-primary);
+    box-shadow: 0 0 0 3px rgba(var(--em-primary-rgb), 0.15);
+}
+
+.form-switch .form-check-input {
+    width: 2.5em;
+    height: 1.25em;
+}
+
+/* Dropdown Enhancement */
+.dropdown-menu {
+    border: none;
+    border-radius: var(--em-radius);
+    box-shadow: var(--em-shadow-lg);
+    padding: 0.5rem;
+}
+
+.dropdown-item {
+    border-radius: var(--em-radius-sm);
+    padding: 0.5rem 0.75rem;
+    transition: background-color var(--em-transition);
+}
+
+.dropdown-item:hover {
+    background-color: var(--em-gray-50);
+}
+
+.dropdown-item.text-danger:hover {
+    background-color: var(--em-danger-light);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .income-category-index .card-body {
+        padding: 1rem;
+    }
+
+    .income-category-index .table > thead th,
+    .income-category-index .table > tbody td {
+        padding: 0.75rem 0.5rem;
+    }
+
+    .category-icon {
+        width: 36px;
+        height: 36px;
+        min-width: 36px;
+        font-size: 1rem;
+    }
+
+    .bulk-actions-bar {
+        margin: 0 -1rem -1rem;
+    }
+
+    .empty-state {
+        padding: 2rem 1rem;
+    }
+}
+
+/* Loading State */
+.spinner-border-sm {
+    width: 1rem;
+    height: 1rem;
+    border-width: 0.15em;
+}
+
+/* Skeleton Loading (optional) */
+.skeleton {
+    background: linear-gradient(90deg, var(--em-gray-100) 25%, var(--em-gray-50) 50%, var(--em-gray-100) 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite;
+    border-radius: var(--em-radius-sm);
+}
+
+@keyframes skeleton-loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .income-category-index .btn,
+    .income-category-index .bulk-actions-bar,
+    .income-category-index .search-box,
+    .income-category-index .form-select,
+    .income-category-index .pagination,
+    .income-category-index [class*="checkbox"] {
+        display: none !important;
+    }
+
+    .income-category-index .card {
+        box-shadow: none;
+        border: 1px solid #ddd;
+    }
+}

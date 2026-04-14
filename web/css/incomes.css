@@ -1,0 +1,422 @@
+/* ============================================================== */
+/* Incomes Module - Additional Styles                             */
+/* Append these styles to your existing site.css                 */
+/* ============================================================== */
+
+/* Page Header */
+.income-index h1,
+.income-create h1,
+.income-update h1 {
+    color: var(--em-gray-800);
+    font-weight: 600;
+}
+
+/* Statistics Cards */
+.income-index .stats-card {
+    border: none;
+    border-radius: 12px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    overflow: hidden;
+}
+
+.income-index .stats-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.income-index .stats-icon {
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    font-size: 1.5rem;
+}
+
+.income-index .stats-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--em-gray-800);
+}
+
+.income-index .stats-label {
+    font-size: 0.8rem;
+    color: var(--em-gray-500);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Filter Card */
+.income-index .filter-card {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border: none;
+    border-radius: 12px;
+}
+
+/* Table Card */
+.income-index .table-card {
+    border: none;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+/* Table Styles */
+.income-index .table thead th {
+    background-color: #f8fafc;
+    border-bottom: 2px solid #e2e8f0;
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #64748b;
+    padding: 1rem 0.75rem;
+}
+
+.income-index .table tbody td {
+    padding: 1rem 0.75rem;
+    vertical-align: middle;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.income-index .table tbody tr:hover {
+    background-color: rgba(22, 163, 74, 0.02);
+}
+
+.income-index .table tfoot td {
+    background-color: #f8fafc;
+    font-weight: 600;
+    padding: 1rem 0.75rem;
+}
+
+/* Amount Cell */
+.income-index .amount-cell {
+    font-weight: 600;
+    color: var(--em-success, #16a34a);
+    font-variant-numeric: tabular-nums;
+}
+
+/* Category Badge */
+.income-index .category-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+/* Date Cell */
+.income-index .date-cell {
+    color: var(--em-gray-600);
+    font-size: 0.875rem;
+}
+
+/* Attachment Icon */
+.income-index .attachment-icon {
+    color: var(--em-gray-400);
+    font-size: 1rem;
+    transition: color 0.15s ease;
+}
+
+.income-index .attachment-icon.has-file {
+    color: var(--em-primary, #2563eb);
+}
+
+/* Quick Filter Buttons */
+.income-index .quick-filter-btn {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.8rem;
+    border-radius: 20px;
+    transition: all 0.15s ease;
+}
+
+.income-index .quick-filter-btn:hover {
+    background-color: var(--em-success);
+    border-color: var(--em-success);
+    color: white;
+}
+
+.income-index .quick-filter-btn.active {
+    background-color: var(--em-success);
+    border-color: var(--em-success);
+    color: white;
+}
+
+/* Action Buttons */
+.income-index .btn-action {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    transition: all 0.15s ease;
+}
+
+.income-index .btn-action:hover {
+    background-color: #e2e8f0;
+}
+
+.income-index .btn-action.text-danger:hover {
+    background-color: #fee2e2;
+}
+
+/* Empty State */
+.income-index .empty-state {
+    padding: 4rem 2rem;
+    text-align: center;
+}
+
+.income-index .empty-state-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1.5rem;
+    background: linear-gradient(135deg, #dcfce7 0%, #dbeafe 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.income-index .empty-state h5 {
+    color: var(--em-gray-800);
+    font-weight: 600;
+}
+
+/* Search Form Styles */
+.income-search .form-label {
+    font-weight: 500;
+    margin-bottom: 0.375rem;
+}
+
+.income-search .form-control,
+.income-search .form-select {
+    border-radius: 8px;
+    border-color: #e2e8f0;
+    padding: 0.5rem 0.875rem;
+    transition: all 0.15s ease;
+}
+
+.income-search .form-control:focus,
+.income-search .form-select:focus {
+    border-color: var(--em-success, #16a34a);
+    box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1);
+}
+
+/* Form Styles */
+.income-form .form-label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.income-form .form-control,
+.income-form .form-select {
+    border-radius: 8px;
+    padding: 0.625rem 0.875rem;
+    border-color: #e2e8f0;
+    transition: all 0.15s ease;
+}
+
+.income-form .form-control:focus,
+.income-form .form-select:focus {
+    border-color: var(--em-success, #16a34a);
+    box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1);
+}
+
+.income-form .input-group-text {
+    border-radius: 8px 0 0 8px;
+    border-color: #e2e8f0;
+}
+
+.income-form .input-group .form-control {
+    border-radius: 0 8px 8px 0;
+}
+
+/* Upload Area */
+.income-form .upload-area {
+    border: 2px dashed #e2e8f0;
+    border-radius: 12px;
+    background: #fff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.income-form .upload-area:hover,
+.income-form .upload-area.dragover {
+    border-color: var(--em-success, #16a34a);
+    background: rgba(22, 163, 74, 0.02);
+}
+
+.income-form .upload-placeholder {
+    pointer-events: none;
+}
+
+.income-form .current-attachment {
+    border: 1px solid #e2e8f0 !important;
+}
+
+/* View Modal Styles */
+.income-view .detail-item {
+    height: 100%;
+}
+
+.income-view .attachment-card {
+    transition: all 0.2s ease;
+}
+
+.income-view .attachment-card:hover {
+    background-color: #e9ecef !important;
+}
+
+/* Modal Enhancements */
+#incomeModal .modal-content {
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+#incomeModal .modal-header {
+    padding: 1.25rem 1.5rem;
+    background-color: #fff;
+}
+
+#incomeModal .modal-header .modal-title {
+    font-weight: 600;
+    color: var(--em-gray-800);
+}
+
+#incomeModal .modal-body {
+    padding: 1.5rem;
+}
+
+/* Toast Container */
+#toast-container {
+    z-index: 1100;
+}
+
+#toast-container .toast {
+    border-radius: 10px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Pagination */
+.income-index .pagination {
+    gap: 4px;
+}
+
+.income-index .pagination .page-link {
+    border-radius: 6px;
+    border: none;
+    padding: 0.375rem 0.75rem;
+    color: var(--em-gray-600);
+    background: transparent;
+}
+
+.income-index .pagination .page-link:hover {
+    background-color: #f1f5f9;
+    color: var(--em-gray-800);
+}
+
+.income-index .pagination .page-item.active .page-link {
+    background-color: var(--em-success, #16a34a);
+    color: white;
+}
+
+.income-index .pagination .page-item.disabled .page-link {
+    color: var(--em-gray-400);
+    background: transparent;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .income-index .stats-card .card-body {
+        padding: 1rem;
+    }
+
+    .income-index .stats-icon {
+        width: 44px;
+        height: 44px;
+        font-size: 1.25rem;
+    }
+
+    .income-index .stats-value {
+        font-size: 1.25rem;
+    }
+
+    .income-index .filter-card .card-body {
+        padding: 1rem;
+    }
+
+    .income-index .quick-filter-btn {
+        font-size: 0.7rem;
+        padding: 0.25rem 0.5rem;
+    }
+
+    .income-index .table thead th,
+    .income-index .table tbody td {
+        padding: 0.75rem 0.5rem;
+    }
+
+    .income-index .btn-action {
+        width: 28px;
+        height: 28px;
+    }
+
+    .income-form .row > .col-lg-5 {
+        margin-top: 1.5rem;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .income-index .btn,
+    .income-index .filter-card,
+    .income-index .quick-filter-btn,
+    .income-index .pagination,
+    .income-index .stats-card:hover {
+        transform: none !important;
+        box-shadow: none !important;
+    }
+
+    .income-index .card {
+        box-shadow: none;
+        border: 1px solid #ddd;
+    }
+
+    .income-view .btn {
+        display: none !important;
+    }
+}
+
+/* Animation for new rows */
+@keyframes fadeInRow {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.income-index .table tbody tr.new-row {
+    animation: fadeInRow 0.3s ease;
+}
+
+/* Success highlight for updated rows */
+.income-index .table tbody tr.updated-highlight {
+    animation: highlightRow 2s ease;
+}
+
+@keyframes highlightRow {
+    0% {
+        background-color: rgba(22, 163, 74, 0.2);
+    }
+    100% {
+        background-color: transparent;
+    }
+}
