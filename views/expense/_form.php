@@ -27,6 +27,9 @@ use app\models\Expense;
 
 $isNewRecord = $model->isNewRecord;
 $categories = ExpenseCategory::getExpenseCategoryHierarchy();
+$fbrCategories = ExpenseCategory::getFbrCategories();
+
+$showFbr = (Yii::$app->user->identity?->profile?->country_code) === 'PK';
 ?>
 
 <?php $form = ActiveForm::begin([
@@ -41,7 +44,7 @@ $categories = ExpenseCategory::getExpenseCategoryHierarchy();
     'enableAjaxValidation' => false,
 ]); ?>
 
-<?= Html::activeHiddenInput($model, 'user_id', ['value' => Yii::$app->user->id]) ?>
+<?= Html::activeHiddenInput($model, 'user_id', ['value' => Yii::$app->user->id]); ?>
 
 <div class="row g-4">
     <!-- Main Fields Column -->
@@ -57,6 +60,21 @@ $categories = ExpenseCategory::getExpenseCategoryHierarchy();
                 'id' => 'expense-category-select',
             ])->label('<i class="bi bi-folder me-1 text-danger"></i>' . Yii::t('app', 'Category') . ' <span class="text-danger">*</span>') ?>
         </div>
+
+        <?php if ($showFbr) { ?>
+        <div class="mb-3">
+            <?= $form->field($model, 'fbr_category', [
+                'options' => ['class' => 'mb-0'],
+                'template' => '{label}{input}{hint}{error}',
+            ])->dropDownList(
+                $fbrCategories,
+                [
+                    'class' => 'form-select',
+                    'prompt' => 'Select FBR Category...'
+                ]
+            ); ?>
+        </div>
+        <?php } ?>
 
         <!-- Date -->
         <div class="mb-3">

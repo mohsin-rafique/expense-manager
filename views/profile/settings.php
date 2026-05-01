@@ -179,6 +179,17 @@ $deleteBannerUrl = Url::to(['delete-banner']);
                             <div class="col-md-6"><?= $form->field($profileModel, 'designation')->textInput(['class' => 'form-control', 'placeholder' => Yii::t('app', 'e.g., Software Engineer')])->label('<i class="bi bi-briefcase me-1 text-muted"></i>' . Yii::t('app', 'Designation')) ?></div>
                             <div class="col-md-6"><?= $form->field($profileModel, 'phone')->textInput(['class' => 'form-control', 'placeholder' => '+1 (555) 123-4567'])->label('<i class="bi bi-telephone me-1 text-muted"></i>' . Yii::t('app', 'Phone Number')) ?></div>
                             <div class="col-md-6"><?= $form->field($profileModel, 'location')->textInput(['class' => 'form-control', 'placeholder' => Yii::t('app', 'e.g., New York, USA')])->label('<i class="bi bi-geo-alt me-1 text-muted"></i>' . Yii::t('app', 'Location')) ?></div>
+                            <div class="col-md-6">
+                                <?= $form->field($profileModel, 'country_code')->dropDownList([
+                                    'PK' => Yii::t('app', 'Pakistan'),
+                                    'US' => Yii::t('app', 'United States'),
+                                    'GB' => Yii::t('app', 'United Kingdom'),
+                                    // Add other major countries or use a helper to list all
+                                ], [
+                                    'class' => 'form-select',
+                                    'prompt' => Yii::t('app', '— Select Country —')
+                                ])->label('<i class="bi bi-flag me-1 text-muted"></i>' . Yii::t('app', 'Country')) ?>
+                            </div>
                             <div class="col-md-6"><?= $form->field($profileModel, 'website')->textInput(['class' => 'form-control', 'placeholder' => 'https://yourwebsite.com'])->label('<i class="bi bi-globe me-1 text-muted"></i>' . Yii::t('app', 'Website')) ?></div>
                             <div class="col-md-6"><?= $form->field($profileModel, 'timezone')->dropDownList(ArrayHelper::map(Timezone::getAll(), 'timezone', 'name'), ['class' => 'form-select', 'prompt' => Yii::t('app', '— Select Timezone —')])->label('<i class="bi bi-clock me-1 text-muted"></i>' . Yii::t('app', 'Timezone')) ?></div>
                             <div class="col-12"><?= $form->field($profileModel, 'bio')->textarea(['class' => 'form-control', 'rows' => 4, 'placeholder' => Yii::t('app', 'Tell us about yourself...')])->label('<i class="bi bi-card-text me-1 text-muted"></i>' . Yii::t('app', 'Bio')) ?></div>

@@ -272,6 +272,26 @@ $pjaxContainerId = 'expenses-pjax';
                             'footer' => '<strong>' . Yii::t('app', 'Page Total') . '</strong>',
                         ],
 
+                        // FBR Category - Only for Pakistan users
+                        [
+                            'attribute' => 'fbr_category',
+                            'label' => Yii::t('app', 'FBR Category'),
+                            'headerOptions' => ['style' => 'width: 120px;'],
+                            'contentOptions' => ['style' => 'white-space: nowrap;'],
+                            'format' => 'raw',
+                            'visible' => (Yii::$app->user->identity?->profile?->country_code) === 'PK',
+                            'value' => function ($model) {
+                                if (empty($model->fbr_category)) {
+                                    return '<span class="text-muted">—</span>';
+                                }
+                                $fbrCategories = \app\models\ExpenseCategory::getFbrCategories();
+                                $label = $fbrCategories[$model->fbr_category] ?? $model->fbr_category;
+                                return '<span class="badge bg-warning bg-opacity-10 text-warning">' .
+                                    Html::encode($label) .
+                                    '</span>';
+                            },
+                        ],
+
                         // Payment Method - Compact
                         [
                             'attribute' => 'payment_method',

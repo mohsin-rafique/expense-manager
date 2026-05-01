@@ -94,6 +94,10 @@ class ExpenseCategory extends ActiveRecord
             [['parent_id', 'user_id', 'status', 'created_at', 'updated_at', 'created_by', 'updated_by'], 'integer'],
             [['description'], 'string'],
 
+            // FBR Category validation
+            [['fbr_category'], 'string', 'max' => 100],
+            [['fbr_category'], 'in', 'range' => array_keys(self::getFbrCategories())],
+
             // String length limits
             [['name'], 'string', 'max' => 191],
             [['icon'], 'string', 'max' => 50],
@@ -104,6 +108,7 @@ class ExpenseCategory extends ActiveRecord
             [['icon'], 'default', 'value' => self::DEFAULT_ICON],
             [['color'], 'default', 'value' => self::DEFAULT_COLOR],
             [['parent_id'], 'default', 'value' => null],
+            [['fbr_category'], 'default', 'value' => null],
 
             // Unique name per user within same parent
             [
@@ -904,5 +909,27 @@ class ExpenseCategory extends ActiveRecord
             Yii::error('Failed to delete category: ' . $e->getMessage(), __METHOD__);
             return false;
         }
+    }
+
+    /**
+     * Returns mapped FBR expense categories for Pakistan
+     *
+     * @return array [code => label]
+     */
+    public static function getFbrCategories(): array
+    {
+        return [
+        'VEHICLE_MAINT' => Yii::t('app', 'Vehicle Running / Maintenance'),
+        'TRAVELLING'    => Yii::t('app', 'Travelling'),
+        'ELECTRICITY'   => Yii::t('app', 'Electricity'),
+        'WATER'         => Yii::t('app', 'Water'),
+        'GAS'           => Yii::t('app', 'Gas'),
+        'TELEPHONE'     => Yii::t('app', 'Telephone'),
+        'ASSET_INS'     => Yii::t('app', 'Asset Insurance / Security'),
+        'MEDICAL'       => Yii::t('app', 'Medical'),
+        'EDUCATIONAL'   => Yii::t('app', 'Educational'),
+        'FUNCTIONS'     => Yii::t('app', 'Functions / Gatherings'),
+        'OTHER_PERS'    => Yii::t('app', 'Other Personal / Household'),
+        ];
     }
 }

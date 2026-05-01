@@ -25,6 +25,7 @@ use yii\imagine\Image;
  * @property string|null $designation Job title or role
  * @property string|null $phone Phone number
  * @property string|null $location City, country, or address
+ * @property string|null $country_code ISO 3166-1 alpha-2 country code (e.g., 'PK')
  * @property string|null $website Personal or professional website URL
  * @property string|null $timezone User's timezone (e.g., 'America/New_York')
  * @property string|null $bio Short biography or description
@@ -148,6 +149,9 @@ class Profile extends ActiveRecord
 
             // Default values
             [['name', 'designation', 'phone', 'location', 'website', 'timezone', 'bio', 'avatar', 'banner', 'gravatar_email', 'gravatar_id'], 'default', 'value' => null],
+
+            ['country_code', 'string', 'max' => 2],
+            ['country_code', 'default', 'value' => 'PK'],
         ];
     }
 
@@ -173,6 +177,7 @@ class Profile extends ActiveRecord
             'bannerFile' => Yii::t('app', 'Cover Image'),
             'gravatar_email' => Yii::t('app', 'Gravatar Email'),
             'gravatar_id' => Yii::t('app', 'Gravatar ID'),
+            'country_code' => Yii::t('app', 'Country'),
         ];
     }
 

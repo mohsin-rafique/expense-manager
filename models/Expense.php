@@ -109,11 +109,13 @@ class Expense extends ActiveRecord
             // Required fields
             [['user_id', 'expense_category_id', 'expense_date', 'amount'], 'required'],
 
+            [['fbr_category'], 'string', 'max' => 100],
+
             // Integer fields
             [['user_id', 'expense_category_id', 'created_at', 'updated_at', 'created_by', 'updated_by'], 'integer'],
 
             // Safe attributes
-            [['expense_date'], 'safe'],
+            [['fbr_category', 'expense_date'], 'safe'],
 
             // String validations
             [['description'], 'string'],
@@ -146,6 +148,7 @@ class Expense extends ActiveRecord
             'id' => Yii::t('app', 'ID'),
             'user_id' => Yii::t('app', 'User'),
             'expense_category_id' => Yii::t('app', 'Category'),
+            'fbr_category' => 'FBR Tax Category',
             'expense_date' => Yii::t('app', 'Date'),
             'description' => Yii::t('app', 'Description'),
             'amount' => Yii::t('app', 'Amount'),
