@@ -320,15 +320,7 @@ $config = [
                 */
                 'reports' => 'report/index',                           // Reports dashboard
                 'report' => 'report/index',                            // Alias
-                'report/monthly' => 'report/monthly',                  // Monthly report
-                'report/monthly/<year:\d{4}>/<month:\d{1,2}>' => 'report/monthly', // Specific month
-                'report/yearly' => 'report/yearly',                    // Yearly report
-                'report/yearly/<year:\d{4}>' => 'report/yearly',       // Specific year
-                'report/fiscal-year' => 'report/fiscal-year',          // Fiscal year report
-                'report/fiscal-year/<year:[\w\-]+>' => 'report/fiscal-year', // Specific FY
-                'report/category' => 'report/category',                // Category report
-                'report/comparison' => 'report/comparison',            // Comparison report
-                'report/export/<type:[\w\-]+>' => 'report/export',     // Export report
+                'report/pdf' => 'report/pdf',                          // Generate/download PDF
                 'report/<action:[\w\-]+>' => 'report/<action>',        // Catch-all
 
                 /*

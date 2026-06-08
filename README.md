@@ -124,6 +124,14 @@ Most expense-tracking tools either cost money, lock your data in someone else's 
 - Dashboard **Budget Overview** widget highlighting at-risk categories
 - Hierarchical expense categories roll child spending up to the parent budget
 
+### 📄 Advanced PDF Reporting
+
+- Downloadable, professionally-styled **PDF financial reports** (powered by mPDF)
+- Four report types: **Financial Summary**, **Category Breakdown**, **Income vs Expense** trend, and **Budget Status**
+- Flexible periods: **this/any month**, **fiscal year**, **custom date range**, and **all-time**
+- Branded header (company name), summary metric cards, percentage bars, and per-page footers
+- Full **Unicode & right-to-left** rendering — reports generate correctly in every supported language, including Urdu
+
 ### 📥 Data Import (CSV / Excel)
 
 - Bulk-import **expenses and income** from `.csv`, `.xlsx`, or `.xls` files
@@ -233,7 +241,8 @@ This project demonstrates a deliberate, professional choice of technologies — 
 | **Frontend** | Bootstrap 5.3 | Responsive, accessible, mobile-first UI framework |
 | **Icons** | Bootstrap Icons | Consistent, high-quality SVG icon set |
 | **Charts** | [ApexCharts](https://apexcharts.com/) | Interactive, animated financial charts |
-| **XLSX Export** | [PhpSpreadsheet](https://phpspreadsheet.readthedocs.io/) | Styled Excel exports with formatting, freeze panes, borders |
+| **XLSX Export / Import** | [PhpSpreadsheet](https://phpspreadsheet.readthedocs.io/) | Styled Excel exports + CSV/Excel bulk import |
+| **PDF Reports** | [mPDF](https://mpdf.github.io/) | HTML→PDF financial reports with Unicode & RTL support |
 | **AJAX Navigation** | Yii2 PJAX | Partial page rendering without full reloads |
 | **Notifications** | NEM Toast | Non-blocking, accessible toast alerts |
 | **Dependency Manager** | Composer 2.x | PSR-4 autoloading, package versioning |
@@ -474,7 +483,6 @@ expense-manager/
 
 The project is under active development. Planned features in priority order:
 
-- [ ] **Advanced PDF reporting** — downloadable financial summaries
 - [ ] **Multi-user / Team support** — shared workspaces with role-based access
 - [ ] **REST API** — Yii2 RESTful API for mobile and third-party integrations
 - [ ] **Mobile app** — React Native companion app via the REST API

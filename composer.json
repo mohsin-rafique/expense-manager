@@ -33,6 +33,7 @@
         "kartik-v/yii2-widget-datepicker": "^1.4",
         "kartik-v/yii2-widget-select2": "^2.2",
         "miloschuman/yii2-highcharts-widget": "^11.0",
+        "mpdf/mpdf": "^8.3",
         "phpoffice/phpspreadsheet": "^2.4",
         "vlucas/phpdotenv": "^5.6",
         "yiisoft/yii2": "^2.0.53",

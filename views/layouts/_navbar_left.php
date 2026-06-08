@@ -103,5 +103,13 @@ use yii\helpers\Url;
                 <span><?= Yii::t('app', 'Budgets') ?></span>
             </a>
         </li>
+
+        <!-- Reports -->
+        <li class="nav-item">
+            <a class="nav-link <?= $currentController === 'report' ? 'active' : '' ?>" href="<?= Url::to(['/report']) ?>">
+                <i class="bi bi-file-earmark-pdf nav-icon text-info"></i>
+                <span><?= Yii::t('app', 'Reports') ?></span>
+            </a>
+        </li>
     <?php endif; ?>
 </ul>
