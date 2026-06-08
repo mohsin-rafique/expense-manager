@@ -81,5 +81,13 @@ use yii\helpers\Url;
                 </li>
             </ul>
         </li>
+
+        <!-- Budgets -->
+        <li class="nav-item">
+            <a class="nav-link <?= $currentController === 'budget' ? 'active' : '' ?>" href="<?= Url::to(['/budget']) ?>">
+                <i class="bi bi-wallet2 nav-icon text-primary"></i>
+                <span><?= Yii::t('app', 'Budgets') ?></span>
+            </a>
+        </li>
     <?php endif; ?>
 </ul>

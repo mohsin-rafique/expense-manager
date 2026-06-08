@@ -33,6 +33,7 @@ use app\widgets\FiscalYearExpenseSummaryByMonth;
 use app\widgets\ComparativeAnalysisPanel;
 use app\widgets\FiscalYearIncomeExpenseWidget;
 use app\widgets\LifetimeOverviewWidget;
+use app\widgets\BudgetOverviewWidget;
 use app\assets\DashboardAsset;
 
 DashboardAsset::register($this);
@@ -104,6 +105,11 @@ $this->params['breadcrumbs'][] = $this->title;
         <!-- Performance Donut Chart -->
         <div class="col-xl-6">
             <?= MonthlyPerformanceWidget::widget() ?>
+        </div>
+
+        <!-- Budget Overview -->
+        <div class="col-12">
+            <?= BudgetOverviewWidget::widget(['onlyAlerting' => false, 'maxItems' => 6]) ?>
         </div>
     </div>
 </section>

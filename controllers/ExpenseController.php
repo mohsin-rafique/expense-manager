@@ -194,11 +194,19 @@ class ExpenseController extends Controller
                 $file->saveAs($path);
             }
 
-            return ApiResponse::success(
+            $response = ApiResponse::success(
                 $model->isNewRecord
                     ? Yii::t('app', 'Expense created successfully.')
                     : Yii::t('app', 'Expense updated successfully.')
             );
+
+            // Raise an alert if this expense pushed a budget over its threshold
+            $alert = (new \app\services\BudgetService())->evaluateExpense($model);
+            if ($alert !== null) {
+                $response['alert'] = $alert;
+            }
+
+            return $response;
         }
 
         return ApiResponse::error(Yii::t('app', 'Failed to save expense.'), $model->errors);

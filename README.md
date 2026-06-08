@@ -113,6 +113,17 @@ Most expense-tracking tools either cost money, lock your data in someone else's 
 - Interactive charts powered by ApexCharts
 - Real-time balance widget
 
+### 🎯 Budget Management
+
+- Set spending budgets **per category** (expense caps or income targets)
+- **Monthly, yearly, and fiscal-year** budget periods — spending is tracked against the current period automatically
+- Configurable **alert threshold** per budget (e.g. warn at 80% of the limit)
+- Color-coded progress bars with on-track / approaching-limit / over-budget states
+- **In-app toast alerts** the moment a saved expense pushes a category over its threshold
+- Optional **email alerts** when a budget crosses its threshold
+- Dashboard **Budget Overview** widget highlighting at-risk categories
+- Hierarchical expense categories roll child spending up to the parent budget
+
 ### 👤 User & Profile Management
 
 - Secure registration and login with email verification
@@ -454,7 +465,6 @@ expense-manager/
 
 The project is under active development. Planned features in priority order:
 
-- [ ] **Budget management module** — set monthly/yearly budgets per category with alerts
 - [ ] **Recurring transactions** — auto-generate periodic income/expense entries
 - [ ] **Data import from CSV/Excel** — bulk import from spreadsheets
 - [ ] **Advanced PDF reporting** — downloadable financial summaries

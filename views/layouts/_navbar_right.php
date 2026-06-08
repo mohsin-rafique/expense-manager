@@ -42,13 +42,13 @@ use app\widgets\LanguageSwitcher;
         <li class="nav-item">
             <a class="nav-link" href="<?= Url::to(['/site/login']) ?>">
                 <i class="bi bi-box-arrow-in-right nav-icon"></i>
-                <span><?= Yii::t('app', 'Login') ?></span>
+                <span><?= \Yii::t('app', 'Login') ?></span>
             </a>
         </li>
         <li class="nav-item">
             <a class="nav-link btn btn-success text-white ms-2 px-3" href="<?= Url::to(['/site/signup']) ?>">
                 <i class="bi bi-person-plus nav-icon"></i>
-                <span><?= Yii::t('app', 'Sign Up') ?></span>
+                <span><?= \Yii::t('app', 'Sign Up') ?></span>
             </a>
         </li>
     <?php else: ?>

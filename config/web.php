@@ -291,6 +291,21 @@ $config = [
 
                 /*
                 |------------------------------------------------------------------
+                | Budget Routes
+                |------------------------------------------------------------------
+                */
+                'budgets' => 'budget/index',                           // Budget list
+                'budget' => 'budget/index',                            // Alias (singular)
+                'budget/create' => 'budget/create',                    // Create budget
+                'budget/add' => 'budget/create',                       // Alias
+                'budget/<id:\d+>' => 'budget/view',                    // View budget
+                'budget/edit/<id:\d+>' => 'budget/update',             // Edit budget
+                'budget/update/<id:\d+>' => 'budget/update',           // Update budget
+                'budget/delete/<id:\d+>' => 'budget/delete',           // Delete budget
+                'budget/<action:[\w\-]+>' => 'budget/<action>',        // Catch-all
+
+                /*
+                |------------------------------------------------------------------
                 | Report Routes
                 |------------------------------------------------------------------
                 */

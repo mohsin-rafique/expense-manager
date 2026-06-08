@@ -253,6 +253,15 @@ var NEM = (function ($) {
                             Toast.success(response.message);
                         }
 
+                        // Show a secondary budget/overspend alert if present
+                        if (response.alert && response.alert.message) {
+                            Toast.show(
+                                response.alert.level === "error" ? "error" : "warning",
+                                response.alert.message,
+                                { duration: 8000 }
+                            );
+                        }
+
                         // Reload PJAX container
                         if (settings.pjaxContainer) {
                             Pjax.reload(settings.pjaxContainer);
@@ -603,6 +612,15 @@ var NEM = (function ($) {
                         // Show success message
                         if (response.message) {
                             Toast.success(response.message);
+                        }
+
+                        // Show a secondary budget/overspend alert if present
+                        if (response.alert && response.alert.message) {
+                            Toast.show(
+                                response.alert.level === "error" ? "error" : "warning",
+                                response.alert.message,
+                                { duration: 8000 }
+                            );
                         }
 
                         // Reload PJAX container
@@ -1564,6 +1582,24 @@ var NEM = (function ($) {
         Delete.init();
         UI.initPageSize();
         UI.initTooltips();
+
+        // Generic status toggle (e.g. budgets): POST with CSRF, then reload PJAX
+        $(document).on("click", ".nemToggleStatus", function (e) {
+            e.preventDefault();
+            var $btn = $(this);
+            var url = $btn.data("url");
+            if (!url) return;
+
+            var csrf = Utils.getCsrf();
+            Ajax.request({
+                url: url,
+                type: "POST",
+                data: csrf.param + "=" + csrf.token,
+                contentType: "application/x-www-form-urlencoded",
+                processData: true,
+                pjaxContainer: $btn.data("container"),
+            });
+        });
 
         // Initialize utility modules
         QuickDateFilter.init();
