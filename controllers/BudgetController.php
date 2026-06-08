@@ -39,6 +39,11 @@ class BudgetController extends Controller
     public function behaviors(): array
     {
         return [
+            'workspaceWrite' => [
+                'class' => \app\components\RequireWorkspaceCapability::class,
+                'capability' => \app\models\WorkspaceMember::CAN_MANAGE_DATA,
+                'only' => ['create', 'update', 'delete', 'bulk-delete', 'toggle-status'],
+            ],
             'access' => [
                 'class' => AccessControl::class,
                 'rules' => [
@@ -69,7 +74,7 @@ class BudgetController extends Controller
         $searchModel = new BudgetSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-        $stats = (new BudgetService())->getSummary(Yii::$app->user->id);
+        $stats = (new BudgetService())->getSummary(Yii::$app->workspace->getId());
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -223,7 +228,7 @@ class BudgetController extends Controller
      */
     protected function categoryOptions(string $type): array
     {
-        $userId = Yii::$app->user->id;
+        $userId = Yii::$app->workspace->getId();
 
         if ($type === Budget::TYPE_INCOME) {
             return IncomeCategory::getIncomeCategory(true, $userId);
@@ -243,7 +248,7 @@ class BudgetController extends Controller
     protected function findModel(int $id): Budget
     {
         $model = Budget::find()
-            ->where(['id' => $id, 'user_id' => Yii::$app->user->id])
+            ->where(['id' => $id, 'workspace_id' => Yii::$app->workspace->getId()])
             ->one();
 
         if ($model === null) {

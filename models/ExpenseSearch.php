@@ -186,9 +186,9 @@ class ExpenseSearch extends Expense
      */
     protected function applyFilters($query)
     {
-        // Always filter by current user
+        // Always filter by the active workspace
         $query->andFilterWhere([
-            '{{%expenses}}.user_id' => Yii::$app->user->id,
+            '{{%expenses}}.workspace_id' => Yii::$app->workspace->getId(),
         ]);
 
         // ID filter

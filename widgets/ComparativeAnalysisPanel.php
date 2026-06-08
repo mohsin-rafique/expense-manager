@@ -122,7 +122,7 @@ class ComparativeAnalysisPanel extends Widget
         $this->_widgetId = $this->getId();
 
         if ($this->userId === null) {
-            $this->userId = Yii::$app->user->id;
+            $this->userId = Yii::$app->workspace->getId();
         }
 
         $this->validateConfiguration();
@@ -200,7 +200,7 @@ class ComparativeAnalysisPanel extends Widget
         $result = Yii::$app->db->createCommand(
             "SELECT COALESCE(SUM(amount), 0)
              FROM {$this->incomeTable}
-             WHERE user_id = :user
+             WHERE workspace_id = :user
              AND entry_date BETWEEN :start AND :end"
         )->bindValues([
             ':user' => $this->userId,
@@ -223,7 +223,7 @@ class ComparativeAnalysisPanel extends Widget
         $result = Yii::$app->db->createCommand(
             "SELECT COALESCE(SUM(amount), 0)
              FROM {$this->expenseTable}
-             WHERE user_id = :user
+             WHERE workspace_id = :user
              AND expense_date BETWEEN :start AND :end"
         )->bindValues([
             ':user' => $this->userId,
@@ -254,9 +254,9 @@ class ComparativeAnalysisPanel extends Widget
                 ON parent.id = c.parent_id
              LEFT JOIN {$this->expenseTable} e
                 ON e.expense_category_id = c.id
-                AND e.user_id = :user
+                AND e.workspace_id = :user
                 AND e.expense_date BETWEEN :start AND :end
-             WHERE c.user_id = :user
+             WHERE c.workspace_id = :user
              GROUP BY COALESCE(parent.id, c.id), COALESCE(parent.name, c.name)
              HAVING total > 0
              ORDER BY total DESC

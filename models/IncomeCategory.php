@@ -69,6 +69,7 @@ class IncomeCategory extends ActiveRecord
                 'class' => TimestampBehavior::class,
                 'value' => new Expression('NOW()'),
             ],
+            \app\components\WorkspaceBehavior::class,
         ];
     }
 
@@ -83,7 +84,7 @@ class IncomeCategory extends ActiveRecord
             [['user_id'], 'required', 'on' => 'create'],
 
             // Type validation
-            [['user_id', 'status'], 'integer'],
+            [['user_id', 'workspace_id', 'status'], 'integer'],
             [['description'], 'string'],
             [['created_at', 'updated_at'], 'safe'],
 
@@ -101,7 +102,7 @@ class IncomeCategory extends ActiveRecord
             [
                 ['name'],
                 'unique',
-                'targetAttribute' => ['name', 'user_id'],
+                'targetAttribute' => ['name', 'workspace_id'],
                 'message' => Yii::t('app', 'You already have a category with this name.'),
             ],
 
@@ -249,11 +250,11 @@ class IncomeCategory extends ActiveRecord
      */
     public static function getIncomeCategory(bool $activeOnly = true, ?int $userId = null): array
     {
-        $userId = $userId ?? Yii::$app->user->id;
+        $userId = $userId ?? Yii::$app->workspace->getId();
 
         $query = self::find()
             ->select(['id', 'name'])
-            ->where(['user_id' => $userId])
+            ->where(['workspace_id' => $userId])
             ->orderBy(['name' => SORT_ASC]);
 
         if ($activeOnly) {
@@ -283,11 +284,11 @@ class IncomeCategory extends ActiveRecord
      */
     public static function getIncomeCategoryWithDetails(bool $activeOnly = true, ?int $userId = null): array
     {
-        $userId = $userId ?? Yii::$app->user->id;
+        $userId = $userId ?? Yii::$app->workspace->getId();
 
         $query = self::find()
             ->select(['id', 'name', 'icon', 'color', 'description'])
-            ->where(['user_id' => $userId])
+            ->where(['workspace_id' => $userId])
             ->orderBy(['name' => SORT_ASC]);
 
         if ($activeOnly) {
@@ -305,11 +306,11 @@ class IncomeCategory extends ActiveRecord
      */
     public static function getActiveCategories(?int $userId = null): array
     {
-        $userId = $userId ?? Yii::$app->user->id;
+        $userId = $userId ?? Yii::$app->workspace->getId();
 
         return self::find()
             ->where([
-                'user_id' => $userId,
+                'workspace_id' => $userId,
                 'status' => self::STATUS_ACTIVE,
             ])
             ->orderBy(['name' => SORT_ASC])
@@ -382,12 +383,12 @@ class IncomeCategory extends ActiveRecord
      */
     public static function findByName(string $name, ?int $userId = null): ?self
     {
-        $userId = $userId ?? Yii::$app->user->id;
+        $userId = $userId ?? Yii::$app->workspace->getId();
 
         return self::find()
             ->where([
                 'name' => $name,
-                'user_id' => $userId,
+                'workspace_id' => $userId,
             ])
             ->one();
     }

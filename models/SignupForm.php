@@ -173,6 +173,17 @@ class SignupForm extends Model
             $settings->decimal_places = 2;
             $settings->save(false);
 
+            // Create the user's personal workspace (owner membership)
+            if (Workspace::createPersonalFor($user) === null) {
+                throw new \Exception('Failed to create personal workspace.');
+            }
+
+            // Attach any pending email invitations addressed to this user
+            WorkspaceMember::updateAll(
+                ['user_id' => $user->id, 'status' => WorkspaceMember::STATUS_ACTIVE],
+                ['invited_email' => $user->email, 'user_id' => null, 'status' => WorkspaceMember::STATUS_PENDING]
+            );
+
             $transaction->commit();
             $this->_user = $user;
 

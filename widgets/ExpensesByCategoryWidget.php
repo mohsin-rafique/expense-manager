@@ -104,7 +104,7 @@ class ExpensesByCategoryWidget extends Widget
         $this->_widgetId = $this->getId();
 
         if ($this->userId === null) {
-            $this->userId = Yii::$app->user->id;
+            $this->userId = Yii::$app->workspace->getId();
         }
 
         // Set default date range to current month if not specified
@@ -140,10 +140,10 @@ class ExpensesByCategoryWidget extends Widget
             ->leftJoin('{{%expenses}} e', [
                 'and',
                 'e.expense_category_id = c.id',
-                ['e.user_id' => $this->userId],
+                ['e.workspace_id' => $this->userId],
                 ['BETWEEN', 'e.expense_date', $this->startDate, $this->endDate],
             ])
-            ->where(['c.user_id' => $this->userId])
+            ->where(['c.workspace_id' => $this->userId])
             ->groupBy(['COALESCE(parent.id, c.id)', 'COALESCE(parent.name, c.name)'])
             ->having(['>', 'total', 0])
             ->orderBy(['total' => SORT_DESC])

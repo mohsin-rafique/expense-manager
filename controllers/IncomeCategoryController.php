@@ -54,6 +54,11 @@ class IncomeCategoryController extends Controller
     public function behaviors(): array
     {
         return [
+            'workspaceWrite' => [
+                'class' => \app\components\RequireWorkspaceCapability::class,
+                'capability' => \app\models\WorkspaceMember::CAN_MANAGE_DATA,
+                'only' => ['create', 'update', 'delete', 'bulk-delete', 'toggle-status'],
+            ],
             'access' => [
                 'class' => AccessControl::class,
                 'rules' => [
@@ -93,7 +98,7 @@ class IncomeCategoryController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         // Ensure user can only see their own categories
-        $dataProvider->query->andWhere(['user_id' => Yii::$app->user->id]);
+        $dataProvider->query->andWhere(['workspace_id' => Yii::$app->workspace->getId()]);
 
         // Configure pagination
         $dataProvider->pagination->pageSize = Yii::$app->request->get('per-page', 10);
@@ -345,7 +350,7 @@ class IncomeCategoryController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams, true);
 
         // Restrict to authenticated user
-        $dataProvider->query->andWhere(['user_id' => Yii::$app->user->id]);
+        $dataProvider->query->andWhere(['workspace_id' => Yii::$app->workspace->getId()]);
 
         $categories = $dataProvider->getModels();
 
@@ -482,7 +487,7 @@ class IncomeCategoryController extends Controller
         $model = IncomeCategory::find()
             ->where([
                 'id' => $id,
-                'user_id' => Yii::$app->user->id,
+                'workspace_id' => Yii::$app->workspace->getId(),
             ])
             ->one();
 

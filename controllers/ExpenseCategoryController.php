@@ -41,6 +41,11 @@ class ExpenseCategoryController extends Controller
     public function behaviors(): array
     {
         return [
+            'workspaceWrite' => [
+                'class' => \app\components\RequireWorkspaceCapability::class,
+                'capability' => \app\models\WorkspaceMember::CAN_MANAGE_DATA,
+                'only' => ['create', 'update', 'delete', 'move', 'toggle-status', 'bulk-delete'],
+            ],
             'access' => [
                 'class' => AccessControl::class,
                 'rules' => [
@@ -73,10 +78,10 @@ class ExpenseCategoryController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         // Ensure user can only see their own categories
-        $dataProvider->query->andWhere(['user_id' => Yii::$app->user->id]);
+        $dataProvider->query->andWhere(['workspace_id' => Yii::$app->workspace->getId()]);
 
         // Get tree data for tree view
-        $treeData = ExpenseCategory::getJsTreeData(Yii::$app->user->id, false);
+        $treeData = ExpenseCategory::getJsTreeData(Yii::$app->workspace->getId(), false);
 
         // Get statistics
         $stats = $this->getCategoryStats();
@@ -171,7 +176,7 @@ class ExpenseCategoryController extends Controller
         }
 
         // Get parent options for dropdown
-        $parentOptions = ExpenseCategory::getDropdownList(Yii::$app->user->id);
+        $parentOptions = ExpenseCategory::getDropdownList(Yii::$app->workspace->getId());
 
         if (Yii::$app->request->isAjax) {
             return $this->renderAjax('_form', [
@@ -223,7 +228,7 @@ class ExpenseCategoryController extends Controller
         }
 
         // Get parent options, excluding this category and its descendants
-        $parentOptions = ExpenseCategory::getDropdownList(Yii::$app->user->id, $model->id);
+        $parentOptions = ExpenseCategory::getDropdownList(Yii::$app->workspace->getId(), $model->id);
 
         if (Yii::$app->request->isAjax) {
             return $this->renderAjax('_form', [
@@ -425,7 +430,7 @@ class ExpenseCategoryController extends Controller
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        $treeData = ExpenseCategory::getJsTreeData(Yii::$app->user->id, false);
+        $treeData = ExpenseCategory::getJsTreeData(Yii::$app->workspace->getId(), false);
 
         return $this->asJson($treeData);
     }
@@ -466,7 +471,7 @@ class ExpenseCategoryController extends Controller
     public function actionExport(): Response
     {
         $categories = ExpenseCategory::find()
-            ->where(['user_id' => Yii::$app->user->id])
+            ->where(['workspace_id' => Yii::$app->workspace->getId()])
             ->orderBy(['parent_id' => SORT_ASC, 'name' => SORT_ASC])
             ->all();
 
@@ -503,18 +508,18 @@ class ExpenseCategoryController extends Controller
      */
     protected function getCategoryStats(): array
     {
-        $userId = Yii::$app->user->id;
+        $userId = Yii::$app->workspace->getId();
 
         $total = ExpenseCategory::find()
-            ->where(['user_id' => $userId])
+            ->where(['workspace_id' => $userId])
             ->count();
 
         $active = ExpenseCategory::find()
-            ->where(['user_id' => $userId, 'status' => ExpenseCategory::STATUS_ACTIVE])
+            ->where(['workspace_id' => $userId, 'status' => ExpenseCategory::STATUS_ACTIVE])
             ->count();
 
         $rootCount = ExpenseCategory::find()
-            ->where(['user_id' => $userId, 'parent_id' => null])
+            ->where(['workspace_id' => $userId, 'parent_id' => null])
             ->count();
 
         $maxDepth = 0;
@@ -578,7 +583,7 @@ class ExpenseCategoryController extends Controller
         $model = ExpenseCategory::find()
             ->where([
                 'id' => $id,
-                'user_id' => Yii::$app->user->id,
+                'workspace_id' => Yii::$app->workspace->getId(),
             ])
             ->one();
 

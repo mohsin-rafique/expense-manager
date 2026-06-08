@@ -45,6 +45,11 @@ class IncomeController extends Controller
     public function behaviors(): array
     {
         return [
+            'workspaceWrite' => [
+                'class' => \app\components\RequireWorkspaceCapability::class,
+                'capability' => \app\models\WorkspaceMember::CAN_MANAGE_DATA,
+                'only' => ['create', 'update', 'delete', 'bulk-delete'],
+            ],
             'access' => [
                 'class' => AccessControl::class,
                 'rules' => [
@@ -517,7 +522,7 @@ class IncomeController extends Controller
         $model = Income::find()
             ->where([
                 'id' => $id,
-                'user_id' => Yii::$app->user->id,
+                'workspace_id' => Yii::$app->workspace->getId(),
             ])
             ->one();
 

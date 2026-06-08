@@ -136,6 +136,9 @@ body {
     background-color: var(--em-body-bg);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    /* Sticky footer: fill at least the viewport so the flex-grow main area
+       pushes the footer to the bottom even when page content is short. */
+    min-height: 100vh;
 }
 
 /* ============================================================== */
@@ -312,7 +315,6 @@ a:hover {
 /* ============================================================== */
 
 .main-content {
-    min-height: calc(100vh - 140px);
     padding-top: 76px;
 }
 

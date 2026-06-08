@@ -40,6 +40,11 @@ class ImportController extends Controller
     public function behaviors(): array
     {
         return [
+            'workspaceWrite' => [
+                'class' => \app\components\RequireWorkspaceCapability::class,
+                'capability' => \app\models\WorkspaceMember::CAN_MANAGE_DATA,
+                'only' => ['run'],
+            ],
             'access' => [
                 'class' => AccessControl::class,
                 'rules' => [

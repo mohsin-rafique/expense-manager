@@ -309,6 +309,17 @@ $config = [
                 | Import Routes
                 |------------------------------------------------------------------
                 */
+                /*
+                |------------------------------------------------------------------
+                | Workspace / Team Routes
+                |------------------------------------------------------------------
+                */
+                'workspace' => 'workspace/index',                      // Team management
+                'team' => 'workspace/index',                           // Alias
+                'workspace/switch/<id:\d+>' => 'workspace/switch',     // Switch active workspace
+                'workspace/accept/<token:[\w\-]+>' => 'workspace/accept', // Accept invite
+                'workspace/<action:[\w\-]+>' => 'workspace/<action>',  // Catch-all
+
                 'import' => 'import/index',                             // Import wizard
                 'import/template' => 'import/template',                 // Download template
                 'import/<action:[\w\-]+>' => 'import/<action>',         // Catch-all
@@ -558,6 +569,19 @@ $config = [
          */
         'balanceHelper' => [
             'class' => 'app\components\BalanceHelper',
+        ],
+
+        /**
+         * Workspace Manager
+         *
+         * Resolves the authenticated user's active workspace (team) and role.
+         * All data queries are scoped to Yii::$app->workspace->id.
+         *
+         * @see app\components\WorkspaceManager
+         * @usage Yii::$app->workspace->getId()
+         */
+        'workspace' => [
+            'class' => 'app\components\WorkspaceManager',
         ],
 
     ],

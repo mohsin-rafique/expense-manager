@@ -82,7 +82,8 @@ class ReportController extends Controller
             throw new BadRequestHttpException(Yii::t('app', 'Unknown report type.'));
         }
 
-        $userId = Yii::$app->user->id;
+        // ReportService scopes by the active workspace
+        $userId = Yii::$app->workspace->getId();
         $service = new ReportService();
 
         $period = $service->resolvePeriod($periodType, [

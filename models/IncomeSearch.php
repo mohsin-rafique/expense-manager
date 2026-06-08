@@ -158,8 +158,8 @@ class IncomeSearch extends Income
             return $dataProvider;
         }
 
-        // Always filter by current user
-        $query->andWhere(['i.user_id' => Yii::$app->user->id]);
+        // Always filter by the active workspace
+        $query->andWhere(['i.workspace_id' => Yii::$app->workspace->getId()]);
 
         // Apply filters
         $this->applyFilters($query);
@@ -281,7 +281,7 @@ class IncomeSearch extends Income
                 'DATE_FORMAT(entry_date, "%Y-%m") as month',
                 'SUM(amount) as total',
             ])
-            ->where(['user_id' => Yii::$app->user->id])
+            ->where(['workspace_id' => Yii::$app->workspace->getId()])
             ->andWhere(['between', 'entry_date', $startDate, $endDate])
             ->groupBy(['month'])
             ->orderBy(['month' => SORT_ASC])
@@ -302,7 +302,7 @@ class IncomeSearch extends Income
             ->alias('i')
             ->select(['ic.name', 'SUM(i.amount) as total'])
             ->joinWith(['incomeCategory ic'])
-            ->where(['i.user_id' => Yii::$app->user->id])
+            ->where(['i.workspace_id' => Yii::$app->workspace->getId()])
             ->groupBy(['i.income_category_id', 'ic.name'])
             ->orderBy(['total' => SORT_DESC]);
 

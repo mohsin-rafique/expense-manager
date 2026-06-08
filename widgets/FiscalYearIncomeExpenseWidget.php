@@ -154,7 +154,7 @@ class FiscalYearIncomeExpenseWidget extends Widget
      */
     protected function getMonthlyIncome(): array
     {
-        $userId = Yii::$app->user->id;
+        $userId = Yii::$app->workspace->getId();
 
         $rows = Income::find()
             ->select([
@@ -162,7 +162,7 @@ class FiscalYearIncomeExpenseWidget extends Widget
                 new Expression('SUM(amount) AS total'),
             ])
             ->where(['between', 'entry_date', $this->fiscalStartDate, $this->fiscalEndDate])
-            ->andWhere(['user_id' => $userId])
+            ->andWhere(['workspace_id' => $userId])
             ->groupBy([new Expression("DATE_FORMAT(entry_date, '%Y-%m')")])
             ->orderBy(new Expression('month_key ASC'))
             ->asArray()
@@ -183,7 +183,7 @@ class FiscalYearIncomeExpenseWidget extends Widget
      */
     protected function getMonthlyExpenses(): array
     {
-        $userId = Yii::$app->user->id;
+        $userId = Yii::$app->workspace->getId();
 
         $rows = Expense::find()
             ->select([
@@ -191,7 +191,7 @@ class FiscalYearIncomeExpenseWidget extends Widget
                 new Expression('SUM(amount) AS total'),
             ])
             ->where(['between', 'expense_date', $this->fiscalStartDate, $this->fiscalEndDate])
-            ->andWhere(['user_id' => $userId])
+            ->andWhere(['workspace_id' => $userId])
             ->groupBy([new Expression("DATE_FORMAT(expense_date, '%Y-%m')")])
             ->orderBy(new Expression('month_key ASC'))
             ->asArray()

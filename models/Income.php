@@ -86,6 +86,7 @@ class Income extends ActiveRecord
                     ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
                 ],
             ],
+            \app\components\WorkspaceBehavior::class,
         ];
     }
 
@@ -112,7 +113,7 @@ class Income extends ActiveRecord
             [['user_id', 'income_category_id', 'entry_date', 'amount'], 'required'],
 
             // Integer fields
-            [['user_id', 'income_category_id', 'created_at', 'updated_at', 'created_by', 'updated_by'], 'integer'],
+            [['user_id', 'workspace_id', 'income_category_id', 'created_at', 'updated_at', 'created_by', 'updated_by'], 'integer'],
 
             // Date validation
             [['entry_date'], 'safe'],
@@ -165,7 +166,7 @@ class Income extends ActiveRecord
             ],
 
             // Trim whitespace
-            [['reference', 'description'], 'filter', 'filter' => 'trim'],
+            [['reference', 'description'], 'filter', 'filter' => fn ($value) => $value === null ? null : trim($value)],
         ];
     }
 
@@ -420,10 +421,10 @@ class Income extends ActiveRecord
         ?string $endDate = null,
         ?int $categoryId = null
     ): float {
-        $userId = $userId ?? Yii::$app->user->id;
+        $userId = $userId ?? Yii::$app->workspace->getId();
 
         $query = self::find()
-            ->where(['user_id' => $userId]);
+            ->where(['workspace_id' => $userId]);
 
         if ($startDate !== null) {
             $query->andWhere(['>=', 'entry_date', $startDate]);
@@ -453,10 +454,10 @@ class Income extends ActiveRecord
         ?string $startDate = null,
         ?string $endDate = null
     ): int {
-        $userId = $userId ?? Yii::$app->user->id;
+        $userId = $userId ?? Yii::$app->workspace->getId();
 
         $query = self::find()
-            ->where(['user_id' => $userId]);
+            ->where(['workspace_id' => $userId]);
 
         if ($startDate !== null) {
             $query->andWhere(['>=', 'entry_date', $startDate]);
@@ -482,12 +483,12 @@ class Income extends ActiveRecord
         ?string $startDate = null,
         ?string $endDate = null
     ): array {
-        $userId = $userId ?? Yii::$app->user->id;
+        $userId = $userId ?? Yii::$app->workspace->getId();
 
         $query = self::find()
             ->select(['c.name', 'SUM({{%incomes}}.amount) as total'])
             ->leftJoin('{{%income_categories}} c', 'c.id = {{%incomes}}.income_category_id')
-            ->where(['{{%incomes}}.user_id' => $userId])
+            ->where(['{{%incomes}}.workspace_id' => $userId])
             ->groupBy(['{{%incomes}}.income_category_id', 'c.name'])
             ->orderBy(['total' => SORT_DESC]);
 
@@ -511,10 +512,10 @@ class Income extends ActiveRecord
      */
     public static function getRecentIncomes(int $limit = 5, ?int $userId = null): array
     {
-        $userId = $userId ?? Yii::$app->user->id;
+        $userId = $userId ?? Yii::$app->workspace->getId();
 
         return self::find()
-            ->where(['user_id' => $userId])
+            ->where(['workspace_id' => $userId])
             ->orderBy(['entry_date' => SORT_DESC, 'created_at' => SORT_DESC])
             ->limit($limit)
             ->all();

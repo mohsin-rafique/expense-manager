@@ -74,6 +74,7 @@ $pjaxContainerId = 'expenses-pjax';
                     'data-pjax' => '0',
                 ]
             ) ?>
+            <?php if (Yii::$app->workspace->can(\app\models\WorkspaceMember::CAN_MANAGE_DATA)): ?>
             <?= Html::button(
                 '<i class="bi bi-plus-lg me-1"></i>' . Yii::t('app', 'Add Expense'),
                 [
@@ -84,6 +85,7 @@ $pjaxContainerId = 'expenses-pjax';
                     'data-target' => '#nemModal',
                 ]
             ) ?>
+            <?php endif; ?>
         </div>
     </div>
 

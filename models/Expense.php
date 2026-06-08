@@ -83,7 +83,8 @@ class Expense extends ActiveRecord
                     ActiveRecord::EVENT_BEFORE_INSERT => ['created_at', 'updated_at'],
                     ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
                 ]
-            ]
+            ],
+            \app\components\WorkspaceBehavior::class,
         ];
     }
 
@@ -112,7 +113,7 @@ class Expense extends ActiveRecord
             [['fbr_category'], 'string', 'max' => 100],
 
             // Integer fields
-            [['user_id', 'expense_category_id', 'created_at', 'updated_at', 'created_by', 'updated_by'], 'integer'],
+            [['user_id', 'workspace_id', 'expense_category_id', 'created_at', 'updated_at', 'created_by', 'updated_by'], 'integer'],
 
             // Safe attributes
             [['fbr_category', 'expense_date'], 'safe'],
@@ -135,7 +136,7 @@ class Expense extends ActiveRecord
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
 
             // Trim whitespace
-            [['reference', 'description', 'payment_method'], 'filter', 'filter' => 'trim'],
+            [['reference', 'description', 'payment_method'], 'filter', 'filter' => fn ($value) => $value === null ? null : trim($value)],
         ];
     }
 
@@ -393,7 +394,7 @@ class Expense extends ActiveRecord
     public static function getSummary(?string $startDate = null, ?string $endDate = null): array
     {
         $query = self::find()
-            ->where(['user_id' => Yii::$app->user->id]);
+            ->where(['workspace_id' => Yii::$app->workspace->getId()]);
 
         if ($startDate && $endDate) {
             $query->andWhere(['between', 'expense_date', $startDate, $endDate]);

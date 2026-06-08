@@ -80,7 +80,7 @@ class MonthlyPerformanceWidget extends Widget
         $this->_widgetId = $this->getId();
 
         if ($this->userId === null) {
-            $this->userId = Yii::$app->user->id;
+            $this->userId = Yii::$app->workspace->getId();
         }
 
         $this->_currentMonthName = Yii::$app->formatter->asDate(time(), 'MMMM yyyy');
@@ -100,7 +100,7 @@ class MonthlyPerformanceWidget extends Widget
         // Get current month income
         $this->_income = (float) Yii::$app->db->createCommand(
             'SELECT COALESCE(SUM(amount), 0) FROM {{%incomes}}
-             WHERE user_id = :userId
+             WHERE workspace_id = :userId
              AND MONTH(entry_date) = :month
              AND YEAR(entry_date) = :year',
             [
@@ -113,7 +113,7 @@ class MonthlyPerformanceWidget extends Widget
         // Get current month expense
         $this->_expense = (float) Yii::$app->db->createCommand(
             'SELECT COALESCE(SUM(amount), 0) FROM {{%expenses}}
-             WHERE user_id = :userId
+             WHERE workspace_id = :userId
              AND MONTH(expense_date) = :month
              AND YEAR(expense_date) = :year',
             [
@@ -149,13 +149,13 @@ class MonthlyPerformanceWidget extends Widget
 
             $inc = (float) Yii::$app->db->createCommand(
                 'SELECT COALESCE(SUM(amount), 0) FROM {{%incomes}}
-             WHERE user_id = :userId AND MONTH(entry_date) = :month AND YEAR(entry_date) = :year',
+             WHERE workspace_id = :userId AND MONTH(entry_date) = :month AND YEAR(entry_date) = :year',
                 [':userId' => $userId, ':month' => $m, ':year' => $y]
             )->queryScalar();
 
             $exp = (float) Yii::$app->db->createCommand(
                 'SELECT COALESCE(SUM(amount), 0) FROM {{%expenses}}
-             WHERE user_id = :userId AND MONTH(expense_date) = :month AND YEAR(expense_date) = :year',
+             WHERE workspace_id = :userId AND MONTH(expense_date) = :month AND YEAR(expense_date) = :year',
                 [':userId' => $userId, ':month' => $m, ':year' => $y]
             )->queryScalar();
 

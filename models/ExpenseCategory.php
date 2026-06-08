@@ -23,7 +23,8 @@ use yii\helpers\ArrayHelper;
  *
  * @property int $id Category ID
  * @property int|null $parent_id Parent category ID (null for root categories)
- * @property int $user_id Owner user ID
+ * @property int $user_id Creator user ID
+ * @property int $workspace_id Owning workspace ID
  * @property string $name Category name
  * @property string|null $description Optional description
  * @property string|null $icon Bootstrap icon class (e.g., 'bi-cart')
@@ -77,6 +78,7 @@ class ExpenseCategory extends ActiveRecord
         return [
             TimestampBehavior::class,
             BlameableBehavior::class,
+            \app\components\WorkspaceBehavior::class,
         ];
     }
 
@@ -91,7 +93,7 @@ class ExpenseCategory extends ActiveRecord
             [['user_id'], 'required', 'on' => 'create'],
 
             // Type validation
-            [['parent_id', 'user_id', 'status', 'created_at', 'updated_at', 'created_by', 'updated_by'], 'integer'],
+            [['parent_id', 'user_id', 'workspace_id', 'status', 'created_at', 'updated_at', 'created_by', 'updated_by'], 'integer'],
             [['description'], 'string'],
 
             // FBR Category validation
@@ -114,7 +116,7 @@ class ExpenseCategory extends ActiveRecord
             [
                 ['name'],
                 'unique',
-                'targetAttribute' => ['name', 'user_id', 'parent_id'],
+                'targetAttribute' => ['name', 'workspace_id', 'parent_id'],
                 'message' => Yii::t('app', 'You already have a category with this name at this level.'),
             ],
 
@@ -135,7 +137,7 @@ class ExpenseCategory extends ActiveRecord
                 'targetClass' => self::class,
                 'targetAttribute' => ['parent_id' => 'id'],
                 'filter' => function ($query) {
-                    $query->andWhere(['user_id' => $this->user_id]);
+                    $query->andWhere(['workspace_id' => $this->workspace_id]);
                 },
                 'when' => function ($model) {
                     return $model->parent_id !== null;
@@ -540,11 +542,11 @@ class ExpenseCategory extends ActiveRecord
      */
     public static function getExpenseCategory(bool $activeOnly = true, ?int $userId = null): array
     {
-        $userId = $userId ?? Yii::$app->user->id;
+        $userId = $userId ?? Yii::$app->workspace->getId();
 
         $query = self::find()
             ->select(['id', 'name'])
-            ->where(['user_id' => $userId])
+            ->where(['workspace_id' => $userId])
             ->orderBy(['name' => SORT_ASC]);
 
         if ($activeOnly) {
@@ -603,11 +605,11 @@ class ExpenseCategory extends ActiveRecord
      */
     public static function getExpenseCategoryWithDetails(bool $activeOnly = true, ?int $userId = null): array
     {
-        $userId = $userId ?? Yii::$app->user->id;
+        $userId = $userId ?? Yii::$app->workspace->getId();
 
         $query = self::find()
             ->select(['id', 'name', 'parent_id', 'icon', 'color', 'description'])
-            ->where(['user_id' => $userId])
+            ->where(['workspace_id' => $userId])
             ->orderBy(['parent_id' => SORT_ASC, 'name' => SORT_ASC]);
 
         if ($activeOnly) {
@@ -639,13 +641,13 @@ class ExpenseCategory extends ActiveRecord
      */
     public static function findByName(string $name, ?int $parentId = null, ?int $userId = null): ?self
     {
-        $userId = $userId ?? Yii::$app->user->id;
+        $userId = $userId ?? Yii::$app->workspace->getId();
 
         return self::find()
             ->where([
                 'name' => $name,
                 'parent_id' => $parentId,
-                'user_id' => $userId,
+                'workspace_id' => $userId,
             ])
             ->one();
     }
@@ -685,11 +687,11 @@ class ExpenseCategory extends ActiveRecord
      */
     public static function getRootCategories(?int $userId = null, bool $activeOnly = true): array
     {
-        $userId = $userId ?? Yii::$app->user->id;
+        $userId = $userId ?? Yii::$app->workspace->getId();
 
         $query = self::find()
             ->where([
-                'user_id' => $userId,
+                'workspace_id' => $userId,
                 'parent_id' => null,
             ])
             ->orderBy(['name' => SORT_ASC]);
@@ -710,10 +712,10 @@ class ExpenseCategory extends ActiveRecord
      */
     public static function getTree(?int $userId = null, bool $activeOnly = true): array
     {
-        $userId = $userId ?? Yii::$app->user->id;
+        $userId = $userId ?? Yii::$app->workspace->getId();
 
         $query = self::find()
-            ->where(['user_id' => $userId])
+            ->where(['workspace_id' => $userId])
             ->orderBy(['parent_id' => SORT_ASC, 'name' => SORT_ASC]);
 
         if ($activeOnly) {
@@ -765,7 +767,7 @@ class ExpenseCategory extends ActiveRecord
      */
     public static function getDropdownList(?int $userId = null, ?int $excludeId = null, bool $activeOnly = true): array
     {
-        $userId = $userId ?? Yii::$app->user->id;
+        $userId = $userId ?? Yii::$app->workspace->getId();
         $tree = self::getTree($userId, $activeOnly);
 
         $excludeIds = [];

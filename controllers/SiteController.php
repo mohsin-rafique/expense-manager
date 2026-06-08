@@ -212,7 +212,7 @@ class SiteController extends Controller
     {
         $categories = ExpenseCategory::find()
             ->select(['id', 'name'])
-            ->where(['user_id' => Yii::$app->user->id])
+            ->where(['workspace_id' => Yii::$app->workspace->getId()])
             ->asArray()
             ->all();
 
@@ -250,7 +250,7 @@ class SiteController extends Controller
             $expenses = Expense::find()
                 ->select(['expense_category_id', 'SUM(amount) AS total'])
                 ->where(['between', 'expense_date', $firstDay, $lastDay])
-                ->andWhere(['user_id' => Yii::$app->user->id])
+                ->andWhere(['workspace_id' => Yii::$app->workspace->getId()])
                 ->groupBy('expense_category_id')
                 ->asArray()
                 ->all();

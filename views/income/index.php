@@ -57,6 +57,7 @@ $recordCount = $statistics['count'] ?? 0;
                 ['export', 'IncomeSearch' => $exportParams],
                 ['class' => 'btn btn-outline-secondary']
             ) ?>
+            <?php if (Yii::$app->workspace->can(\app\models\WorkspaceMember::CAN_MANAGE_DATA)): ?>
             <?= Html::button(
                 '<i class="bi bi-plus-lg me-1"></i>' . Yii::t('app', 'Add Income'),
                 [
@@ -67,6 +68,7 @@ $recordCount = $statistics['count'] ?? 0;
                     'data-target' => '#nemModal',
                 ]
             ) ?>
+            <?php endif; ?>
         </div>
     </div>
 

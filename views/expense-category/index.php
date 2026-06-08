@@ -61,6 +61,7 @@ $this->registerJsFile('https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.16/jstr
                     'data-pjax' => '0',
                 ]
             ) ?>
+            <?php if (Yii::$app->workspace->can(\app\models\WorkspaceMember::CAN_MANAGE_DATA)): ?>
             <?= Html::button(
                 '<i class="bi bi-plus-lg me-1"></i>' . Yii::t('app', 'Add Category'),
                 [
@@ -72,6 +73,7 @@ $this->registerJsFile('https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.16/jstr
                     'id' => 'btn-create-category',
                 ]
             ) ?>
+            <?php endif; ?>
         </div>
     </div>
 

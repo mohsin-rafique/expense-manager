@@ -52,6 +52,7 @@ $usagePercent = $stats['totalBudget'] > 0
             </p>
         </div>
         <div class="d-flex gap-2">
+            <?php if (Yii::$app->workspace->can(\app\models\WorkspaceMember::CAN_MANAGE_DATA)): ?>
             <?= Html::button(
                 '<i class="bi bi-plus-lg me-1"></i>' . Yii::t('app', 'Add Budget'),
                 [
@@ -63,6 +64,7 @@ $usagePercent = $stats['totalBudget'] > 0
                     'id' => 'btn-create-budget',
                 ]
             ) ?>
+            <?php endif; ?>
         </div>
     </div>
 

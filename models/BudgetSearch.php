@@ -51,7 +51,7 @@ class BudgetSearch extends Budget
      */
     public function search(array $params): ActiveDataProvider
     {
-        $query = Budget::find()->where(['user_id' => Yii::$app->user->id]);
+        $query = Budget::find()->where(['workspace_id' => Yii::$app->workspace->getId()]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

@@ -113,7 +113,7 @@ class CurrentMonthPanelWidget extends Widget
         $this->_widgetId = $this->getId();
 
         if ($this->userId === null) {
-            $this->userId = Yii::$app->user->id;
+            $this->userId = Yii::$app->workspace->getId();
         }
 
         // Set date values
@@ -140,7 +140,7 @@ class CurrentMonthPanelWidget extends Widget
         // Get current month income
         $this->_currentMonthIncome = (float) Yii::$app->db->createCommand(
             'SELECT COALESCE(SUM(amount), 0) FROM {{%incomes}}
-             WHERE user_id = :userId
+             WHERE workspace_id = :userId
              AND MONTH(entry_date) = :month
              AND YEAR(entry_date) = :year',
             [
@@ -153,7 +153,7 @@ class CurrentMonthPanelWidget extends Widget
         // Get current month expense
         $this->_currentMonthExpense = (float) Yii::$app->db->createCommand(
             'SELECT COALESCE(SUM(amount), 0) FROM {{%expenses}}
-             WHERE user_id = :userId
+             WHERE workspace_id = :userId
              AND MONTH(expense_date) = :month
              AND YEAR(expense_date) = :year',
             [
@@ -177,7 +177,7 @@ class CurrentMonthPanelWidget extends Widget
         // Get current month income
         $this->_currentMonthIncome = (float) Yii::$app->db->createCommand(
             'SELECT COALESCE(SUM(amount), 0) FROM {{%incomes}}
-             WHERE user_id = :userId
+             WHERE workspace_id = :userId
              AND MONTH(entry_date) = :month
              AND YEAR(entry_date) = :year',
             [
@@ -190,7 +190,7 @@ class CurrentMonthPanelWidget extends Widget
         // Get current month expense
         $this->_currentMonthExpense = (float) Yii::$app->db->createCommand(
             'SELECT COALESCE(SUM(amount), 0) FROM {{%expenses}}
-             WHERE user_id = :userId
+             WHERE workspace_id = :userId
              AND MONTH(expense_date) = :month
              AND YEAR(expense_date) = :year',
             [
@@ -203,7 +203,7 @@ class CurrentMonthPanelWidget extends Widget
         // Get previous month income
         $this->_previousMonthIncome = (float) Yii::$app->db->createCommand(
             'SELECT COALESCE(SUM(amount), 0) FROM {{%incomes}}
-             WHERE user_id = :userId
+             WHERE workspace_id = :userId
              AND MONTH(entry_date) = :month
              AND YEAR(entry_date) = :year',
             [
@@ -216,7 +216,7 @@ class CurrentMonthPanelWidget extends Widget
         // Get previous month expense
         $this->_previousMonthExpense = (float) Yii::$app->db->createCommand(
             'SELECT COALESCE(SUM(amount), 0) FROM {{%expenses}}
-             WHERE user_id = :userId
+             WHERE workspace_id = :userId
              AND MONTH(expense_date) = :month
              AND YEAR(expense_date) = :year',
             [
@@ -339,13 +339,13 @@ class CurrentMonthPanelWidget extends Widget
 
             $income[] = (float) Yii::$app->db->createCommand(
                 'SELECT COALESCE(SUM(amount), 0) FROM {{%incomes}}
-             WHERE user_id = :userId AND MONTH(entry_date) = :month AND YEAR(entry_date) = :year',
+             WHERE workspace_id = :userId AND MONTH(entry_date) = :month AND YEAR(entry_date) = :year',
                 [':userId' => $userId, ':month' => $m, ':year' => $y]
             )->queryScalar();
 
             $expense[] = (float) Yii::$app->db->createCommand(
                 'SELECT COALESCE(SUM(amount), 0) FROM {{%expenses}}
-             WHERE user_id = :userId AND MONTH(expense_date) = :month AND YEAR(expense_date) = :year',
+             WHERE workspace_id = :userId AND MONTH(expense_date) = :month AND YEAR(expense_date) = :year',
                 [':userId' => $userId, ':month' => $m, ':year' => $y]
             )->queryScalar();
         }

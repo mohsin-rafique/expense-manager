@@ -116,10 +116,10 @@ class ReportService
                 ->leftJoin('{{%incomes}} t', [
                     'and',
                     't.income_category_id = c.id',
-                    ['t.user_id' => $userId],
+                    ['t.workspace_id' => $userId],
                     ['between', 't.entry_date', $start, $end],
                 ])
-                ->where(['c.user_id' => $userId])
+                ->where(['c.workspace_id' => $userId])
                 ->groupBy(['c.id', 'c.name'])
                 ->having(['>', 'COALESCE(SUM(t.amount), 0)', 0])
                 ->orderBy(['total' => SORT_DESC])
@@ -136,10 +136,10 @@ class ReportService
                 ->leftJoin('{{%expenses}} t', [
                     'and',
                     't.expense_category_id = c.id',
-                    ['t.user_id' => $userId],
+                    ['t.workspace_id' => $userId],
                     ['between', 't.expense_date', $start, $end],
                 ])
-                ->where(['c.user_id' => $userId])
+                ->where(['c.workspace_id' => $userId])
                 ->groupBy(['COALESCE(parent.id, c.id)', 'COALESCE(parent.name, c.name)'])
                 ->having(['>', 'COALESCE(SUM(t.amount), 0)', 0])
                 ->orderBy(['total' => SORT_DESC])
@@ -230,7 +230,7 @@ class ReportService
     {
         return (float) ((new Query())
             ->from($table)
-            ->where(['user_id' => $userId])
+            ->where(['workspace_id' => $userId])
             ->andWhere(['between', $dateCol, $start, $end])
             ->sum('amount') ?? 0);
     }
@@ -242,7 +242,7 @@ class ReportService
     {
         return (int) (new Query())
             ->from($table)
-            ->where(['user_id' => $userId])
+            ->where(['workspace_id' => $userId])
             ->andWhere(['between', $dateCol, $start, $end])
             ->count();
     }
@@ -259,7 +259,7 @@ class ReportService
         $rows = (new Query())
             ->select(['bucket' => "DATE_FORMAT($dateCol, '$format')", 'total' => 'SUM(amount)'])
             ->from($table)
-            ->where(['user_id' => $userId])
+            ->where(['workspace_id' => $userId])
             ->andWhere(['between', $dateCol, $start, $end])
             ->groupBy(['bucket'])
             ->all();
@@ -279,8 +279,8 @@ class ReportService
      */
     private function earliestDate(int $userId): ?string
     {
-        $minExpense = (new Query())->from('{{%expenses}}')->where(['user_id' => $userId])->min('expense_date');
-        $minIncome = (new Query())->from('{{%incomes}}')->where(['user_id' => $userId])->min('entry_date');
+        $minExpense = (new Query())->from('{{%expenses}}')->where(['workspace_id' => $userId])->min('expense_date');
+        $minIncome = (new Query())->from('{{%incomes}}')->where(['workspace_id' => $userId])->min('entry_date');
 
         $dates = array_filter([$minExpense, $minIncome]);
         return empty($dates) ? null : min($dates);

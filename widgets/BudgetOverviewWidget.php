@@ -50,7 +50,7 @@ class BudgetOverviewWidget extends Widget
     public function run(): string
     {
         if ($this->userId === null) {
-            $this->userId = Yii::$app->user->id;
+            $this->userId = Yii::$app->workspace->getId();
         }
 
         $service = new BudgetService();

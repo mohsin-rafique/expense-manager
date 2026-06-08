@@ -463,7 +463,7 @@ class ImportService
 
         $rows = $class::find()
             ->select(['id', 'name'])
-            ->where(['user_id' => $userId])
+            ->where(['workspace_id' => Yii::$app->workspace->getId()])
             ->asArray()
             ->all();
 
@@ -507,16 +507,18 @@ class ImportService
     {
         $amountStr = number_format($amount, 2, '.', '');
 
+        $workspaceId = Yii::$app->workspace->getId();
+
         if ($type === self::TYPE_INCOME) {
             $query = Income::find()->where([
-                'user_id' => $userId,
+                'workspace_id' => $workspaceId,
                 'income_category_id' => $categoryId,
                 'entry_date' => $date,
                 'amount' => $amountStr,
             ]);
         } else {
             $query = Expense::find()->where([
-                'user_id' => $userId,
+                'workspace_id' => $workspaceId,
                 'expense_category_id' => $categoryId,
                 'expense_date' => $date,
                 'amount' => $amountStr,

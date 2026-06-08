@@ -83,6 +83,7 @@ class Budget extends ActiveRecord
         return [
             TimestampBehavior::class,
             BlameableBehavior::class,
+            \app\components\WorkspaceBehavior::class,
         ];
     }
 
@@ -107,7 +108,7 @@ class Budget extends ActiveRecord
         return [
             [['user_id', 'category_type', 'category_id', 'period_type', 'amount'], 'required'],
 
-            [['user_id', 'category_id', 'alert_threshold'], 'integer'],
+            [['user_id', 'workspace_id', 'category_id', 'alert_threshold'], 'integer'],
             [['email_alerts', 'status'], 'boolean'],
 
             [['amount'], 'number', 'min' => 0.01],
@@ -131,7 +132,7 @@ class Budget extends ActiveRecord
             [
                 ['category_id'],
                 'unique',
-                'targetAttribute' => ['user_id', 'category_type', 'category_id', 'period_type'],
+                'targetAttribute' => ['workspace_id', 'category_type', 'category_id', 'period_type'],
                 'message' => Yii::t('app', 'A budget for this category and period already exists.'),
             ],
 
@@ -148,7 +149,7 @@ class Budget extends ActiveRecord
     {
         $model = $this->getCategoryModel();
 
-        if ($model === null || (int) $model->user_id !== (int) $this->user_id) {
+        if ($model === null || (int) $model->workspace_id !== (int) $this->workspace_id) {
             $this->addError($attribute, Yii::t('app', 'The selected category is invalid.'));
         }
     }
@@ -382,12 +383,12 @@ class Budget extends ActiveRecord
 
         if ($this->isExpense()) {
             $query = Expense::find()
-                ->where(['user_id' => $this->user_id])
+                ->where(['workspace_id' => $this->workspace_id])
                 ->andWhere(['expense_category_id' => $categoryIds])
                 ->andWhere(['between', 'expense_date', $period['startDate'], $period['endDate']]);
         } else {
             $query = Income::find()
-                ->where(['user_id' => $this->user_id])
+                ->where(['workspace_id' => $this->workspace_id])
                 ->andWhere(['income_category_id' => $categoryIds])
                 ->andWhere(['between', 'entry_date', $period['startDate'], $period['endDate']]);
         }

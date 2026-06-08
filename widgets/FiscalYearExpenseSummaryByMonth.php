@@ -111,7 +111,7 @@ class FiscalYearExpenseSummaryByMonth extends Widget
         $this->_widgetId = $this->getId();
 
         if ($this->userId === null) {
-            $this->userId = Yii::$app->user->id;
+            $this->userId = Yii::$app->workspace->getId();
         }
 
         if (empty($this->fiscalYearLabel)) {
@@ -185,7 +185,7 @@ class FiscalYearExpenseSummaryByMonth extends Widget
         $rawCategories = (new Query())
             ->select(['id', 'name', 'parent_id'])
             ->from($this->expenseCategoryTable)
-            ->where(['user_id' => $this->userId])
+            ->where(['workspace_id' => $this->userId])
             ->all();
 
         $childrenMap = [];
@@ -236,7 +236,7 @@ class FiscalYearExpenseSummaryByMonth extends Widget
             ->from($this->expenseTable)
             ->where([
                 'and',
-                ['user_id' => $this->userId],
+                ['workspace_id' => $this->userId],
                 ['BETWEEN', 'expense_date', $this->fiscalStartDate, $this->fiscalEndDate]
             ])
             ->groupBy(['ym', 'expense_category_id'])

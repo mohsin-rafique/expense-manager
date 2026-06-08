@@ -132,6 +132,15 @@ Most expense-tracking tools either cost money, lock your data in someone else's 
 - Branded header (company name), summary metric cards, percentage bars, and per-page footers
 - Full **Unicode & right-to-left** rendering — reports generate correctly in every supported language, including Urdu
 
+### 👥 Multi-User / Team Workspaces
+
+- **Shared workspaces** — invite teammates to collaborate on the same income, expenses, categories, and budgets
+- **Role-based access control**: Owner (full control + delete), Admin (manage members + data), Member (manage data), Viewer (read-only)
+- **Email invitations** for existing and brand-new users, with token-based acceptance (new sign-ups auto-join on registration)
+- One-click **workspace switcher** in the navbar; every user keeps a private personal workspace
+- Server-side enforcement — read-only members can't create/edit/delete, non-admins can't manage members
+- Existing data migrates seamlessly into each user's personal workspace (no data loss)
+
 ### 📥 Data Import (CSV / Excel)
 
 - Bulk-import **expenses and income** from `.csv`, `.xlsx`, or `.xls` files
@@ -483,7 +492,6 @@ expense-manager/
 
 The project is under active development. Planned features in priority order:
 
-- [ ] **Multi-user / Team support** — shared workspaces with role-based access
 - [ ] **REST API** — Yii2 RESTful API for mobile and third-party integrations
 - [ ] **Mobile app** — React Native companion app via the REST API
 - [ ] **Bank account integration** — connect to banking APIs for auto-import

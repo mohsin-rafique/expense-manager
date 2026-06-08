@@ -29,7 +29,7 @@ use yii\base\Widget;
  *
  * ```php
  * <?= LifetimeOverviewWidget::widget([
- *     'userId' => Yii::$app->user->id,
+ *     'userId' => Yii::$app->workspace->getId(),
  *     'showTrendIndicators' => true,
  *     'currencyCode' => 'PKR',
  * ]) ?>
@@ -93,7 +93,7 @@ class LifetimeOverviewWidget extends Widget
         parent::init();
 
         if ($this->userId === null) {
-            $this->userId = Yii::$app->user->id;
+            $this->userId = Yii::$app->workspace->getId();
         }
 
         $this->initMetricConfig();
@@ -152,7 +152,7 @@ class LifetimeOverviewWidget extends Widget
         $userId = (int) $this->userId;
 
         // Build income query with optional start date
-        $incomeQuery = 'SELECT COALESCE(SUM(amount), 0) FROM {{%incomes}} WHERE user_id = :userId';
+        $incomeQuery = 'SELECT COALESCE(SUM(amount), 0) FROM {{%incomes}} WHERE workspace_id = :userId';
         $incomeParams = [':userId' => $userId];
 
         if ($this->startDate !== null) {
@@ -161,7 +161,7 @@ class LifetimeOverviewWidget extends Widget
         }
 
         // Build expense query with optional start date
-        $expenseQuery = 'SELECT COALESCE(SUM(amount), 0) FROM {{%expenses}} WHERE user_id = :userId';
+        $expenseQuery = 'SELECT COALESCE(SUM(amount), 0) FROM {{%expenses}} WHERE workspace_id = :userId';
         $expenseParams = [':userId' => $userId];
 
         if ($this->startDate !== null) {

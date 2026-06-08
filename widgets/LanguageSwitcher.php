@@ -69,45 +69,43 @@ class LanguageSwitcher extends Widget
      */
     protected function renderDropdown(array $languages, string $currentLanguage): string
     {
-        $html = '';
-        $containerClass = $this->containerClass ?: 'language-switcher-dropdown';
-
-        $html .= Html::beginTag('div', ['class' => $containerClass]);
-        $html .= Html::beginTag('div', ['class' => 'dropdown']);
-
-        // Language button
-        $html .= Html::button(
-            Html::tag('i', '', ['class' => 'bi bi-globe']) . ' ' .
-            Html::tag('span', $languages[$currentLanguage] ?? $currentLanguage, ['class' => 'ms-1 d-none d-sm-inline']),
+        // Navbar-native dropdown: the toggle + menu are direct children of the
+        // surrounding <li class="nav-item dropdown">, matching the user menu and
+        // workspace switcher for consistent vertical alignment.
+        $toggle = Html::a(
+            Html::tag('i', '', ['class' => 'bi bi-globe2 nav-icon'])
+                . Html::tag('span', $languages[$currentLanguage] ?? $currentLanguage, ['class' => 'd-none d-lg-inline']),
+            '#',
             [
-                'class' => 'btn btn-link dropdown-toggle text-decoration-none',
-                'type' => 'button',
+                'class' => 'nav-link dropdown-toggle',
                 'id' => 'languageDropdown',
+                'role' => 'button',
                 'data-bs-toggle' => 'dropdown',
                 'aria-expanded' => 'false',
             ]
         );
 
-        // Dropdown menu
-        $html .= Html::beginTag('ul', ['class' => 'dropdown-menu dropdown-menu-end', 'aria-labelledby' => 'languageDropdown']);
-
+        $items = '';
         foreach ($languages as $code => $name) {
-            $active = ($code === $currentLanguage) ? ' active' : '';
-            $html .= Html::tag(
+            $isActive = ($code === $currentLanguage);
+            $label = Html::tag('span', $name)
+                . ($isActive ? Html::tag('i', '', ['class' => 'bi bi-check-lg ms-auto text-primary']) : '');
+            $items .= Html::tag(
                 'li',
                 Html::a(
-                    Html::tag('i', '', ['class' => 'bi bi-check-circle me-2']) . $name,
+                    $label,
                     ['site/change-language', 'lang' => $code],
-                    ['class' => 'dropdown-item' . $active]
+                    ['class' => 'dropdown-item d-flex align-items-center' . ($isActive ? ' active' : ''), 'data-pjax' => '0']
                 )
             );
         }
 
-        $html .= Html::endTag('ul');
-        $html .= Html::endTag('div');
-        $html .= Html::endTag('div');
+        $menu = Html::tag('ul', $items, [
+            'class' => 'dropdown-menu dropdown-menu-end shadow-sm',
+            'aria-labelledby' => 'languageDropdown',
+        ]);
 
-        return $html;
+        return $toggle . $menu;
     }
 
     /**

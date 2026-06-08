@@ -36,7 +36,7 @@ class BudgetService
     public function getActiveBudgetsWithProgress(int $userId): array
     {
         $budgets = Budget::find()
-            ->where(['user_id' => $userId, 'status' => Budget::STATUS_ACTIVE])
+            ->where(['workspace_id' => $userId, 'status' => Budget::STATUS_ACTIVE])
             ->all();
 
         usort($budgets, static function (Budget $a, Budget $b) {
@@ -98,7 +98,7 @@ class BudgetService
         }
 
         return [
-            'total' => Budget::find()->where(['user_id' => $userId])->count(),
+            'total' => Budget::find()->where(['workspace_id' => $userId])->count(),
             'active' => count($budgets),
             'over' => $over,
             'warning' => $warning,
@@ -130,7 +130,7 @@ class BudgetService
 
         $budgets = Budget::find()
             ->where([
-                'user_id' => $expense->user_id,
+                'workspace_id' => $expense->workspace_id,
                 'category_type' => Budget::TYPE_EXPENSE,
                 'status' => Budget::STATUS_ACTIVE,
             ])

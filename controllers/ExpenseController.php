@@ -45,6 +45,11 @@ class ExpenseController extends Controller
     public function behaviors()
     {
         return [
+            'workspaceWrite' => [
+                'class' => \app\components\RequireWorkspaceCapability::class,
+                'capability' => \app\models\WorkspaceMember::CAN_MANAGE_DATA,
+                'only' => ['create', 'update', 'delete'],
+            ],
             'access' => [
                 'class' => AccessControl::class,
                 'rules' => [
@@ -499,7 +504,7 @@ class ExpenseController extends Controller
      */
     protected function checkOwnership($model)
     {
-        if ($model->user_id !== Yii::$app->user->id) {
+        if ((int) $model->workspace_id !== (int) Yii::$app->workspace->getId()) {
             throw new ForbiddenHttpException(Yii::t('app', 'You are not authorized to access this expense.'));
         }
     }
