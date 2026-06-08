@@ -15,7 +15,7 @@ use yii\db\ActiveRecord;
  * Settings model for the "{{%settings}}" table.
  *
  * Stores per-user application preferences including currency formatting,
- * date/time formats, timezone, and branding assets.
+ * date/time formats, timezone, language preference, and branding assets.
  *
  * @property int $id
  * @property int $user_id
@@ -31,6 +31,7 @@ use yii\db\ActiveRecord;
  * @property string|null $thousand_separator
  * @property string|null $decimal_separator
  * @property int|null $decimal_places
+ * @property string|null $language
  * @property string|null $logo
  * @property string|null $favicon
  *
@@ -58,6 +59,7 @@ class Settings extends ActiveRecord
             [['user_id', 'company_name'], 'required'],
             [['user_id', 'decimal_places'], 'integer'],
             [['company_name', 'site_title', 'phone', 'email', 'timezone', 'date_format', 'time_format', 'logo', 'favicon'], 'string', 'max' => 191],
+            [['language'], 'string', 'max' => 10],
             [['currency'], 'string', 'max' => 5],
             [['currency_position'], 'string', 'max' => 16],
             [['thousand_separator', 'decimal_separator'], 'string', 'max' => 1],
@@ -85,6 +87,7 @@ class Settings extends ActiveRecord
             'thousand_separator' => Yii::t('app', 'Thousand Separator'),
             'decimal_separator' => Yii::t('app', 'Decimal Separator'),
             'decimal_places'    => Yii::t('app', 'Decimal Places'),
+            'language'          => Yii::t('app', 'Language'),
             'logo'              => Yii::t('app', 'Logo'),
             'favicon'           => Yii::t('app', 'Favicon'),
         ];

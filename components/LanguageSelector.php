@@ -39,19 +39,65 @@ class LanguageSelector implements BootstrapInterface
 
             $settings = Settings::findOne(['user_id' => $userId]);
 
-            Yii::$app->language = 'en';
+            Yii::$app->language = $this->resolveLanguage($settings->language ?? null);
             Yii::$app->formatter->currencyCode = $settings->currency;
             Yii::$app->formatter->thousandSeparator = $settings->thousand_separator;
             Yii::$app->formatter->decimalSeparator = $settings->decimal_separator;
             Yii::$app->formatter->dateFormat = 'php:' . $settings->date_format;
             Yii::$app->formatter->datetimeFormat = 'php:d/m/Y H:i:s';
         } else {
-            Yii::$app->language = Yii::$app->request->getPreferredLanguage($this->supportedLanguages);
+            Yii::$app->language = $this->resolveGuestLanguage();
             Yii::$app->formatter->currencyCode = 'PKR';
             Yii::$app->formatter->decimalSeparator = '.';
             Yii::$app->formatter->thousandSeparator = ',';
             Yii::$app->formatter->dateFormat = 'php:d/m/Y';
             Yii::$app->formatter->datetimeFormat = 'php:d/m/Y H:i:s';
         }
+    }
+
+    /**
+     * Resolves the language for an authenticated user.
+     *
+     * Falls back to the default language when the stored preference is empty
+     * or not part of the supported languages list.
+     *
+     * @param string|null $preferred The user's stored language preference
+     * @return string A valid, supported language code
+     */
+    private function resolveLanguage(?string $preferred): string
+    {
+        if ($preferred !== null && in_array($preferred, $this->supportedLanguages, true)) {
+            return $preferred;
+        }
+
+        return $this->defaultLanguage();
+    }
+
+    /**
+     * Resolves the language for a guest visitor.
+     *
+     * Priority: language cookie (set via the switcher) → browser's preferred
+     * language (Accept-Language header) → application default.
+     *
+     * @return string A valid, supported language code
+     */
+    private function resolveGuestLanguage(): string
+    {
+        $cookieLang = Yii::$app->request->cookies->getValue('language');
+        if ($cookieLang !== null && in_array($cookieLang, $this->supportedLanguages, true)) {
+            return $cookieLang;
+        }
+
+        return Yii::$app->request->getPreferredLanguage($this->supportedLanguages);
+    }
+
+    /**
+     * Returns the configured default language, falling back to 'en'.
+     *
+     * @return string
+     */
+    private function defaultLanguage(): string
+    {
+        return Yii::$app->params['defaultLanguage'] ?? 'en';
     }
 }

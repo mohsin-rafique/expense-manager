@@ -139,6 +139,16 @@ Most expense-tracking tools either cost money, lock your data in someone else's 
 - Toast notification system (NEM Toast) with success, warning, and error states
 - Bootstrap Icons throughout — consistent, crisp iconography
 
+### 🌐 Multi-Language Support (i18n)
+
+- Full UI localization in **5 languages** — English, Spanish (Español), French (Français), Urdu (اردو), and German (Deutsch)
+- In-app language switcher in the navigation bar — change languages with one click
+- Per-user language preference saved to the database; remembered across sessions
+- Automatic language detection for guests via the browser `Accept-Language` header, with cookie persistence
+- **Right-to-left (RTL)** layout support, enabled automatically for Urdu
+- Built on Yii2's native `Yii::t()` translation framework with PHP message catalogs — easy to extend with new languages
+- Graceful fallback to English for any string not yet translated
+
 ### 🔐 Security (Production-Hardened)
 
 - Login rate limiting — max 5 failed attempts per IP per 15 minutes
@@ -444,7 +454,6 @@ expense-manager/
 
 The project is under active development. Planned features in priority order:
 
-- [ ] **Multi-language support (i18n)** — full localization with language switcher
 - [ ] **Budget management module** — set monthly/yearly budgets per category with alerts
 - [ ] **Recurring transactions** — auto-generate periodic income/expense entries
 - [ ] **Data import from CSV/Excel** — bulk import from spreadsheets

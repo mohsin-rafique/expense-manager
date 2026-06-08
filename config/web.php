@@ -64,7 +64,7 @@ $config = [
         'log',
         [
             'class' => 'app\components\LanguageSelector',
-            'supportedLanguages' => ['en'],
+            'supportedLanguages' => ['en', 'es', 'fr', 'ur', 'de'],
         ],
         'app\components\CurrencyBootstrap',
     ],

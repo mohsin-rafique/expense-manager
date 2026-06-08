@@ -530,6 +530,55 @@ class SiteController extends Controller
     }
 
     /**
+     * Changes the application language for the authenticated user
+     *
+     * Updates the user's language preference in the settings table
+     * and redirects back to the referring page or home.
+     *
+     * @return Response Redirect to referring page or home
+     */
+    public function actionChangeLanguage(): Response
+    {
+        $lang = Yii::$app->request->get('lang', 'en');
+        $params = Yii::$app->params;
+        $supportedLanguages = $params['supportedLanguages'] ?? ['en'];
+
+        // Validate language code
+        if (!array_key_exists($lang, $supportedLanguages)) {
+            $lang = $params['defaultLanguage'] ?? 'en';
+        }
+
+        // Update language for authenticated user
+        if (!Yii::$app->user->isGuest) {
+            $userId = Yii::$app->user->identity->id;
+            $settings = \app\models\Settings::findOne(['user_id' => $userId]);
+
+            if ($settings) {
+                $settings->language = $lang;
+                if (!$settings->save()) {
+                    Yii::$app->session->setFlash('error', Yii::t('app', 'Failed to update language preference.'));
+                    return $this->goBack();
+                }
+            }
+        } else {
+            // For guests, just set the language for this session
+            Yii::$app->language = $lang;
+        }
+
+        // Set language cookie for persistent storage
+        Yii::$app->response->cookies->add(new \yii\web\Cookie([
+            'name' => 'language',
+            'value' => $lang,
+            'expire' => time() + 365 * 24 * 3600, // 1 year
+        ]));
+
+        Yii::$app->language = $lang;
+
+        // Redirect back to referrer or home
+        return $this->goBack(Yii::$app->homeUrl);
+    }
+
+    /**
      * Displays the forgot password page
      *
      * Handles password reset request:

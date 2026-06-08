@@ -10,6 +10,7 @@
  * Right Navigation Partial View
  *
  * Renders the right-side navigation items:
+ * - Language switcher
  * - For guests: Login and Sign Up buttons
  * - For authenticated users: Notifications and User menu
  *
@@ -27,9 +28,15 @@
  */
 
 use yii\helpers\Url;
+use app\widgets\LanguageSwitcher;
 ?>
 
 <ul class="navbar-nav">
+    <!-- Language Switcher -->
+    <li class="nav-item">
+        <?= LanguageSwitcher::widget(['style' => 'dropdown']) ?>
+    </li>
+
     <?php if ($isGuest): ?>
         <!-- Guest Navigation -->
         <li class="nav-item">

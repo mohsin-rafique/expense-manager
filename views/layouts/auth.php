@@ -67,7 +67,7 @@ $this->registerLinkTag(['rel' => 'manifest', 'href' => Yii::getAlias('@web/site.
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
-<html lang="<?= Yii::$app->language ?>" class="h-100">
+<html lang="<?= Yii::$app->language ?>" dir="<?= in_array(Yii::$app->language, Yii::$app->params['rtlLanguages'] ?? [], true) ? 'rtl' : 'ltr' ?>" class="h-100">
 
 <head>
     <title><?= Html::encode($this->title) ?> | <?= Html::encode(Yii::$app->name) ?></title>
