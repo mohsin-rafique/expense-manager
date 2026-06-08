@@ -212,7 +212,7 @@ $config = [
                 'income/update/<id:\d+>' => 'income/update',           // Update income
                 'income/delete/<id:\d+>' => 'income/delete',           // Delete income
                 'income/export' => 'income/export',                    // Export incomes
-                'income/import' => 'income/import',                    // Import incomes
+                ['pattern' => 'income/import', 'route' => 'import/index', 'defaults' => ['type' => 'income']], // Import incomes
                 'income/report' => 'income/report',                    // Income report
                 'income/summary' => 'income/summary',                  // Income summary
                 'income/chart-data' => 'income/chart-data',            // Chart data (AJAX)
@@ -251,7 +251,7 @@ $config = [
                 'expense/update/<id:\d+>' => 'expense/update',         // Update expense
                 'expense/delete/<id:\d+>' => 'expense/delete',         // Delete expense
                 'expense/export' => 'expense/export',                  // Export expenses
-                'expense/import' => 'expense/import',                  // Import expenses
+                ['pattern' => 'expense/import', 'route' => 'import/index', 'defaults' => ['type' => 'expense']], // Import expenses
                 'expense/report' => 'expense/report',                  // Expense report
                 'expense/summary' => 'expense/summary',                // Expense summary
                 'expense/chart-data' => 'expense/chart-data',          // Chart data (AJAX)
@@ -303,6 +303,15 @@ $config = [
                 'budget/update/<id:\d+>' => 'budget/update',           // Update budget
                 'budget/delete/<id:\d+>' => 'budget/delete',           // Delete budget
                 'budget/<action:[\w\-]+>' => 'budget/<action>',        // Catch-all
+
+                /*
+                |------------------------------------------------------------------
+                | Import Routes
+                |------------------------------------------------------------------
+                */
+                'import' => 'import/index',                             // Import wizard
+                'import/template' => 'import/template',                 // Download template
+                'import/<action:[\w\-]+>' => 'import/<action>',         // Catch-all
 
                 /*
                 |------------------------------------------------------------------

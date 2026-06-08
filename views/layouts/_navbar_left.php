@@ -57,6 +57,13 @@ use yii\helpers\Url;
                         <span><?= Yii::t('app', 'Income Categories') ?></span>
                     </a>
                 </li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                    <a class="dropdown-item" href="<?= Url::to(['/import/index', 'type' => 'income']) ?>">
+                        <i class="bi bi-upload text-success"></i>
+                        <span><?= Yii::t('app', 'Import Income') ?></span>
+                    </a>
+                </li>
             </ul>
         </li>
 
@@ -77,6 +84,13 @@ use yii\helpers\Url;
                     <a class="dropdown-item <?= $currentController === 'expense-category' ? 'active' : '' ?>" href="<?= Url::to(['/expense-category']) ?>">
                         <i class="bi bi-folder text-danger"></i>
                         <span><?= Yii::t('app', 'Expense Categories') ?></span>
+                    </a>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                    <a class="dropdown-item" href="<?= Url::to(['/import/index', 'type' => 'expense']) ?>">
+                        <i class="bi bi-upload text-danger"></i>
+                        <span><?= Yii::t('app', 'Import Expenses') ?></span>
                     </a>
                 </li>
             </ul>

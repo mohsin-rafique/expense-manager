@@ -124,6 +124,15 @@ Most expense-tracking tools either cost money, lock your data in someone else's 
 - Dashboard **Budget Overview** widget highlighting at-risk categories
 - Hierarchical expense categories roll child spending up to the parent budget
 
+### 📥 Data Import (CSV / Excel)
+
+- Bulk-import **expenses and income** from `.csv`, `.xlsx`, or `.xls` files
+- **Preview before commit** — every row is validated and shown with an OK / duplicate / skip status before anything is written
+- Flexible column mapping by header name (order-independent); tolerant of currency symbols, thousands separators, and multiple date formats
+- **Auto-create missing categories** and **skip duplicates** (toggleable per import)
+- Downloadable template per type to get started quickly
+- Round-trips the app's own Excel exports
+
 ### 👤 User & Profile Management
 
 - Secure registration and login with email verification
@@ -465,8 +474,6 @@ expense-manager/
 
 The project is under active development. Planned features in priority order:
 
-- [ ] **Recurring transactions** — auto-generate periodic income/expense entries
-- [ ] **Data import from CSV/Excel** — bulk import from spreadsheets
 - [ ] **Advanced PDF reporting** — downloadable financial summaries
 - [ ] **Multi-user / Team support** — shared workspaces with role-based access
 - [ ] **REST API** — Yii2 RESTful API for mobile and third-party integrations
