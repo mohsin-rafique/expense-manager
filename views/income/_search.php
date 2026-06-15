@@ -92,7 +92,7 @@ $categories = IncomeCategory::getIncomeCategory();
                 ['class' => 'btn btn-success']
             ) ?>
             <?= Html::a(
-                '<i class="bi bi-x-lg"></i>',
+                '<i class="bi bi-arrow-counterclockwise"></i>',
                 ['index'],
                 ['class' => 'btn btn-outline-secondary', 'title' => Yii::t('app', 'Reset')]
             ) ?>

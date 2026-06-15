@@ -1180,11 +1180,14 @@ var NEM = (function ($) {
                 // Skip elements that are already enhanced.
                 if (el.choicesInstance) return;
 
-                // Only show the search box when the list is long enough to need it.
+                // Show the search box when explicitly requested (a select that
+                // carries data-search-placeholder, e.g. category pickers) or when
+                // the list is long enough to need it.
                 var optionCount = el.querySelectorAll("option").length;
+                var forceSearch = el.hasAttribute("data-search-placeholder");
 
                 el.choicesInstance = new Choices(el, {
-                    searchEnabled: optionCount > 8,
+                    searchEnabled: forceSearch || optionCount > 8,
                     searchResultLimit: 50,
                     shouldSort: false, // preserve category tree / defined order
                     allowHTML: false,

@@ -14,14 +14,75 @@ This project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html) 
 
 The following capabilities are actively being scoped and will be released in upcoming versions:
 
-- **Budget Management Module** - Set monthly or yearly budgets per category with visual progress tracking and overspend alerts
 - **Recurring Transactions** - Auto-generate periodic income and expense entries on daily, weekly, or monthly schedules
-- **Multi-user / Team Support** - Shared workspaces with role-based permissions for teams and organizations
-- **Data Import from CSV / Excel** - Bulk-import historical transaction data from spreadsheets
-- **Advanced PDF Reporting** - Downloadable, branded financial summary reports in PDF format
 - **Mobile App** - React Native companion application via a Yii2 REST API
 - **Bank Account Integration** - Connect external banking APIs for automatic transaction import
-- **Multi-language Support (i18n)** - Full localization with a language switcher in the UI
+
+---
+
+## [1.2.0] - 2026-06-15
+
+> **Summary:** The largest feature release since 1.0.0. Expense Manager grows from a single-user tracker into a collaborative financial platform: shared **team workspaces** with role-based access, a full **budget management** module with overspend alerts, downloadable **PDF financial reports**, **multi-language** support across 5 languages, and **bulk CSV/Excel import**. Existing data migrates automatically with no loss.
+
+### Added
+
+#### 🎯 Budget Management
+
+- Per-category spending budgets across **monthly, yearly, and fiscal-year** periods, tracked against the current period automatically
+- Configurable **alert threshold** per budget with color-coded progress (on-track / approaching / over-budget)
+- **In-app toast alerts** the moment a saved expense pushes a category over its threshold, plus optional **email alerts**
+- Dashboard **Budget Overview** widget highlighting at-risk categories; child-category spending rolls up to the parent budget
+
+#### 👥 Multi-user / Team Workspaces
+
+- **Shared workspaces** for collaborating on income, expenses, categories, and budgets
+- **Role-based access control**: Owner (full control + delete), Admin (manage members + data), Member (manage data), Viewer (read-only)
+- **Email invitations** for existing and brand-new users with token-based acceptance (new sign-ups auto-join on registration)
+- One-click **workspace switcher** in the navbar; every user keeps a private personal workspace
+- Server-side capability enforcement; existing records migrate into each user's personal workspace with no data loss
+
+#### 📄 Advanced PDF Reporting
+
+- Downloadable, professionally branded **PDF financial reports** powered by mPDF
+- Four report types: **Financial Summary**, **Category Breakdown**, **Income vs Expense** trend, and **Budget Status**
+- Flexible periods: any month, fiscal year, custom date range, and all-time
+- Branded header, summary metric cards, percentage bars, per-page footers, and full **Unicode + right-to-left** rendering (including Urdu)
+
+#### 🌐 Multi-language Support (i18n)
+
+- Full UI localization in **5 languages**: English, Spanish (Español), French (Français), Urdu (اردو), and German (Deutsch)
+- In-navbar **language switcher**; per-user preference saved to the database and remembered across sessions
+- Automatic language detection for guests via the `Accept-Language` header, with cookie persistence
+- **Right-to-left (RTL)** layout enabled automatically for Urdu
+- Built on Yii2's native `Yii::t()` framework with PHP message catalogs and graceful fallback to English
+
+#### 📥 Data Import (CSV / Excel)
+
+- Bulk-import **expenses and income** from `.csv`, `.xlsx`, and `.xls` files
+- **Preview before commit** - every row is validated and shown with an OK / duplicate / skip status before anything is written
+- Header-based column mapping (order-independent); tolerant of currency symbols, thousands separators, and multiple date formats
+- **Auto-create missing categories** and **skip duplicates** (toggleable per import), with a downloadable template per type
+
+#### 💸 Expense Enhancements
+
+- **FBR category support** for Pakistani tax tracking, shown automatically for users with a Pakistan profile
+- **In-browser receipt auto-read (Beta)** - attach a receipt photo to auto-fill date, amount, payment method, reference, and description; runs entirely in the browser with nothing uploaded for processing
+- **Searchable category and payment dropdowns** so the hierarchical category tree can be searched instead of scrolled
+
+### Changed
+
+- Replaced plain category and payment selects with **searchable dropdowns** across the Expense and Income modules
+- Aligned the **Budget module UI** with the Income/Expense modules: summary cards, a collapsible Filter & Search panel, a consistent module color scheme, and a section icon
+- **Documentation overhaul** - README refreshed for all new modules, with updated project structure and usage guides
+- Updated copyright to **2025 - 2026** across the project
+- Corrected documentation that referenced a dark/light theme toggle which is not currently available
+
+### Fixed
+
+- **Receipt auto-read date parsing** - prefers the labeled date line, tolerates OCR spacing, and avoids future-dated reads when the day/month order is ambiguous
+- **Receipt auto-read description** - skips document headers and OCR noise when detecting the merchant name
+- **Searchable category dropdowns** now always expose the search box, even for short lists such as income categories
+- Themed the searchable dropdowns to match Bootstrap form controls (sizing, focus ring, and dropdown panel)
 
 ---
 
@@ -171,6 +232,7 @@ The following capabilities are actively being scoped and will be released in upc
 
 | Version | Date | Highlights |
 |---|---|---|
+| [1.2.0](#120--2026-06-15) | 2026-06-15 | Budgets, team workspaces, PDF reporting, multi-language (i18n), CSV/Excel import |
 | [1.1.0](#110--2026-04-10) | 2026-04-10 | Professional XLSX exports, unified AJAX response system, code quality improvements |
 | [1.0.1](#101--2026-04-05) | 2026-04-05 | Security hardening, login rate limiting, PHPDoc, bug fixes |
 | [1.0.0](#100--2026-01-08) | 2026-01-08 | Initial stable release - full income/expense/dashboard system |
@@ -189,7 +251,8 @@ The following capabilities are actively being scoped and will be released in upc
 
 ---
 
-[Unreleased]: https://github.com/mohsin-rafique/expense-manager/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/mohsin-rafique/expense-manager/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/mohsin-rafique/expense-manager/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/mohsin-rafique/expense-manager/compare/v1.0.1...v1.1.0
 [1.0.1]: https://github.com/mohsin-rafique/expense-manager/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/mohsin-rafique/expense-manager/releases/tag/v1.0.0

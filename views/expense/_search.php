@@ -105,7 +105,7 @@ $categories = ExpenseCategory::getExpenseCategoryHierarchy();
                 ['class' => 'btn btn-danger']
             ) ?>
             <?= Html::a(
-                '<i class="bi bi-x-lg me-1"></i>' . Yii::t('app', 'Reset'),
+                '<i class="bi bi-arrow-counterclockwise"></i>',
                 ['index'],
                 ['class' => 'btn btn-outline-secondary']
             ) ?>
