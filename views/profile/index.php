@@ -233,7 +233,7 @@ $bannerUrl = $profile ? $profile->getBannerUrl() : null;
                             <div class="profile-detail-content">
                                 <span class="profile-detail-label"><?= Yii::t('app', 'Designation') ?></span>
                                 <span class="profile-detail-value">
-                                    <?= ($profile && !empty($profile->designation)) ? Html::encode($profile->designation) : '—' ?>
+                                    <?= ($profile && !empty($profile->designation)) ? Html::encode($profile->designation) : '-' ?>
                                 </span>
                             </div>
                         </div>
@@ -246,7 +246,7 @@ $bannerUrl = $profile ? $profile->getBannerUrl() : null;
                             <div class="profile-detail-content">
                                 <span class="profile-detail-label"><?= Yii::t('app', 'Timezone') ?></span>
                                 <span class="profile-detail-value">
-                                    <?= ($profile && !empty($profile->timezone)) ? Html::encode($profile->timezone) : '—' ?>
+                                    <?= ($profile && !empty($profile->timezone)) ? Html::encode($profile->timezone) : '-' ?>
                                 </span>
                             </div>
                         </div>

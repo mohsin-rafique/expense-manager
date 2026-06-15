@@ -86,7 +86,7 @@ use yii\widgets\Pjax;
                     if ($model->parent) {
                         return '<span class="text-muted">' . Html::encode($model->parent->name) . '</span>';
                     }
-                    return '<span class="text-muted">—</span>';
+                    return '<span class="text-muted">-</span>';
                 },
             ],
 

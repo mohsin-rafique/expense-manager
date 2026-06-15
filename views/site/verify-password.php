@@ -24,7 +24,7 @@ $this->title = 'Verify Password';
                                     <div class="mt-auto">
                                         <div class="mb-3">
                                             <h2 class="text-success">Account Recovery</h2>
-                                            <p class="text-white">To help keep your account safe, Google wants to make sure that it’s really you trying to sign in</p>
+                                            <p class="text-white">To help keep your account safe, Google wants to make sure that it's really you trying to sign in</p>
                                         </div>
                                     </div>
                                 </div>

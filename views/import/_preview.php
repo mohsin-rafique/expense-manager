@@ -107,7 +107,7 @@ $shown = array_slice($rows, 0, $maxShown);
                         <td class="small"><?= Html::encode((string) $r['payment_method']) ?></td>
                     <?php endif; ?>
                     <td class="text-end small">
-                        <?= $r['amount'] !== null ? Html::encode($cur->format($r['amount'])) : '<span class="text-danger">—</span>' ?>
+                        <?= $r['amount'] !== null ? Html::encode($cur->format($r['amount'])) : '<span class="text-danger">-</span>' ?>
                     </td>
                     <td class="small text-muted">
                         <?php if (!empty($r['errors'])): ?>

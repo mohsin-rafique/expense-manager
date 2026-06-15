@@ -187,11 +187,11 @@ $deleteBannerUrl = Url::to(['delete-banner']);
                                     // Add other major countries or use a helper to list all
                                 ], [
                                     'class' => 'form-select',
-                                    'prompt' => Yii::t('app', '— Select Country —')
+                                    'prompt' => Yii::t('app', '- Select Country -')
                                 ])->label('<i class="bi bi-flag me-1 text-muted"></i>' . Yii::t('app', 'Country')) ?>
                             </div>
                             <div class="col-md-6"><?= $form->field($profileModel, 'website')->textInput(['class' => 'form-control', 'placeholder' => 'https://yourwebsite.com'])->label('<i class="bi bi-globe me-1 text-muted"></i>' . Yii::t('app', 'Website')) ?></div>
-                            <div class="col-md-6"><?= $form->field($profileModel, 'timezone')->dropDownList(ArrayHelper::map(Timezone::getAll(), 'timezone', 'name'), ['class' => 'form-select', 'prompt' => Yii::t('app', '— Select Timezone —')])->label('<i class="bi bi-clock me-1 text-muted"></i>' . Yii::t('app', 'Timezone')) ?></div>
+                            <div class="col-md-6"><?= $form->field($profileModel, 'timezone')->dropDownList(ArrayHelper::map(Timezone::getAll(), 'timezone', 'name'), ['class' => 'form-select', 'prompt' => Yii::t('app', '- Select Timezone -')])->label('<i class="bi bi-clock me-1 text-muted"></i>' . Yii::t('app', 'Timezone')) ?></div>
                             <div class="col-12"><?= $form->field($profileModel, 'bio')->textarea(['class' => 'form-control', 'rows' => 4, 'placeholder' => Yii::t('app', 'Tell us about yourself...')])->label('<i class="bi bi-card-text me-1 text-muted"></i>' . Yii::t('app', 'Bio')) ?></div>
                         </div>
                         <div class="settings-form-actions"><?= Html::submitButton('<i class="bi bi-check-lg me-1"></i>' . Yii::t('app', 'Save Changes'), ['class' => 'btn btn-primary']) ?></div>
@@ -244,7 +244,7 @@ $deleteBannerUrl = Url::to(['delete-banner']);
                         </div>
                         <?php $form = ActiveForm::begin(['id' => 'currency-settings-form', 'options' => ['class' => 'settings-form']]); ?>
                         <div class="row g-3">
-                            <div class="col-md-6"><?= $form->field($currencySettingsModel, 'currency')->dropDownList(CurrencyFormatter::getCurrencyCodes(), ['class' => 'form-select', 'prompt' => Yii::t('app', '— Select Currency —')])->label('<i class="bi bi-currency-dollar me-1 text-muted"></i>' . Yii::t('app', 'Currency')) ?></div>
+                            <div class="col-md-6"><?= $form->field($currencySettingsModel, 'currency')->dropDownList(CurrencyFormatter::getCurrencyCodes(), ['class' => 'form-select', 'prompt' => Yii::t('app', '- Select Currency -')])->label('<i class="bi bi-currency-dollar me-1 text-muted"></i>' . Yii::t('app', 'Currency')) ?></div>
                             <div class="col-md-6"><?= $form->field($currencySettingsModel, 'currency_position')->dropDownList(CurrencyFormatter::getPositionOptions(), ['class' => 'form-select'])->label('<i class="bi bi-text-left me-1 text-muted"></i>' . Yii::t('app', 'Symbol Position')) ?></div>
                             <div class="col-md-4"><?= $form->field($currencySettingsModel, 'thousand_separator')->textInput(['class' => 'form-control', 'placeholder' => ',', 'maxlength' => 1])->label('<i class="bi bi-hash me-1 text-muted"></i>' . Yii::t('app', 'Thousand Separator'))->hint(Yii::t('app', 'e.g., comma (,) or period (.)')) ?></div>
                             <div class="col-md-4"><?= $form->field($currencySettingsModel, 'decimal_separator')->textInput(['class' => 'form-control', 'placeholder' => '.', 'maxlength' => 1])->label('<i class="bi bi-dot me-1 text-muted"></i>' . Yii::t('app', 'Decimal Separator'))->hint(Yii::t('app', 'e.g., period (.) or comma (,)')) ?></div>

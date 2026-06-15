@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Database configuration — copy this file to db.php and configure your connection,
+ * Database configuration - copy this file to db.php and configure your connection,
  * or use environment variables via a .env file (recommended).
  *
  * .env variables:

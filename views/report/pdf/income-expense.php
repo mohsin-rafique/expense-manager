@@ -7,7 +7,7 @@
  */
 
 /**
- * Income vs Expense PDF report — per-period trend within the date range.
+ * Income vs Expense PDF report - per-period trend within the date range.
  *
  * @var yii\web\View $this
  * @var array $period

@@ -69,7 +69,7 @@ $fmt = Yii::$app->formatter;
     <!-- Details -->
     <dl class="row mb-0 small">
         <dt class="col-5 text-muted fw-normal"><?= Yii::t('app', 'Period window') ?></dt>
-        <dd class="col-7"><?= Html::encode($fmt->asDate($period['startDate'])) ?> — <?= Html::encode($fmt->asDate($period['endDate'])) ?></dd>
+        <dd class="col-7"><?= Html::encode($fmt->asDate($period['startDate'])) ?> - <?= Html::encode($fmt->asDate($period['endDate'])) ?></dd>
 
         <dt class="col-5 text-muted fw-normal"><?= Yii::t('app', 'Alert Threshold') ?></dt>
         <dd class="col-7"><?= (int) $model->alert_threshold ?>%</dd>

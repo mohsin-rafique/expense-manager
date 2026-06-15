@@ -252,7 +252,7 @@ class ImportController extends Controller
      */
     private function stagePath(string $token): ?string
     {
-        // Token format: <random>.<ext> — strictly alphanumeric + single dot
+        // Token format: <random>.<ext> - strictly alphanumeric + single dot
         if (!preg_match('/^[A-Za-z0-9]+\.[a-z0-9]+$/', $token)) {
             return null;
         }

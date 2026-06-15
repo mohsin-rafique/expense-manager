@@ -338,7 +338,7 @@ class IncomeController extends Controller
                 Yii::$app->formatter->asDate($searchModel->end_date);
         }
 
-        // Title block (rows 1–3)
+        // Title block (rows 1-3)
         $sheet->setCellValue('A1', 'Income Report');
         $sheet->setCellValue('A2', 'Generated: ' . Yii::$app->formatter->asDatetime(time()));
         if ($dateRange) {

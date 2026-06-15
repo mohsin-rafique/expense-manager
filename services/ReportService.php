@@ -17,7 +17,7 @@ use app\models\Budget;
  *
  * It resolves the reporting period (month / fiscal year / custom range /
  * lifetime) and produces summary totals, category breakdowns, period trends,
- * and budget status — all scoped to a single user.
+ * and budget status - all scoped to a single user.
  *
  * @author Mohsin Rafique <mohsin.rafique@gmail.com>
  * @since 1.0.0
@@ -52,7 +52,7 @@ class ReportService
                 if ($end < $start) {
                     [$start, $end] = [$end, $start];
                 }
-                $label = Yii::$app->formatter->asDate($start) . ' – ' . Yii::$app->formatter->asDate($end);
+                $label = Yii::$app->formatter->asDate($start) . ' - ' . Yii::$app->formatter->asDate($end);
                 return ['start' => $start, 'end' => $end, 'label' => $label, 'type' => $type];
 
             case self::PERIOD_LIFETIME:

@@ -90,7 +90,7 @@ $colorOptions = [
     <!-- Parent Category -->
     <div class="mb-3">
         <?= $form->field($model, 'parent_id')->dropDownList(
-            ['' => Yii::t('app', '— Root Category (No Parent) —')] + $parentOptions,
+            ['' => Yii::t('app', '- Root Category (No Parent) -')] + $parentOptions,
             [
                 'class' => 'form-select',
                 'id' => 'parent-category-select',
@@ -379,7 +379,7 @@ $js = <<<JS
 
             if (parentId && parentOptions[parentId]) {
                 // Remove indentation dashes from parent name
-                parentName = parentOptions[parentId].replace(/^[—\s]+/, '');
+                parentName = parentOptions[parentId].replace(/^[-\s]+/, '');
             }
 
             if (parentName) {

@@ -40,7 +40,7 @@ $features = $this->params['authPromoFeatures'] ?? [
     Yii::t('app', 'Track daily expenses effortlessly'),
     Yii::t('app', 'Categorize income and spending'),
     Yii::t('app', 'Generate insightful financial reports'),
-    Yii::t('app', 'Secure and private — your data stays yours'),
+    Yii::t('app', 'Secure and private - your data stays yours'),
 ];
 ?>
 

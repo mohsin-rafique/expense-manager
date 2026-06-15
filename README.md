@@ -5,7 +5,7 @@
 <h1 align="center">Expense Manager</h1>
 
 <p align="center">
-  <strong>A production-ready, open-source financial management system built with PHP Yii2 — crafted for businesses, freelancers, and individuals who demand clarity over their money.</strong>
+  <strong>A production-ready, open-source financial management system built with PHP Yii2 - crafted for businesses, freelancers, and individuals who demand clarity over their money.</strong>
 </p>
 
 <p align="center">
@@ -48,13 +48,13 @@
 
 ---
 
-> **If this project saves you time or inspires your own work, please consider giving it a ⭐ star — it takes one second and means the world to an open-source developer.**
+> **If this project saves you time or inspires your own work, please consider giving it a ⭐ star - it takes one second and means the world to an open-source developer.**
 
 ---
 
 ## 🧭 Overview
 
-**Expense Manager** is a self-hosted, full-featured financial tracking application built from the ground up with the **Yii2 PHP framework**. It gives businesses, freelancers, and individuals a clean, powerful dashboard to manage income, expenses, categories, and reports — without depending on third-party cloud services or paying subscription fees.
+**Expense Manager** is a self-hosted, full-featured financial tracking application built from the ground up with the **Yii2 PHP framework**. It gives businesses, freelancers, and individuals a clean, powerful dashboard to manage income, expenses, categories, and reports - without depending on third-party cloud services or paying subscription fees.
 
 This is not a demo project. It is a production-grade application with:
 
@@ -64,7 +64,7 @@ This is not a demo project. It is a production-grade application with:
 - A unified AJAX response system across all controllers
 - Clean MVC architecture following Yii2 conventions throughout
 
-Whether you are a business owner looking for a finance tool you control, a developer evaluating modern PHP architecture, or a hiring manager assessing real-world PHP skill — this project speaks for itself.
+Whether you are a business owner looking for a finance tool you control, a developer evaluating modern PHP architecture, or a hiring manager assessing real-world PHP skill - this project speaks for itself.
 
 ---
 
@@ -77,11 +77,11 @@ Most expense-tracking tools either cost money, lock your data in someone else's 
 | **100% Free & Open Source** | No monthly fees, no vendor lock-in, full code ownership |
 | **Self-Hosted** | Your financial data lives on your server, not ours |
 | **Production-Ready Security** | Rate-limited login, bcrypt passwords, `.env`-based secrets, CSRF on every form |
-| **Professional XLSX Exports** | Styled spreadsheets with branded headers — ready to share with accountants |
+| **Professional XLSX Exports** | Styled spreadsheets with branded headers - ready to share with accountants |
 | **Hierarchical Categories** | Model real-world business expense trees, not flat lists |
 | **50+ Currencies Supported** | Ready for international teams and multi-currency operations |
-| **Modern, Responsive UI** | Bootstrap 5.3 with dark/light mode — looks great on desktop and mobile |
-| **Built to Extend** | Clean Yii2 MVC architecture — easy to customize, easy to hand to a new developer |
+| **Modern, Responsive UI** | Bootstrap 5.3 with dark/light mode - looks great on desktop and mobile |
+| **Built to Extend** | Clean Yii2 MVC architecture - easy to customize, easy to hand to a new developer |
 
 ---
 
@@ -97,12 +97,12 @@ Most expense-tracking tools either cost money, lock your data in someone else's 
 
 ### 💸 Expense Management
 
-- Track expenses with detailed metadata — date, amount, payment method, notes
+- Track expenses with detailed metadata - date, amount, payment method, notes
 - **Hierarchical categories** with parent/child structure for real-world expense trees
 - Multiple payment methods: Cash, Card, Bank Transfer
 - File attachment support for receipts and invoices
 - Advanced filtering, searching, and pagination
-- Export filtered data to styled XLSX — column-formatted, zebra-striped, and branded
+- Export filtered data to styled XLSX - column-formatted, zebra-striped, and branded
 
 ### 📊 Dashboard & Reporting
 
@@ -116,7 +116,7 @@ Most expense-tracking tools either cost money, lock your data in someone else's 
 ### 🎯 Budget Management
 
 - Set spending budgets **per category** (expense caps or income targets)
-- **Monthly, yearly, and fiscal-year** budget periods — spending is tracked against the current period automatically
+- **Monthly, yearly, and fiscal-year** budget periods - spending is tracked against the current period automatically
 - Configurable **alert threshold** per budget (e.g. warn at 80% of the limit)
 - Color-coded progress bars with on-track / approaching-limit / over-budget states
 - **In-app toast alerts** the moment a saved expense pushes a category over its threshold
@@ -130,21 +130,21 @@ Most expense-tracking tools either cost money, lock your data in someone else's 
 - Four report types: **Financial Summary**, **Category Breakdown**, **Income vs Expense** trend, and **Budget Status**
 - Flexible periods: **this/any month**, **fiscal year**, **custom date range**, and **all-time**
 - Branded header (company name), summary metric cards, percentage bars, and per-page footers
-- Full **Unicode & right-to-left** rendering — reports generate correctly in every supported language, including Urdu
+- Full **Unicode & right-to-left** rendering - reports generate correctly in every supported language, including Urdu
 
 ### 👥 Multi-User / Team Workspaces
 
-- **Shared workspaces** — invite teammates to collaborate on the same income, expenses, categories, and budgets
+- **Shared workspaces** - invite teammates to collaborate on the same income, expenses, categories, and budgets
 - **Role-based access control**: Owner (full control + delete), Admin (manage members + data), Member (manage data), Viewer (read-only)
 - **Email invitations** for existing and brand-new users, with token-based acceptance (new sign-ups auto-join on registration)
 - One-click **workspace switcher** in the navbar; every user keeps a private personal workspace
-- Server-side enforcement — read-only members can't create/edit/delete, non-admins can't manage members
+- Server-side enforcement - read-only members can't create/edit/delete, non-admins can't manage members
 - Existing data migrates seamlessly into each user's personal workspace (no data loss)
 
 ### 📥 Data Import (CSV / Excel)
 
 - Bulk-import **expenses and income** from `.csv`, `.xlsx`, or `.xls` files
-- **Preview before commit** — every row is validated and shown with an OK / duplicate / skip status before anything is written
+- **Preview before commit** - every row is validated and shown with an OK / duplicate / skip status before anything is written
 - Flexible column mapping by header name (order-independent); tolerant of currency symbols, thousands separators, and multiple date formats
 - **Auto-create missing categories** and **skip duplicates** (toggleable per import)
 - Downloadable template per type to get started quickly
@@ -165,81 +165,81 @@ Most expense-tracking tools either cost money, lock your data in someone else's 
 - Date/time format and timezone preferences per user
 - Company name, logo, and favicon upload for white-label feel
 - Database backup/export from within the application
-- All sensitive settings managed via `.env` — nothing hardcoded
+- All sensitive settings managed via `.env` - nothing hardcoded
 
 ### 🎨 UI/UX
 
-- Responsive Bootstrap 5.3 layout — mobile, tablet, and desktop
+- Responsive Bootstrap 5.3 layout - mobile, tablet, and desktop
 - Dark and Light theme toggle (persisted per user)
-- PJAX-powered navigation — fast, no full page reloads
+- PJAX-powered navigation - fast, no full page reloads
 - AJAX modals for all Create/Edit/View/Delete operations
 - Toast notification system (NEM Toast) with success, warning, and error states
-- Bootstrap Icons throughout — consistent, crisp iconography
+- Bootstrap Icons throughout - consistent, crisp iconography
 
 ### 🌐 Multi-Language Support (i18n)
 
-- Full UI localization in **5 languages** — English, Spanish (Español), French (Français), Urdu (اردو), and German (Deutsch)
-- In-app language switcher in the navigation bar — change languages with one click
+- Full UI localization in **5 languages** - English, Spanish (Español), French (Français), Urdu (اردو), and German (Deutsch)
+- In-app language switcher in the navigation bar - change languages with one click
 - Per-user language preference saved to the database; remembered across sessions
 - Automatic language detection for guests via the browser `Accept-Language` header, with cookie persistence
 - **Right-to-left (RTL)** layout support, enabled automatically for Urdu
-- Built on Yii2's native `Yii::t()` translation framework with PHP message catalogs — easy to extend with new languages
+- Built on Yii2's native `Yii::t()` translation framework with PHP message catalogs - easy to extend with new languages
 - Graceful fallback to English for any string not yet translated
 
 ### 🔐 Security (Production-Hardened)
 
-- Login rate limiting — max 5 failed attempts per IP per 15 minutes
+- Login rate limiting - max 5 failed attempts per IP per 15 minutes
 - CSRF protection on every POST form
 - Bcrypt password hashing
 - SQL injection prevention via PDO prepared statements
 - XSS prevention via Yii2 output encoding
 - Session cookie hardening via `.env` (`SESSION_SECURE`, `SESSION_SAMESITE`)
-- Debug mode disabled by default — no stack traces in production
+- Debug mode disabled by default - no stack traces in production
 
 ---
 
 ## 📸 Screenshots
 
 <p align="center">
-  <img src="docs/screenshots/dashboard.png" alt="Dashboard — Financial Overview" width="100%" />
-  <br><em>Dashboard — See your full financial picture at a glance: income, expenses, balance, and trends</em>
+  <img src="docs/screenshots/dashboard.png" alt="Dashboard - Financial Overview" width="100%" />
+  <br><em>Dashboard - See your full financial picture at a glance: income, expenses, balance, and trends</em>
 </p>
 
 <p align="center">
   <img src="docs/screenshots/income-category.png" alt="Income Categories" width="100%" />
-  <br><em>Income Categories — Organize income sources with icons and colors for instant recognition</em>
+  <br><em>Income Categories - Organize income sources with icons and colors for instant recognition</em>
 </p>
 
 <p align="center">
   <img src="docs/screenshots/income.png" alt="Income Records" width="100%" />
-  <br><em>Income — Track every earning with date, category, amount, reference, and attachments</em>
+  <br><em>Income - Track every earning with date, category, amount, reference, and attachments</em>
 </p>
 
 <p align="center">
-  <img src="docs/screenshots/expense-category-grid.png" alt="Expense Categories — Grid View" width="100%" />
-  <br><em>Expense Categories — Grid view with icon, color, and usage count per category</em>
+  <img src="docs/screenshots/expense-category-grid.png" alt="Expense Categories - Grid View" width="100%" />
+  <br><em>Expense Categories - Grid view with icon, color, and usage count per category</em>
 </p>
 
 <p align="center">
-  <img src="docs/screenshots/expense-category-tree.png" alt="Expense Categories — Tree View" width="100%" />
-  <br><em>Expense Categories — Hierarchical tree view for modeling real-world business expense structures</em>
+  <img src="docs/screenshots/expense-category-tree.png" alt="Expense Categories - Tree View" width="100%" />
+  <br><em>Expense Categories - Hierarchical tree view for modeling real-world business expense structures</em>
 </p>
 
 <p align="center">
   <img src="docs/screenshots/expenses.png" alt="Expenses" width="100%" />
-  <br><em>Expenses — Complete expense ledger with filters, search, payment method, and export</em>
+  <br><em>Expenses - Complete expense ledger with filters, search, payment method, and export</em>
 </p>
 
 <p align="center">
   <img src="docs/screenshots/profile.png" alt="User Profile" width="100%" />
-  <br><em>Profile — User settings, avatar, theme preference, currency, and timezone</em>
+  <br><em>Profile - User settings, avatar, theme preference, currency, and timezone</em>
 </p>
 
 ---
 
 ## 🛠 Tech Stack
 
-This project demonstrates a deliberate, professional choice of technologies — selected for stability, security, and real-world production viability.
+This project demonstrates a deliberate, professional choice of technologies - selected for stability, security, and real-world production viability.
 
 | Layer | Technology | Why |
 |---|---|---|
@@ -332,9 +332,9 @@ SESSION_SECURE=false
 SESSION_SAMESITE=Lax
 ```
 
-> Your `.env` file is gitignored — credentials are never committed to the repository.
+> Your `.env` file is gitignored - credentials are never committed to the repository.
 
-> ⚠️ Never set `YII_DEBUG=true` in production — it exposes stack traces and internal file paths.
+> ⚠️ Never set `YII_DEBUG=true` in production - it exposes stack traces and internal file paths.
 
 ### 3. Run Database Migrations
 
@@ -371,7 +371,7 @@ Update `config/web.php` with a unique secret key:
 
 ### 6. Web Server
 
-**Apache** — The `web/.htaccess` file is included. Enable `mod_rewrite`:
+**Apache** - The `web/.htaccess` file is included. Enable `mod_rewrite`:
 
 ```bash
 sudo a2enmod rewrite
@@ -411,7 +411,7 @@ server {
 
 1. Open `http://your-domain.com` or `http://localhost/expense-manager/web/`
 2. Log in with the demo account or register a new user
-3. Go to **Settings** — configure your currency, timezone, and branding
+3. Go to **Settings** - configure your currency, timezone, and branding
 4. Create your income and expense **Categories**
 5. Start recording transactions under **Income** and **Expenses**
 
@@ -433,9 +433,9 @@ server {
 
 ### Categories
 
-**Income Categories:** Navigate to **Income → Categories** — add, edit, delete, set icon and color.
+**Income Categories:** Navigate to **Income → Categories** - add, edit, delete, set icon and color.
 
-**Expense Categories:** Navigate to **Expenses → Categories** — supports parent/child hierarchy, drag-and-drop organization, icon and color customization.
+**Expense Categories:** Navigate to **Expenses → Categories** - supports parent/child hierarchy, drag-and-drop organization, icon and color customization.
 
 ### Dashboard
 
@@ -492,9 +492,9 @@ expense-manager/
 
 The project is under active development. Planned features in priority order:
 
-- [ ] **REST API** — Yii2 RESTful API for mobile and third-party integrations
-- [ ] **Mobile app** — React Native companion app via the REST API
-- [ ] **Bank account integration** — connect to banking APIs for auto-import
+- [ ] **REST API** - Yii2 RESTful API for mobile and third-party integrations
+- [ ] **Mobile app** - React Native companion app via the REST API
+- [ ] **Bank account integration** - connect to banking APIs for auto-import
 
 Want to help build any of these? See [Contributing](#-contributing).
 
@@ -533,11 +533,11 @@ Want to help build any of these? See [Contributing](#-contributing).
 
 This project is a live demonstration of what I bring to every client engagement:
 
-- **Clean architecture** — MVC strictly followed, no logic in views, no fat controllers
-- **Security-first mindset** — every form protected, every secret in `.env`, rate limiting baked in
-- **Database professionalism** — normalized schemas, versioned migrations, no raw SQL in business logic
-- **Real deliverables** — styled XLSX exports your accountant can open, not raw data dumps
-- **Maintainable code** — PHPDoc on every class, PHP 8.1 type declarations throughout, Yii2 coding standards enforced
+- **Clean architecture** - MVC strictly followed, no logic in views, no fat controllers
+- **Security-first mindset** - every form protected, every secret in `.env`, rate limiting baked in
+- **Database professionalism** - normalized schemas, versioned migrations, no raw SQL in business logic
+- **Real deliverables** - styled XLSX exports your accountant can open, not raw data dumps
+- **Maintainable code** - PHPDoc on every class, PHP 8.1 type declarations throughout, Yii2 coding standards enforced
 
 ### Services Available
 
@@ -555,8 +555,8 @@ This project is a live demonstration of what I bring to every client engagement:
 - 10+ years of PHP development experience
 - Deep expertise in **Yii2**, Laravel, and raw PHP architecture
 - Every project delivered with **full documentation and clean handover**
-- Responsive communication — I treat your project like my own product
-- Open source contributor — you can see how I write code *before* you hire me
+- Responsive communication - I treat your project like my own product
+- Open source contributor - you can see how I write code *before* you hire me
 
 > **Ready to discuss your project?** Email me at [mohsin.rafique@gmail.com](mailto:mohsin.rafique@gmail.com) or visit [mohsinrafique.com](https://mohsinrafique.com)
 
@@ -602,7 +602,7 @@ Found a bug? Please [open an issue](https://github.com/mohsin-rafique/expense-ma
 
 ## ❤️ Support This Project
 
-If Expense Manager saved you time, inspired your work, or helped you learn — here is how you can give back:
+If Expense Manager saved you time, inspired your work, or helped you learn - here is how you can give back:
 
 <p align="center">
   <a href="https://github.com/mohsin-rafique/expense-manager/stargazers">
@@ -614,11 +614,11 @@ If Expense Manager saved you time, inspired your work, or helped you learn — h
   </a>
 </p>
 
-- ⭐ **Star** this repository — it helps others discover the project and supports the developer's profile
-- 🐛 **Report bugs** — help make the project more stable for everyone
-- 💡 **Suggest features** — open a GitHub Discussion or Issue
-- 📖 **Improve documentation** — fix typos, add examples, translate
-- 📢 **Share** — tell other PHP developers, business owners, or communities about it
+- ⭐ **Star** this repository - it helps others discover the project and supports the developer's profile
+- 🐛 **Report bugs** - help make the project more stable for everyone
+- 💡 **Suggest features** - open a GitHub Discussion or Issue
+- 📖 **Improve documentation** - fix typos, add examples, translate
+- 📢 **Share** - tell other PHP developers, business owners, or communities about it
 
 ---
 
@@ -630,7 +630,7 @@ See [CHANGELOG.md](CHANGELOG.md) for the full version history, including every f
 
 ## 📜 License
 
-This project is open-source software licensed under the **MIT License** — you are free to use, modify, and distribute it for any purpose, including commercial use.
+This project is open-source software licensed under the **MIT License** - you are free to use, modify, and distribute it for any purpose, including commercial use.
 
 ```
 MIT License
@@ -652,11 +652,11 @@ copies or substantial portions of the Software.
 
 ## 🙏 Acknowledgments
 
-- [Yii Framework Team](https://www.yiiframework.com/) — the fast, secure, and professional PHP framework that powers this application
-- [Bootstrap](https://getbootstrap.com/) — the world's most popular front-end toolkit
-- [Bootstrap Icons](https://icons.getbootstrap.com/) — clean, high-quality open-source icons
-- [ApexCharts](https://apexcharts.com/) — beautiful, interactive JavaScript charts
-- [PhpSpreadsheet](https://phpspreadsheet.readthedocs.io/) — powerful PHP library for reading and writing spreadsheets
+- [Yii Framework Team](https://www.yiiframework.com/) - the fast, secure, and professional PHP framework that powers this application
+- [Bootstrap](https://getbootstrap.com/) - the world's most popular front-end toolkit
+- [Bootstrap Icons](https://icons.getbootstrap.com/) - clean, high-quality open-source icons
+- [ApexCharts](https://apexcharts.com/) - beautiful, interactive JavaScript charts
+- [PhpSpreadsheet](https://phpspreadsheet.readthedocs.io/) - powerful PHP library for reading and writing spreadsheets
 - All [contributors](https://github.com/mohsin-rafique/expense-manager/graphs/contributors) who improve this project with every pull request and issue
 
 ---
@@ -666,7 +666,7 @@ copies or substantial portions of the Software.
 </p>
 
 <p align="center">
-  <a href="https://github.com/mohsin-rafique/expense-manager/stargazers">⭐ Star this repository if it helped you — it keeps the project alive and growing.</a>
+  <a href="https://github.com/mohsin-rafique/expense-manager/stargazers">⭐ Star this repository if it helped you - it keeps the project alive and growing.</a>
 </p>
 
 <p align="center">

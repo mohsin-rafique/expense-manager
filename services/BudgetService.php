@@ -48,7 +48,7 @@ class BudgetService
 
     /**
      * Returns active budgets that have reached or exceeded their alert
-     * threshold (expense budgets only — those represent risk).
+     * threshold (expense budgets only - those represent risk).
      *
      * @param int $userId
      * @param int $limit Maximum number to return (0 = no limit)

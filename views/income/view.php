@@ -69,7 +69,7 @@ $color = $category->color ?? '#16a34a';
                     <?= Yii::t('app', 'Reference') ?>
                 </div>
                 <div class="fw-semibold">
-                    <?= $model->reference ? Html::encode($model->reference) : '<span class="text-muted">—</span>' ?>
+                    <?= $model->reference ? Html::encode($model->reference) : '<span class="text-muted">-</span>' ?>
                 </div>
             </div>
         </div>

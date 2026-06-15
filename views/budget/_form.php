@@ -61,7 +61,7 @@ $currencyCode = Yii::$app->currency->currencyCode ?? '';
                 $categoryOptions,
                 [
                     'id' => 'budget-category-id',
-                    'prompt' => Yii::t('app', '— Select Category —'),
+                    'prompt' => Yii::t('app', '- Select Category -'),
                     'class' => 'form-select',
                 ]
             )->label(Yii::t('app', 'Category') . ' <span class="text-danger">*</span>') ?>
@@ -163,7 +163,7 @@ $currencyCode = Yii::$app->currency->currencyCode ?? '';
 
 <?php
 $categoriesUrl = Url::to(['categories']);
-$selectPrompt = Yii::t('app', '— Select Category —');
+$selectPrompt = Yii::t('app', '- Select Category -');
 $currentCategoryId = (int) $model->category_id;
 $js = <<<JS
 (function() {

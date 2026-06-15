@@ -127,7 +127,7 @@ class ExpenseSearch extends Expense
             $dataProvider->pagination = false;
         }
 
-        // Skip validation for export — required fields from parent Expense model
+        // Skip validation for export - required fields from parent Expense model
         // would cause validate() to fail, returning all records unfiltered.
         if (!$isExport && !$this->validate()) {
             return $dataProvider;

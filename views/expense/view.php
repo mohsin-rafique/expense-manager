@@ -91,7 +91,7 @@ $this->title = Yii::t('app', 'Expense #{id}', ['id' => $model->id]);
                 </div>
                 <div class="detail-content">
                     <div class="detail-label"><?= Yii::t('app', 'Reference') ?></div>
-                    <div class="detail-value"><?= Html::encode($model->reference ?: '—') ?></div>
+                    <div class="detail-value"><?= Html::encode($model->reference ?: '-') ?></div>
                 </div>
             </div>
         </div>
@@ -187,25 +187,25 @@ $this->title = Yii::t('app', 'Expense #{id}', ['id' => $model->id]);
             <div class="col-md-6">
                 <div class="d-flex justify-content-between py-2 border-bottom">
                     <span class="text-muted"><?= Yii::t('app', 'Created At') ?></span>
-                    <span><?= !empty($model->created_at) ? Yii::$app->formatter->asDatetime($model->created_at) : '—' ?></span>
+                    <span><?= !empty($model->created_at) ? Yii::$app->formatter->asDatetime($model->created_at) : '-' ?></span>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="d-flex justify-content-between py-2 border-bottom">
                     <span class="text-muted"><?= Yii::t('app', 'Created By') ?></span>
-                    <span><?= Html::encode($model->createdBy->profile->name ?? $model->createdBy->username ?? '—') ?></span>
+                    <span><?= Html::encode($model->createdBy->profile->name ?? $model->createdBy->username ?? '-') ?></span>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="d-flex justify-content-between py-2 border-bottom">
                     <span class="text-muted"><?= Yii::t('app', 'Updated At') ?></span>
-                    <span><?= !empty($model->updated_at) ? Yii::$app->formatter->asDatetime($model->updated_at) : '—' ?></span>
+                    <span><?= !empty($model->updated_at) ? Yii::$app->formatter->asDatetime($model->updated_at) : '-' ?></span>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="d-flex justify-content-between py-2 border-bottom">
                     <span class="text-muted"><?= Yii::t('app', 'Updated By') ?></span>
-                    <span><?= Html::encode($model->updatedBy->profile->name ?? $model->updatedBy->username ?? '—') ?></span>
+                    <span><?= Html::encode($model->updatedBy->profile->name ?? $model->updatedBy->username ?? '-') ?></span>
                 </div>
             </div>
         </div>

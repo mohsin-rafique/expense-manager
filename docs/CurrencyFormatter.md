@@ -187,7 +187,7 @@ use app\components\CurrencyFormatter;
 
 <?= $form->field($model, 'currency')->dropDownList(
     CurrencyFormatter::getCurrencyCodes(),
-    ['class' => 'form-select', 'prompt' => '— Select Currency —']
+    ['class' => 'form-select', 'prompt' => '- Select Currency -']
 ) ?>
 
 <?= $form->field($model, 'currency_position')->dropDownList(
@@ -316,7 +316,7 @@ CurrencyFormatter::getPositionOptions();
 | `formatToK($amount, $decimals?)`                      | Thousands notation     | `"25.00k"`    |
 | `getSymbol($currency?)`                               | Get currency symbol    | `"$"`         |
 | `getConfig()`                                         | Get current settings   | `[...]`       |
-| `applyUserSettings($settings)`                        | Apply user preferences | —             |
+| `applyUserSettings($settings)`                        | Apply user preferences | -             |
 
 ### Static Methods
 

@@ -7,7 +7,7 @@
  */
 
 /**
- * Budget Status PDF report — current progress of active expense budgets.
+ * Budget Status PDF report - current progress of active expense budgets.
  *
  * @var yii\web\View $this
  * @var array $period

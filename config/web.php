@@ -526,7 +526,7 @@ $config = [
             'decimalSeparator' => '.',
             'dateFormat' => 'php:M d, Y',
             'datetimeFormat' => 'php:M d, Y H:i',
-            'nullDisplay' => '—',
+            'nullDisplay' => '-',
         ],
 
         /*

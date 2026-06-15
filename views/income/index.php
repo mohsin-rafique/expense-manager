@@ -209,7 +209,7 @@ $recordCount = $statistics['count'] ?? 0;
                                 'headerOptions' => ['style' => 'width: 150px;'],
                                 'contentOptions' => ['class' => 'text-truncate', 'style' => 'max-width: 150px;'],
                                 'value' => function ($model) {
-                                    return $model->reference ?: '—';
+                                    return $model->reference ?: '-';
                                 },
                             ],
 
@@ -220,7 +220,7 @@ $recordCount = $statistics['count'] ?? 0;
                                 'headerOptions' => ['style' => 'min-width: 200px;'],
                                 'contentOptions' => ['class' => 'text-truncate', 'style' => 'max-width: 250px;'],
                                 'value' => function ($model) {
-                                    $desc = $model->description ?: '—';
+                                    $desc = $model->description ?: '-';
                                     return \yii\helpers\StringHelper::truncate($desc, 50);
                                 },
                             ],

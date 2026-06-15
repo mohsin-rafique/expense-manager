@@ -110,7 +110,7 @@ class ReportController extends Controller
         $orientation = $report === 'income-expense' ? 'L' : 'P';
 
         return (new PdfGenerator())->download($html, $filename, [
-            'title' => self::reportOptions()[$report] . ' — ' . $period['label'],
+            'title' => self::reportOptions()[$report] . ' - ' . $period['label'],
             'orientation' => $orientation,
         ]);
     }

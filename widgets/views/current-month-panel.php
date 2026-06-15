@@ -7,7 +7,7 @@
  */
 
 /**
- * Current Month Panel Widget View (Summary Mode) — Enhanced with Sparklines
+ * Current Month Panel Widget View (Summary Mode) - Enhanced with Sparklines
  *
  * @var yii\web\View $this
  * @var string $widgetId Unique widget identifier

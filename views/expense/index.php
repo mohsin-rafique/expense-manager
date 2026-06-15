@@ -31,7 +31,7 @@ use app\components\CustomGridView;
 
 $this->title = Yii::t('app', 'Expenses');
 
-// Get query parameters for export — fall back to searchModel's active values
+// Get query parameters for export - fall back to searchModel's active values
 // so the export URL reflects the default date range even when no query params are set.
 $expensesSearchParams = Yii::$app->request->queryParams['ExpenseSearch'] ?? [
     'start_date' => $searchModel->start_date,
@@ -284,7 +284,7 @@ $pjaxContainerId = 'expenses-pjax';
                             'visible' => (Yii::$app->user->identity?->profile?->country_code) === 'PK',
                             'value' => function ($model) {
                                 if (empty($model->fbr_category)) {
-                                    return '<span class="text-muted">—</span>';
+                                    return '<span class="text-muted">-</span>';
                                 }
                                 $fbrCategories = \app\models\ExpenseCategory::getFbrCategories();
                                 $label = $fbrCategories[$model->fbr_category] ?? $model->fbr_category;
@@ -302,7 +302,7 @@ $pjaxContainerId = 'expenses-pjax';
                             'format' => 'raw',
                             'value' => function ($model) {
                                 if (empty($model->payment_method)) {
-                                    return '<span class="text-muted">—</span>';
+                                    return '<span class="text-muted">-</span>';
                                 }
                                 $badges = [
                                     'Cash' => ['class' => 'bg-success bg-opacity-10 text-success', 'icon' => 'bi-cash'],
@@ -325,7 +325,7 @@ $pjaxContainerId = 'expenses-pjax';
                             'format' => 'raw',
                             'value' => function ($model) {
                                 if (empty($model->reference)) {
-                                    return '<span class="text-muted">—</span>';
+                                    return '<span class="text-muted">-</span>';
                                 }
                                 return '<span title="' . Html::encode($model->reference) . '">' .
                                     Html::encode($model->reference) . '</span>';
@@ -340,7 +340,7 @@ $pjaxContainerId = 'expenses-pjax';
                             'format' => 'raw',
                             'value' => function ($model) {
                                 if (empty($model->description)) {
-                                    return '<span class="text-muted">—</span>';
+                                    return '<span class="text-muted">-</span>';
                                 }
                                 $desc = \yii\helpers\StringHelper::truncate($model->description, 40);
                                 return '<span title="' . Html::encode($model->description) . '">' .

@@ -358,7 +358,7 @@ class IncomeCategoryController extends Controller
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->setTitle('Income Categories');
 
-        // Title block (rows 1–2)
+        // Title block (rows 1-2)
         $sheet->setCellValue('A1', 'Income Category Report');
         $sheet->setCellValue('A2', 'Generated: ' . Yii::$app->formatter->asDatetime(time()));
 

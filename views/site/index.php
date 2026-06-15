@@ -11,11 +11,11 @@
  *
  * Main dashboard displaying financial overview, trends, and analytics.
  * Organized into three logical sections:
- *   1. Current Month  — snapshot of this month's activity
- *   2. Fiscal Year     — year-to-date breakdowns and comparisons
- *   3. Lifetime        — all-time cumulative metrics
+ *   1. Current Month  - snapshot of this month's activity
+ *   2. Fiscal Year     - year-to-date breakdowns and comparisons
+ *   3. Lifetime        - all-time cumulative metrics
  *
- * All data comes from the DashboardViewModel — no business logic here.
+ * All data comes from the DashboardViewModel - no business logic here.
  *
  * @var yii\web\View $this
  * @var app\viewmodels\DashboardViewModel $vm

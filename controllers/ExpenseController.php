@@ -332,7 +332,7 @@ class ExpenseController extends Controller
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->setTitle('Expense Report');
 
-        // Title block (rows 1–3)
+        // Title block (rows 1-3)
         $sheet->setCellValue('A1', 'Expense Report');
         $sheet->setCellValue('A2', 'Generated: ' . Yii::$app->formatter->asDatetime(time()));
 
@@ -391,7 +391,7 @@ class ExpenseController extends Controller
         // Freeze pane below header
         $sheet->freezePane('A' . ($headerRow + 1));
 
-        // Populate data — A=Date, B=Category, C=Payment Method, D=Reference, E=Description, F=Amount
+        // Populate data - A=Date, B=Category, C=Payment Method, D=Reference, E=Description, F=Amount
         $firstDataRow = $headerRow + 1;
         $row = $firstDataRow;
         $totalAmount = 0;

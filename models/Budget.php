@@ -19,7 +19,7 @@ use app\services\FiscalYearService;
  * Budget model for the "{{%budgets}}" table.
  *
  * A budget defines a spending cap (for an expense category) or a target
- * (for an income category) over a recurring period — monthly, yearly, or the
+ * (for an income category) over a recurring period - monthly, yearly, or the
  * application's fiscal year. Spending/earning for the *current* period is
  * computed on the fly from the related transactions, including any descendant
  * categories for hierarchical expense categories.

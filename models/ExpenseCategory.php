@@ -571,9 +571,9 @@ class ExpenseCategory extends ActiveRecord
      * ```php
      * // Hierarchical dropdown showing:
      * // Food
-     * // — Groceries
-     * // — — Vegetables
-     * // — Restaurants
+     * // - Groceries
+     * // - - Vegetables
+     * // - Restaurants
      * <?= $form->field($model, 'expense_category_id')->dropDownList(
      *     ExpenseCategory::getExpenseCategoryHierarchy(),
      *     ['prompt' => 'Select Category']
@@ -792,7 +792,7 @@ class ExpenseCategory extends ActiveRecord
     protected static function flattenTreeForDropdown(array $tree, int $depth = 0, array $excludeIds = []): array
     {
         $result = [];
-        $prefix = str_repeat('— ', $depth);
+        $prefix = str_repeat('- ', $depth);
 
         foreach ($tree as $node) {
             if (in_array($node['id'], $excludeIds)) {
