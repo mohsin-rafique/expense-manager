@@ -546,6 +546,9 @@ var NEM = (function ($) {
         init: function ($container) {
             $container = $container || $(document);
 
+            // Enhance searchable selects within this scope (e.g. modal forms).
+            Select.init($container);
+
             // Find and initialize data-forms
             $container.find(Config.formSelector).each(function () {
                 var $form = $(this);
@@ -1152,6 +1155,68 @@ var NEM = (function ($) {
 
     /**
      * =========================================================================
+     * SEARCHABLE SELECT (Choices.js)
+     * =========================================================================
+     */
+    var Select = {
+        /**
+         * Enhance <select> elements carrying the `.js-choices` marker class into
+         * searchable dropdowns. Safe to call repeatedly: each element is only
+         * initialized once. Works on page load, PJAX refresh, and AJAX modals.
+         *
+         * @param {jQuery} $container - Scope to search within (defaults to document)
+         */
+        init: function ($container) {
+            if (typeof Choices === "undefined") {
+                Utils.log("Choices.js not loaded; skipping searchable selects", "warn");
+                return;
+            }
+
+            $container = $container || $(document);
+
+            $container.find("select.js-choices").each(function () {
+                var el = this;
+
+                // Skip elements that are already enhanced.
+                if (el.choicesInstance) return;
+
+                // Only show the search box when the list is long enough to need it.
+                var optionCount = el.querySelectorAll("option").length;
+
+                el.choicesInstance = new Choices(el, {
+                    searchEnabled: optionCount > 8,
+                    searchResultLimit: 50,
+                    shouldSort: false, // preserve category tree / defined order
+                    allowHTML: false,
+                    itemSelectText: "",
+                    searchPlaceholderValue:
+                        el.getAttribute("data-search-placeholder") || "Search...",
+                });
+
+                Utils.log("Searchable select initialized: " + (el.id || el.name || "unnamed"), "log");
+            });
+        },
+
+        /**
+         * Set a select's value programmatically and keep its Choices UI in sync.
+         *
+         * @param {Element} el - The native <select> element
+         * @param {string} value - Option value to select
+         * @returns {boolean}
+         */
+        setValue: function (el, value) {
+            if (!el) return false;
+            if (el.choicesInstance) {
+                el.choicesInstance.setChoiceByValue(String(value));
+            } else {
+                el.value = value;
+            }
+            return true;
+        },
+    };
+
+    /**
+     * =========================================================================
      * AMOUNT INPUT FORMATTER
      * =========================================================================
      */
@@ -1606,6 +1671,13 @@ var NEM = (function ($) {
         AmountFormatter.init(".amount-input, #expense-amount, #income-amount");
         FormUtils.trimOnSubmit(".expense-search form, .income-search form");
 
+        // Enhance marked <select> elements into searchable dropdowns, and
+        // re-run after PJAX swaps content (e.g. filtered list reloads).
+        Select.init();
+        $(document).on("pjax:end", function (e) {
+            Select.init($(e.target));
+        });
+
         // Initialize settings page modules (only runs if elements exist)
         CurrencyPreview.init();
         SettingsTabs.init();
@@ -1639,6 +1711,7 @@ var NEM = (function ($) {
         DateUtils: DateUtils,
         QuickDateFilter: QuickDateFilter,
         FileUpload: FileUpload,
+        Select: Select,
         AmountFormatter: AmountFormatter,
         GridCheckbox: GridCheckbox,
         BulkDelete: BulkDelete,

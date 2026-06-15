@@ -66,8 +66,9 @@ $categories = IncomeCategory::getIncomeCategory();
             <?= Yii::t('app', 'Category') ?>
         </label>
         <?= Html::activeDropDownList($model, 'income_category_id', $categories, [
-            'class' => 'form-select',
+            'class' => 'form-select js-choices',
             'prompt' => Yii::t('app', 'All Categories'),
+            'data-search-placeholder' => Yii::t('app', 'Search categories...'),
         ]) ?>
     </div>
 

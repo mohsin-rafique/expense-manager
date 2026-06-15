@@ -51,9 +51,10 @@ $categories = IncomeCategory::getIncomeCategory();
                 'options' => ['class' => 'mb-0'],
                 'template' => '{label}{input}{hint}{error}',
             ])->dropDownList($categories, [
-                'class' => 'form-select',
+                'class' => 'form-select js-choices',
                 'prompt' => Yii::t('app', '- Select Category -'),
                 'id' => 'income-category-select',
+                'data-search-placeholder' => Yii::t('app', 'Search categories...'),
             ])->label('<i class="bi bi-folder me-1 text-success"></i>' . Yii::t('app', 'Category') . ' <span class="text-danger">*</span>') ?>
         </div>
 

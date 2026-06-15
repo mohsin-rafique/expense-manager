@@ -67,8 +67,9 @@ $categories = ExpenseCategory::getExpenseCategoryHierarchy();
             <?= Yii::t('app', 'Category') ?>
         </label>
         <?= Html::activeDropDownList($model, 'expense_category_id', $categories, [
-            'class' => 'form-select',
+            'class' => 'form-select js-choices',
             'prompt' => Yii::t('app', 'All Categories'),
+            'data-search-placeholder' => Yii::t('app', 'Search categories...'),
         ]) ?>
     </div>
 
@@ -79,7 +80,7 @@ $categories = ExpenseCategory::getExpenseCategoryHierarchy();
             <?= Yii::t('app', 'Payment') ?>
         </label>
         <?= Html::activeDropDownList($model, 'payment_method', Expense::getPaymentMethods(), [
-            'class' => 'form-select',
+            'class' => 'form-select js-choices',
             'prompt' => Yii::t('app', 'All Methods'),
         ]) ?>
     </div>

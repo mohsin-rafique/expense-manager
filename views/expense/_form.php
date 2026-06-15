@@ -55,9 +55,10 @@ $showFbr = (Yii::$app->user->identity?->profile?->country_code) === 'PK';
                 'options' => ['class' => 'mb-0'],
                 'template' => '{label}{input}{hint}{error}',
             ])->dropDownList($categories, [
-                'class' => 'form-select',
+                'class' => 'form-select js-choices',
                 'prompt' => Yii::t('app', '- Select Category -'),
                 'id' => 'expense-category-select',
+                'data-search-placeholder' => Yii::t('app', 'Search categories...'),
             ])->label('<i class="bi bi-folder me-1 text-danger"></i>' . Yii::t('app', 'Category') . ' <span class="text-danger">*</span>') ?>
         </div>
 
@@ -69,7 +70,7 @@ $showFbr = (Yii::$app->user->identity?->profile?->country_code) === 'PK';
             ])->dropDownList(
                 $fbrCategories,
                 [
-                    'class' => 'form-select',
+                    'class' => 'form-select js-choices',
                     'prompt' => 'Select FBR Category...'
                 ]
             ); ?>
@@ -92,7 +93,7 @@ $showFbr = (Yii::$app->user->identity?->profile?->country_code) === 'PK';
                 'options' => ['class' => 'mb-0'],
                 'template' => '{label}{input}{hint}{error}',
             ])->dropDownList(Expense::getPaymentMethods(), [
-                'class' => 'form-select',
+                'class' => 'form-select js-choices',
                 'prompt' => Yii::t('app', '- Select Payment Method -'),
             ])->label('<i class="bi bi-credit-card me-1 text-danger"></i>' . Yii::t('app', 'Payment Method')) ?>
         </div>
@@ -279,6 +280,16 @@ $showFbr = (Yii::$app->user->identity?->profile?->country_code) === 'PK';
 <?php ActiveForm::end(); ?>
 
 <?php
+// Category list for the receipt matcher, sourced from PHP so it stays reliable
+// regardless of how the searchable-select widget manipulates the DOM options.
+$categoryOptions = [];
+foreach ($categories as $catId => $catLabel) {
+    $name = preg_replace('/^[\s\-]+/u', '', (string) $catLabel);
+    if ($name !== '') {
+        $categoryOptions[] = ['id' => (string) $catId, 'name' => $name];
+    }
+}
+
 $scanConfig = json_encode([
     // Tesseract.js (browser-side OCR) - loaded on demand from a CDN.
     'lib' => 'https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js',
@@ -290,6 +301,7 @@ $scanConfig = json_encode([
     'pdfNote' => Yii::t('app', 'PDF attached. Auto-reading works on photos/images (PNG, JPG) only.'),
     'filledPrefix' => Yii::t('app', 'Filled in:'),
     'suggestedCategory' => Yii::t('app', 'Suggested category:'),
+    'categories' => $categoryOptions,
 ], JSON_UNESCAPED_UNICODE);
 
 $css = <<<'CSS'
@@ -299,6 +311,9 @@ $css = <<<'CSS'
 @keyframes receiptFlash {
     0% { background-color: #fff3cd; }
     100% { background-color: transparent; }
+}
+.choices.receipt-filled .choices__inner {
+    animation: receiptFlash 1.8s ease-out;
 }
 CSS;
 $this->registerCss($css);
@@ -362,9 +377,25 @@ $(function () {
     function fillField(selector, value) {
         var $el = $(selector);
         if (!$el.length) { return false; }
-        $el.val(value).trigger('change');
-        $el.addClass('receipt-filled');
-        setTimeout(function () { $el.removeClass('receipt-filled'); }, 1800);
+        var el = $el[0];
+
+        // For searchable selects, go through the helper so the Choices UI updates.
+        if (el.tagName === 'SELECT' && window.NEM && NEM.Select) {
+            NEM.Select.setValue(el, value);
+        } else {
+            $el.val(value);
+        }
+        $el.trigger('change');
+
+        // Flash the visible control (the Choices wrapper when the select is enhanced).
+        var $flash = $el;
+        try {
+            if (el.choicesInstance && el.choicesInstance.containerOuter) {
+                $flash = $(el.choicesInstance.containerOuter.element);
+            }
+        } catch (e) { /* fall back to the original element */ }
+        $flash.addClass('receipt-filled');
+        setTimeout(function () { $flash.removeClass('receipt-filled'); }, 1800);
         return true;
     }
 
@@ -488,15 +519,9 @@ $(function () {
     }
 
     function getCategoryOptions() {
-        var opts = [];
-        $('#expense-category-select option').each(function () {
-            var val = $(this).attr('value');
-            if (!val) { return; }
-            // Strip the hierarchy indentation prefix ("- ") used in the dropdown.
-            var name = $(this).text().replace(/^[\s--]+/, '').trim();
-            if (name) { opts.push({ id: val, name: name }); }
-        });
-        return opts;
+        // Sourced from PHP (RECEIPT_SCAN.categories) so it stays reliable even
+        // after the searchable-select widget takes over the dropdown's options.
+        return (RECEIPT_SCAN.categories || []).slice();
     }
 
     var CATEGORY_KEYWORDS = [
