@@ -563,7 +563,7 @@ Want to help build any of these? See [Contributing](#-contributing).
 
 ---
 
-## 👨‍💻 Hire the Developer
+## 💼 Hire the Developer
 
 <p align="center">
   <a href="https://github.com/mohsin-rafique">
