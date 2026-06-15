@@ -2,7 +2,7 @@
 
 /**
  * @link https://github.com/mohsin-rafique/expense-manager
- * @copyright Copyright (c) 2025 Mohsin Rafique
+ * @copyright Copyright (c) 2025 - 2026 Mohsin Rafique
  * @license https://opensource.org/licenses/MIT MIT License
  *
  * View for FiscalYearIncomeExpenseWidget

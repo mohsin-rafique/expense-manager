@@ -54,7 +54,7 @@
 
 ## 🧭 Overview
 
-**Expense Manager** is a self-hosted, full-featured financial tracking application built from the ground up with the **Yii2 PHP framework**. It gives businesses, freelancers, and individuals a clean, powerful dashboard to manage income, expenses, categories, and reports - without depending on third-party cloud services or paying subscription fees.
+**Expense Manager** is a self-hosted, full-featured financial tracking application built from the ground up with the **Yii2 PHP framework**. It gives businesses, freelancers, and individuals a clean, powerful dashboard to manage income, expenses, budgets, and reports across multi-user team workspaces - localized in five languages and without depending on third-party cloud services or paying subscription fees.
 
 This is not a demo project. It is a production-grade application with:
 
@@ -70,18 +70,22 @@ Whether you are a business owner looking for a finance tool you control, a devel
 
 ## 💡 Why Expense Manager?
 
-Most expense-tracking tools either cost money, lock your data in someone else's cloud, or are too basic to be useful for a real business. Expense Manager was built to solve all three problems at once.
+Off-the-shelf finance tools force an uncomfortable trade-off: pay a recurring subscription, hand your data to someone else's cloud, or settle for something too basic to run a real business on. Expense Manager removes that trade-off entirely. It is a self-hosted, production-grade platform you own outright, engineered to the standard you would expect from a commercial SaaS product, minus the monthly bill and the vendor lock-in.
 
 | What You Get | Why It Matters |
 |---|---|
-| **100% Free & Open Source** | No monthly fees, no vendor lock-in, full code ownership |
-| **Self-Hosted** | Your financial data lives on your server, not ours |
-| **Production-Ready Security** | Rate-limited login, bcrypt passwords, `.env`-based secrets, CSRF on every form |
-| **Professional XLSX Exports** | Styled spreadsheets with branded headers - ready to share with accountants |
-| **Hierarchical Categories** | Model real-world business expense trees, not flat lists |
-| **50+ Currencies Supported** | Ready for international teams and multi-currency operations |
-| **Modern, Responsive UI** | Bootstrap 5.3 with dark/light mode - looks great on desktop and mobile |
-| **Built to Extend** | Clean Yii2 MVC architecture - easy to customize, easy to hand to a new developer |
+| **You Own Everything** | Open source under the MIT license. No subscriptions, no per-seat fees, no vendor lock-in, and full source-code ownership. |
+| **Your Data Never Leaves** | Fully self-hosted. Sensitive financial records stay on your own infrastructure, not a third-party cloud. |
+| **Bank-Grade Security** | Rate-limited login, bcrypt password hashing, CSRF on every form, PDO prepared statements, and secrets isolated in `.env`. |
+| **Team-Ready from Day One** | Multi-user workspaces with role-based access (Owner, Admin, Member, Viewer) and email invitations for staff or accountants. |
+| **Reports You Can Hand to a CFO** | Branded PDF financial reports and styled XLSX exports your accountant can open without reformatting a single cell. |
+| **Budgets That Warn You Early** | Per-category budgets with configurable alert thresholds and instant in-app and email notifications before you overspend. |
+| **Built for Global Business** | 50+ currencies and a fully localized interface in 5 languages, including complete right-to-left support. |
+| **Effortless Onboarding** | Bulk CSV and Excel import with a row-by-row validation preview, so nothing bad ever lands in your books. |
+| **Modern, Responsive UI** | A polished Bootstrap 5.3 interface that looks sharp on desktop, tablet, and mobile. |
+| **Engineered to Extend** | Clean Yii2 MVC with a documented service layer. Easy to audit, easy to customize, easy to hand to any developer. |
+
+> Every detail, from the normalized database schema to the footer of each generated PDF, reflects how I approach paid client work: deliberate, secure, and built to last. If you like what you see here, [the same standard is available for hire](#-hire-the-developer).
 
 ---
 
@@ -170,7 +174,7 @@ Most expense-tracking tools either cost money, lock your data in someone else's 
 ### 🎨 UI/UX
 
 - Responsive Bootstrap 5.3 layout - mobile, tablet, and desktop
-- Dark and Light theme toggle (persisted per user)
+- Clean, distraction-free interface with a consistent visual language
 - PJAX-powered navigation - fast, no full page reloads
 - AJAX modals for all Create/Edit/View/Delete operations
 - Toast notification system (NEM Toast) with success, warning, and error states
@@ -431,6 +435,8 @@ server {
 4. Filter and search across all fields
 5. Export filtered results to XLSX
 
+> **Tip:** When you attach a receipt photo (PNG/JPG), enable the **Read this invoice** toggle (Beta) to have the form auto-fill the date, amount, payment method, reference, and description from the image - read entirely in your browser, nothing is uploaded for processing. Leave it off for bills paid on a due date (e.g. utilities), where the invoice date is not the payment date.
+
 ### Categories
 
 **Income Categories:** Navigate to **Income → Categories** - add, edit, delete, set icon and color.
@@ -439,7 +445,40 @@ server {
 
 ### Dashboard
 
-The dashboard provides a real-time snapshot: total income, total expenses, current balance, monthly breakdown, and category-level charts.
+The dashboard provides a real-time snapshot: total income, total expenses, current balance, monthly breakdown, and category-level charts. The **Budget Overview** widget highlights any categories that are approaching or over their limit.
+
+### Budgets
+
+1. Navigate to **Budgets**
+2. Click **Add Budget** and pick a category, a limit amount, and a period (monthly, yearly, or fiscal year)
+3. Set an **alert threshold** (e.g. 80%) to be warned before you hit the cap
+4. Watch color-coded progress bars track current-period spending automatically
+5. Get an in-app toast (and optional email) the moment a saved expense pushes a category over its threshold
+
+### PDF Reports
+
+1. Navigate to **Reports**
+2. Choose a report type: **Financial Summary**, **Category Breakdown**, **Income vs Expense**, or **Budget Status**
+3. Pick a period: a specific month, fiscal year, custom date range, or all-time
+4. Click **Download PDF** to generate a branded report (full Unicode and RTL support, including Urdu)
+
+### Team Workspaces
+
+1. Open the **workspace switcher** in the navbar and create or select a shared workspace
+2. Go to **Workspace → Members** and invite teammates by email (existing or brand-new users)
+3. Assign a role: **Owner**, **Admin**, **Member**, or **Viewer** (read-only)
+4. Switch between your personal workspace and any shared workspace at any time - data stays scoped per workspace
+
+### Importing Data (CSV / Excel)
+
+1. Navigate to **Import**
+2. Download the template for **expenses** or **income**, or use your own `.csv`, `.xlsx`, or `.xls` file
+3. Upload the file and **preview** every row with its OK / duplicate / skip status before anything is written
+4. Toggle **auto-create missing categories** and **skip duplicates** as needed, then confirm the import
+
+### Changing the Language
+
+Use the language switcher in the navigation bar to switch between English, Spanish, French, Urdu, and German. Your choice is saved to your profile and remembered across sessions; Urdu automatically switches the layout to right-to-left.
 
 ---
 
@@ -447,12 +486,17 @@ The dashboard provides a real-time snapshot: total income, total expenses, curre
 
 ```
 expense-manager/
+├── actions/                # Reusable standalone controller actions
 ├── assets/                 # Asset bundles (CSS/JS registration)
 ├── commands/               # Console commands (migrations, seeders)
 ├── components/             # Reusable application components
-│   ├── ApiResponse.php     # Unified AJAX response envelope
-│   ├── BalanceHelper.php   # Income/expense balance calculation
-│   ├── CurrencyFormatter.php
+│   ├── ApiResponse.php           # Unified AJAX response envelope
+│   ├── BalanceHelper.php         # Income/expense balance calculation
+│   ├── CurrencyFormatter.php     # Locale-aware currency formatting
+│   ├── PdfGenerator.php          # mPDF report generation wrapper
+│   ├── WorkspaceManager.php      # Active workspace + member resolution
+│   ├── WorkspaceBehavior.php     # Scopes records to the active workspace
+│   ├── RequireWorkspaceCapability.php  # Role-based access enforcement
 │   └── ...
 ├── config/                 # Application configuration
 │   ├── web.php             # Main web application config
@@ -461,23 +505,42 @@ expense-manager/
 ├── controllers/            # HTTP request handlers (MVC Controllers)
 │   ├── ExpenseController.php
 │   ├── IncomeController.php
+│   ├── BudgetController.php
+│   ├── ReportController.php       # PDF financial reports
+│   ├── ImportController.php       # CSV/Excel bulk import
+│   ├── WorkspaceController.php    # Team workspaces + member management
 │   ├── ProfileController.php
 │   └── ...
+├── helpers/                # Stateless helper utilities
+├── mail/                   # Email view templates (invitations, alerts)
+├── messages/               # i18n translation catalogs (en, es, fr, ur, de)
 ├── migrations/             # Versioned database schema migrations
 ├── models/                 # ActiveRecord models + Search models
 │   ├── Expense.php
 │   ├── ExpenseSearch.php
-│   ├── Income.php
+│   ├── Budget.php
+│   ├── Workspace.php
 │   └── ...
-├── views/                  # Twig-compatible PHP view templates
-│   ├── expenses/
-│   ├── incomes/
+├── services/               # Business-logic service layer
+│   ├── BudgetService.php          # Budget tracking + threshold alerts
+│   ├── ReportService.php          # Report data aggregation
+│   ├── ImportService.php          # Import parsing + validation
+│   └── FiscalYearService.php      # Fiscal-year period calculation
+├── viewmodels/             # Presentation models for views
+├── views/                  # PHP view templates
+│   ├── expense/
+│   ├── income/
+│   ├── budget/
+│   ├── report/                    # PDF report layouts
+│   ├── import/
+│   ├── workspace/
 │   ├── layouts/
 │   └── ...
 ├── widgets/                # Reusable UI widget components
 ├── web/                    # Public web root (Apache/Nginx points here)
 │   ├── css/
 │   ├── js/
+│   ├── libs/                      # Vendored front-end libraries
 │   ├── uploads/
 │   └── index.php
 ├── .env.example            # Environment template
@@ -635,7 +698,7 @@ This project is open-source software licensed under the **MIT License** - you ar
 ```
 MIT License
 
-Copyright (c) 2025 Mohsin Rafique
+Copyright (c) 2025 - 2026 Mohsin Rafique
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
