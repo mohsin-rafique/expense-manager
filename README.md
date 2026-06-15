@@ -16,7 +16,7 @@
     <img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="MIT License" />
   </a>
   <a href="https://github.com/mohsin-rafique/expense-manager/stargazers">
-    <img src="https://img.shields.io/github/stars/mohsin-rafique/expense-manager?style=flat-square&color=FFD700" alt="GitHub Stars" />
+    <img src="https://img.shields.io/github/stars/mohsin-rafique/expense-manager?style=flat-square&color=FFD700&label=Stars&logo=github&logoColor=white&cacheSeconds=3600" alt="GitHub Stars" />
   </a>
   <a href="https://github.com/mohsin-rafique/expense-manager/network/members">
     <img src="https://img.shields.io/github/forks/mohsin-rafique/expense-manager?style=flat-square" alt="Forks" />
@@ -615,7 +615,7 @@ This project is a live demonstration of what I bring to every client engagement:
 
 ### Why Work With Me?
 
-- 10+ years of PHP development experience
+- 20+ years of PHP development experience
 - Deep expertise in **Yii2**, Laravel, and raw PHP architecture
 - Every project delivered with **full documentation and clean handover**
 - Responsive communication - I treat your project like my own product
