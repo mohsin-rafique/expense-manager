@@ -7,10 +7,10 @@
  */
 
 /**
- * Fiscal Year Expense Summary Widget View
+ * Fiscal Year Expense Summary by FBR Tax Category Widget View
  *
- * Renders a monthly expense breakdown table with category filtering,
- * heat map visualization, and Excel export capabilities.
+ * Renders a monthly expense breakdown table grouped by FBR tax category,
+ * with category filtering, heat map visualization, and Excel export.
  *
  * @var yii\web\View $this
  * @var string $widgetId Unique widget identifier
@@ -19,8 +19,8 @@
  * @var string $fiscalYearLabel Fiscal year display label
  * @var string|null $containerClass Additional CSS classes
  * @var array $months Month range (ym => label)
- * @var array $categories Ordered categories (id => name)
- * @var array $pivot Expense data (month => category => amount)
+ * @var array $categories FBR categories (code => label)
+ * @var array $pivot Expense data (month => code => amount)
  * @var array $totals Category totals
  * @var float $grandTotal Grand total amount
  * @var bool $enableExport Whether export is enabled
@@ -28,7 +28,7 @@
  * @var string $exportUrl Export URL
  *
  * @author Mohsin Rafique <mohsin.rafique@gmail.com>
- * @since 1.0.0
+ * @since 1.2.0
  */
 
 use app\helpers\FiscalSummaryFormat;
@@ -61,7 +61,7 @@ foreach ($categories as $catId => $catName) {
 ?>
 
 <!-- ============================================================== -->
-<!-- Fiscal Year Expense Summary Widget                             -->
+<!-- Fiscal Year Expense Summary by FBR Tax Category Widget         -->
 <!-- ============================================================== -->
 <div class="<?= implode(' ', $containerClasses) ?>" id="<?= Html::encode($widgetId) ?>">
 
@@ -120,10 +120,10 @@ foreach ($categories as $catId => $catName) {
                                         <input class="form-check-input category-checkbox"
                                             type="checkbox"
                                             value="<?= Html::encode($catId) ?>"
-                                            id="cat_<?= $widgetId ?>_<?= $catId ?>"
+                                            id="cat_<?= $widgetId ?>_<?= Html::encode($catId) ?>"
                                             checked>
                                         <label class="form-check-label small"
-                                            for="cat_<?= $widgetId ?>_<?= $catId ?>">
+                                            for="cat_<?= $widgetId ?>_<?= Html::encode($catId) ?>">
                                             <?= Html::encode($catName) ?>
                                         </label>
                                     </div>
@@ -255,4 +255,4 @@ foreach ($categories as $catId => $catName) {
 
     </div>
 </div>
-<!-- End Fiscal Year Expense Summary Widget -->
+<!-- End Fiscal Year Expense Summary by FBR Tax Category Widget -->

@@ -312,7 +312,17 @@ $deleteBannerUrl = Url::to(['delete-banner']);
                                                     <div class="d-flex align-items-center"><i class="bi bi-file-earmark-code text-primary me-2"></i><span class="fw-medium"><?= Html::encode($file['name']) ?></span></div>
                                                 </td>
                                                 <td><span class="text-muted"><?= Yii::$app->formatter->asDatetime($file['modified'], 'medium') ?></span></td>
-                                                <td class="text-end"><a href="<?= Url::to('@web/sql-exports/' . $file['name']) ?>" class="btn btn-sm btn-outline-primary" download title="<?= Yii::t('app', 'Download') ?>"><i class="bi bi-download"></i></a></td>
+                                                <td class="text-end">
+                                                    <a href="<?= Url::to('@web/sql-exports/' . $file['name']) ?>" class="btn btn-sm btn-outline-primary" download title="<?= Yii::t('app', 'Download') ?>"><i class="bi bi-download"></i></a>
+                                                    <?= Html::beginForm(['profile/delete-backup'], 'post', ['class' => 'd-inline']) ?>
+                                                        <?= Html::hiddenInput('filename', $file['name']) ?>
+                                                        <?= Html::submitButton('<i class="bi bi-trash"></i>', [
+                                                            'class' => 'btn btn-sm btn-outline-danger',
+                                                            'title' => Yii::t('app', 'Delete'),
+                                                            'data-confirm' => Yii::t('app', 'Delete this backup file? This cannot be undone.'),
+                                                        ]) ?>
+                                                    <?= Html::endForm() ?>
+                                                </td>
                                             </tr>
                                         <?php endforeach; ?>
                                     </tbody>

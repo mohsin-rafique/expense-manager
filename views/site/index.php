@@ -30,6 +30,7 @@ use app\widgets\CurrentMonthPanelWidget;
 use app\widgets\MonthlyPerformanceWidget;
 use app\widgets\ExpensesByCategoryWidget;
 use app\widgets\FiscalYearExpenseSummaryByMonth;
+use app\widgets\FiscalYearExpenseSummaryByFbrCategory;
 use app\widgets\ComparativeAnalysisPanel;
 use app\widgets\FiscalYearIncomeExpenseWidget;
 use app\widgets\LifetimeOverviewWidget;
@@ -168,6 +169,20 @@ $this->params['breadcrumbs'][] = $this->title;
     'containerClass' => 'mb-4',
 ]) ?>
 
+<!-- Fiscal Year Expense Summary by FBR Tax Category (Pakistan only) -->
+<?php if ((Yii::$app->user->identity?->profile?->country_code) === 'PK'): ?>
+    <?= FiscalYearExpenseSummaryByFbrCategory::widget([
+        'fiscalStartDate' => $vm->getFiscalStartDate(),
+        'fiscalEndDate' => $vm->getFiscalEndDate(),
+        'fiscalYearLabel' => $vm->getFiscalYearLabel(),
+        'title' => Yii::t('app', 'Fiscal Year Expense Summary by FBR Tax Category'),
+        'subtitle' => Yii::t('app', 'Monthly breakdown by FBR tax category'),
+        'enableExport' => $vm->enableExport,
+        'enableFiltering' => $vm->enableFiltering,
+        'containerClass' => 'mb-4',
+    ]) ?>
+<?php endif; ?>
+
 <!-- Fiscal Year Income vs Expenses -->
 <?= FiscalYearIncomeExpenseWidget::widget([
     'fiscalStartDate' => $vm->getFiscalStartDate(),
@@ -175,6 +190,7 @@ $this->params['breadcrumbs'][] = $this->title;
     'fiscalYearLabel' => $vm->getFiscalYearLabel(),
     'showTrendIndicators' => $vm->showTrendIndicators,
     'currencyCode' => $vm->currencyCode,
+    'enableExport' => $vm->enableExport,
     'containerClass' => 'mb-4',
 ]) ?>
 

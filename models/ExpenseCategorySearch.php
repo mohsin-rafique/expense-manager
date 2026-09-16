@@ -118,6 +118,87 @@ class ExpenseCategorySearch extends ExpenseCategory
     }
 
     /**
+     * Returns the flat set of categories the tree view should render.
+     *
+     * Filtering a hierarchy by row would orphan a matching child whose parent
+     * was filtered out, so every match drags its ancestors along. Those
+     * ancestors are context: they are shown so the match can be reached, even
+     * when they do not match themselves.
+     *
+     * @param array $params Search parameters from request
+     * @param int $workspaceId Owning workspace ID
+     * @return ExpenseCategory[] Matches plus their ancestors, parent-first
+     */
+    public function searchTreeNodes(array $params, int $workspaceId): array
+    {
+        $this->load($params);
+
+        $all = ExpenseCategory::find()
+            ->where(['workspace_id' => $workspaceId])
+            ->orderBy(['parent_id' => SORT_ASC, 'name' => SORT_ASC])
+            ->all();
+
+        if (!$this->validate() || !$this->hasTreeFilters()) {
+            return $all;
+        }
+
+        $byId = [];
+        foreach ($all as $category) {
+            $byId[$category->id] = $category;
+        }
+
+        $keep = [];
+        foreach ($all as $category) {
+            if (!$this->matchesNode($category)) {
+                continue;
+            }
+            // Walk to the root. Hitting a node that is already kept means its
+            // own ancestors were kept on an earlier walk, so stop there.
+            for ($node = $category; $node !== null; $node = $byId[$node->parent_id] ?? null) {
+                if (isset($keep[$node->id])) {
+                    break;
+                }
+                $keep[$node->id] = true;
+            }
+        }
+
+        return array_values(array_filter($all, fn ($category) => isset($keep[$category->id])));
+    }
+
+    /**
+     * Whether any filter that narrows the tree is active.
+     *
+     * @return bool
+     */
+    public function hasTreeFilters(): bool
+    {
+        return trim((string) $this->globalSearch) !== ''
+            || ($this->status !== null && $this->status !== '');
+    }
+
+    /**
+     * Whether a single category satisfies the active filters, ignoring its
+     * place in the hierarchy.
+     *
+     * @param ExpenseCategory $category
+     * @return bool
+     */
+    private function matchesNode(ExpenseCategory $category): bool
+    {
+        if ($this->status !== null && $this->status !== '' && (int) $category->status !== (int) $this->status) {
+            return false;
+        }
+
+        $term = trim((string) $this->globalSearch);
+        if ($term === '') {
+            return true;
+        }
+
+        return stripos((string) $category->name, $term) !== false
+            || stripos((string) $category->description, $term) !== false;
+    }
+
+    /**
      * Search only root categories
      *
      * @param array $params Search parameters

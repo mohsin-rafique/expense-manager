@@ -635,6 +635,11 @@ var NEM = (function ($) {
                         if (typeof options.onSuccess === "function") {
                             options.onSuccess(response);
                         }
+
+                        // Notify listeners of a successful save so a page can
+                        // update itself in place (e.g. the reconciliation screen
+                        // removes the statement line that was just added).
+                        $(document).trigger("nem:form:success", [response, $form]);
                     } else {
                         // Show error message
                         Toast.error(response.message || "An error occurred");
@@ -1234,6 +1239,10 @@ var NEM = (function ($) {
                 locale: "en-US",
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
+                // Grouping separators must stay out of the field: the amount
+                // has a client-side "number" rule that tests the raw value
+                // against a plain number pattern, so "120,000.00" fails it.
+                useGrouping: false,
             };
 
             var settings = $.extend({}, defaults, options);
@@ -1245,6 +1254,7 @@ var NEM = (function ($) {
                         parseFloat(value).toLocaleString(settings.locale, {
                             minimumFractionDigits: settings.minimumFractionDigits,
                             maximumFractionDigits: settings.maximumFractionDigits,
+                            useGrouping: settings.useGrouping,
                         }),
                     );
                 }
@@ -1252,6 +1262,29 @@ var NEM = (function ($) {
 
             $(document).on("focus", selector, function () {
                 $(this).val($(this).val().replace(/,/g, ""));
+            });
+
+            // Strip separators as they arrive, so a typed or pasted
+            // "120,000.00" cannot reach validation. Field validation runs on
+            // the form element and therefore fires before this document-level
+            // handler, so cleaning only on blur would be too late.
+            $(document).on("input", selector, function () {
+                var value = $(this).val();
+                if (value.indexOf(",") === -1) {
+                    return;
+                }
+
+                var caret = this.selectionStart;
+                var removed = (value.slice(0, caret).match(/,/g) || []).length;
+
+                $(this).val(value.replace(/,/g, ""));
+
+                try {
+                    this.setSelectionRange(caret - removed, caret - removed);
+                } catch (e) {
+                    // Selection APIs are unavailable on some input types; the
+                    // value is already clean, so caret position is cosmetic.
+                }
             });
 
             Utils.log("Amount formatter initialized for: " + selector, "log");

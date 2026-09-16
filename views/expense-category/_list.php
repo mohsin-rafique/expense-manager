@@ -20,13 +20,11 @@
  */
 
 use yii\helpers\Html;
-use yii\helpers\Url;
 use yii\grid\GridView;
-use yii\widgets\Pjax;
 
+// Rendered inside the index page's `expense-categories-pjax` container; it must
+// not open one of its own, or the page carries two elements with that id.
 ?>
-
-<?php Pjax::begin(['id' => 'expense-categories-pjax', 'timeout' => 5000]); ?>
 
 <div class="table-responsive">
     <?= GridView::widget([
@@ -182,8 +180,6 @@ use yii\widgets\Pjax;
         ],
     ]); ?>
 </div>
-
-<?php Pjax::end(); ?>
 
 <?php
 $this->registerCss(<<<CSS

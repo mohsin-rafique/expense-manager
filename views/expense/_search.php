@@ -168,7 +168,7 @@ $categories = ExpenseCategory::getExpenseCategoryHierarchy();
             </div>
 
             <!-- Description -->
-            <div class="col-md-6 col-sm-12">
+            <div class="col-md-3 col-sm-6">
                 <label class="form-label small text-muted">
                     <i class="bi bi-text-paragraph me-1"></i>
                     <?= Yii::t('app', 'Description') ?>
@@ -176,6 +176,18 @@ $categories = ExpenseCategory::getExpenseCategoryHierarchy();
                 <?= Html::activeTextInput($model, 'description', [
                     'class' => 'form-control',
                     'placeholder' => Yii::t('app', 'Search in description...'),
+                ]) ?>
+            </div>
+
+            <!-- Status -->
+            <div class="col-md-3 col-sm-6">
+                <label class="form-label small text-muted">
+                    <i class="bi bi-flag me-1"></i>
+                    <?= Yii::t('app', 'Status') ?>
+                </label>
+                <?= Html::activeDropDownList($model, 'status', Expense::getStatuses(), [
+                    'class' => 'form-select js-choices',
+                    'prompt' => Yii::t('app', 'All Statuses'),
                 ]) ?>
             </div>
         </div>

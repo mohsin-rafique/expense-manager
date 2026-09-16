@@ -10,7 +10,9 @@ namespace app\controllers;
 
 use Yii;
 use app\components\ApiResponse;
+use app\helpers\PdfText;
 use app\models\ImportForm;
+use app\services\BankStatementParser;
 use app\services\ImportService;
 use yii\helpers\FileHelper;
 use yii\web\Controller;
@@ -131,11 +133,24 @@ class ImportController extends Controller
         // Stage the uploaded file
         $token = $this->stageFile($model);
         if ($token === null) {
+            // stageFile() adds a field error when it knows why (a wrong PDF
+            // password, say); fall back to a generic message when it does not.
+            $reason = $model->getFirstError('password')
+                ?: $model->getFirstError('file')
+                ?: Yii::t('app', 'Failed to process the uploaded file.');
+
+            return $this->asJson(ApiResponse::error($reason, $model->errors));
+        }
+
+        $path = $this->stagePath($token);
+        if ($path === null || !is_file($path)) {
+            Yii::error('Staged import file could not be resolved for token: ' . $token, __METHOD__);
             return $this->asJson(ApiResponse::error(Yii::t('app', 'Failed to process the uploaded file.')));
         }
 
+        $options = $model->options();
         $service = new ImportService();
-        $parsed = $service->parse($this->stagePath($token));
+        $parsed = $service->parse($path, $options);
 
         if ($parsed['error'] !== null) {
             $this->discard($token);
@@ -144,18 +159,32 @@ class ImportController extends Controller
 
         if (empty($parsed['rows'])) {
             $this->discard($token);
-            return $this->asJson(ApiResponse::error(Yii::t('app', 'No data rows were found in the file.')));
+            return $this->asJson(ApiResponse::error($model->isStatement()
+                ? Yii::t('app', 'No {direction} lines were found in this statement.', [
+                    'direction' => $model->type === ImportService::TYPE_INCOME
+                        ? Yii::t('app', 'credit')
+                        : Yii::t('app', 'debit'),
+                ])
+                : Yii::t('app', 'No data rows were found in the file.')));
         }
 
-        $preview = $service->validateRows($parsed['rows'], $model->type, Yii::$app->user->id, $model->options());
+        $preview = $service->validateRows($parsed['rows'], $model->type, Yii::$app->user->id, $options);
 
         $html = $this->renderAjax('_preview', [
             'type' => $model->type,
             'rows' => $preview['rows'],
             'summary' => $preview['summary'],
+            'isStatement' => $model->isStatement(),
+            'format' => $parsed['format'] ?? null,
         ]);
 
-        return $this->asJson(ApiResponse::success(Yii::t('app', 'File parsed successfully.'), [
+        $message = $model->isStatement() && !empty($parsed['format'])
+            ? Yii::t('app', 'Recognized as {format}.', [
+                'format' => BankStatementParser::formatList()[$parsed['format']] ?? $parsed['format'],
+            ])
+            : Yii::t('app', 'File parsed successfully.');
+
+        return $this->asJson(ApiResponse::success($message, [
             'token' => $token,
             'summary' => $preview['summary'],
             'html' => $html,
@@ -174,14 +203,33 @@ class ImportController extends Controller
         $request = Yii::$app->request;
         $token = (string) $request->post('token', '');
         $type = (string) $request->post('type', ImportService::TYPE_EXPENSE);
-        $options = [
-            'autoCreateCategories' => (bool) $request->post('autoCreateCategories', 1),
-            'skipDuplicates' => (bool) $request->post('skipDuplicates', 1),
-        ];
 
         if (!in_array($type, [ImportService::TYPE_EXPENSE, ImportService::TYPE_INCOME], true)) {
             return $this->asJson(ApiResponse::error(Yii::t('app', 'Invalid import type.')));
         }
+
+        // Re-validate the options through the form rather than trusting the
+        // posted values: the bank and fallback category are foreign keys and
+        // must still belong to this workspace at import time. The staged file
+        // is already plain text for statements, so no password is needed here.
+        $model = new ImportForm();
+        $model->type = $type;
+        $model->source = (string) $request->post('source', ImportForm::SOURCE_SPREADSHEET);
+        $model->statementFormat = (string) $request->post('statementFormat', '');
+        $model->autoCreateCategories = (bool) $request->post('autoCreateCategories', 1);
+        $model->skipDuplicates = (bool) $request->post('skipDuplicates', 1);
+        $model->includeTransfers = (bool) $request->post('includeTransfers', 0);
+        $model->bank_id = $request->post('bankId') ?: null;
+        $model->fallbackCategoryId = $request->post('fallbackCategoryId') ?: null;
+
+        if (!$model->validate(['type', 'source', 'statementFormat', 'bank_id', 'fallbackCategoryId'])) {
+            return $this->asJson(ApiResponse::error(
+                Yii::t('app', 'Please correct the errors below.'),
+                $model->errors
+            ));
+        }
+
+        $options = $model->options();
 
         $path = $this->stagePath($token);
         if ($path === null || !is_file($path)) {
@@ -189,7 +237,7 @@ class ImportController extends Controller
         }
 
         $service = new ImportService();
-        $parsed = $service->parse($path);
+        $parsed = $service->parse($path, $options);
 
         if ($parsed['error'] !== null) {
             $this->discard($token);
@@ -222,6 +270,10 @@ class ImportController extends Controller
     /**
      * Stores the uploaded file under the staging directory and returns a token.
      *
+     * A statement PDF is converted to text here and only the text is staged.
+     * That way the confirm step re-reads plain text, and the PDF password is
+     * never held on disk nor sent back through the browser to be reposted.
+     *
      * @param ImportForm $model
      * @return string|null The staging token, or null on failure
      */
@@ -237,11 +289,49 @@ class ImportController extends Controller
             return null;
         }
 
+        if ($model->isStatement() && $model->isPdf()) {
+            return $this->stageStatementText($model, $dir);
+        }
+
         $ext = strtolower($model->file->extension ?: 'csv');
         $token = Yii::$app->security->generateRandomString(24) . '.' . preg_replace('/[^a-z0-9]/', '', $ext);
         $path = $dir . DIRECTORY_SEPARATOR . $token;
 
         return $model->file->saveAs($path) ? $token : null;
+    }
+
+    /**
+     * Extracts a statement PDF to text and stages the text.
+     *
+     * Empty output means either the wrong open password or a PDF with no text
+     * layer at all (a scan); the two are told apart by whether the file is
+     * encrypted, so the user gets an error they can act on.
+     *
+     * @param ImportForm $model
+     * @param string $dir Staging directory
+     * @return string|null
+     */
+    private function stageStatementText(ImportForm $model, string $dir): ?string
+    {
+        $temp = (string) $model->file->tempName;
+        $text = PdfText::extract($temp, $model->password);
+
+        if (trim($text) === '') {
+            if (PdfText::isEncrypted($temp)) {
+                $model->addError('password', (string) $model->password === ''
+                    ? Yii::t('app', 'This PDF is password-protected. Enter its open password and try again.')
+                    : Yii::t('app', 'The PDF password appears to be incorrect. Please check it and try again.'));
+            } else {
+                $model->addError('file', Yii::t('app', 'Could not read any text from this PDF. If it is a scanned image, export a CSV from your bank instead.'));
+            }
+
+            return null;
+        }
+
+        $token = Yii::$app->security->generateRandomString(24) . '.txt';
+        $path = $dir . DIRECTORY_SEPARATOR . $token;
+
+        return file_put_contents($path, $text) === false ? null : $token;
     }
 
     /**
@@ -252,8 +342,10 @@ class ImportController extends Controller
      */
     private function stagePath(string $token): ?string
     {
-        // Token format: <random>.<ext> - strictly alphanumeric + single dot
-        if (!preg_match('/^[A-Za-z0-9]+\.[a-z0-9]+$/', $token)) {
+        // Token format: <random>.<ext> - a single dot, and only the characters
+        // generateRandomString() can emit (base64url, so "-" and "_" included).
+        // No slashes and no second dot, which is what keeps traversal out.
+        if (!preg_match('/^[A-Za-z0-9_-]+\.[a-z0-9]+$/', $token)) {
             return null;
         }
 

@@ -63,6 +63,7 @@ class ProfileController extends Controller
                             'currency-settings',
                             'change-password',
                             'database-backup',
+                            'delete-backup',
                         ],
                         'allow' => true,
                         'roles' => ['@'],
@@ -76,6 +77,7 @@ class ProfileController extends Controller
                     'delete-avatar' => ['POST'],
                     'upload-banner' => ['POST'],
                     'delete-banner' => ['POST'],
+                    'delete-backup' => ['POST'],
                 ],
             ],
         ];
@@ -274,6 +276,33 @@ class ProfileController extends Controller
         }
 
         return $this->asJson(ApiResponse::error(Yii::t('app', 'Failed to delete banner.')));
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Database Backup Actions
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Deletes a single database backup file
+     *
+     * Removes the given .sql file from the sql-exports directory and returns
+     * to the backups tab with a flash message. The filename is supplied by the
+     * client, so it is validated against the exports directory before any
+     * filesystem call is made.
+     *
+     * @return Response Redirect back to the backups tab
+     */
+    public function actionDeleteBackup(): Response
+    {
+        $filename = (string) Yii::$app->request->post('filename', '');
+
+        if ($this->deleteBackupFile($filename)) {
+            Yii::$app->session->setFlash('success', Yii::t('app', 'Backup deleted successfully.'));
+        }
+
+        return $this->redirect(['settings', 'tab' => 'backups']);
     }
 
     /*
@@ -620,6 +649,47 @@ SQL;
         });
 
         return $fileInfos;
+    }
+
+    /**
+     * Deletes a backup file from the exports directory
+     *
+     * The filename arrives from the browser, so it is never trusted as a path.
+     * Three guards apply in order: the name is reduced to its basename, it must
+     * look like a plain .sql filename, and the resolved real path must still
+     * sit inside the exports directory. Sets an error flash and returns false
+     * if any guard fails or the file cannot be removed.
+     *
+     * @param string $filename The backup filename to delete
+     * @return bool True if the file was deleted
+     */
+    protected function deleteBackupFile(string $filename): bool
+    {
+        // Strip any directory component a crafted request may have included.
+        $filename = basename(trim($filename));
+
+        if ($filename === '' || !preg_match('/^[A-Za-z0-9._-]+\.sql$/', $filename)) {
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Invalid backup file name.'));
+            return false;
+        }
+
+        $directory = Yii::getAlias('@app/web/sql-exports/');
+        $base = realpath($directory);
+        $path = realpath($directory . $filename);
+
+        // The resolved path must still live inside the exports directory, so a
+        // symlink pointing elsewhere cannot be used to delete an unrelated file.
+        if ($base === false || $path === false || strpos($path, $base . DIRECTORY_SEPARATOR) !== 0) {
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Backup file not found.'));
+            return false;
+        }
+
+        if (!is_file($path) || !unlink($path)) {
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Failed to delete the backup file.'));
+            return false;
+        }
+
+        return true;
     }
 
     /*

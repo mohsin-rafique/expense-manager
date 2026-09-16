@@ -12,23 +12,26 @@ use Yii;
 use app\models\Expense;
 use app\models\Income;
 use app\models\ExpenseCategory;
+use app\models\ImportForm;
 use app\models\IncomeCategory;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\Shared\Date as XlsxDate;
 
 /**
- * ImportService parses CSV/XLSX/XLS spreadsheets and bulk-imports transactions.
+ * ImportService parses uploaded files and bulk-imports transactions.
  *
- * Supports both expense and income imports. It is tolerant of the application's
- * own exported report layout (title rows + a header row further down) as well as
- * clean templates whose header is the first row. Column mapping is by header
- * name, so column order does not matter.
+ * Two sources feed the same pipeline. A spreadsheet (CSV/XLSX/XLS) is mapped by
+ * header name, tolerating both the app's own exported report layout (title rows
+ * above the header) and clean templates whose header is the first row. A bank
+ * statement is read by {@see BankStatementParser} and turned into the same row
+ * shape, with the category, payment method and FBR tax category derived by
+ * {@see StatementClassifier} since a statement carries none of them.
  *
  * Workflow:
  *  1. {@see parse()} reads a file into normalized associative rows.
  *  2. {@see validateRows()} produces a per-row preview (valid/invalid, duplicate,
- *     category-to-be-created) without touching the database.
+ *     excluded, category-to-be-created) without touching the database.
  *  3. {@see import()} persists the valid rows inside a transaction.
  *
  * @author Mohsin Rafique <mohsin.rafique@gmail.com>
@@ -71,15 +74,126 @@ class ImportService
     }
 
     /**
+     * Reads an uploaded file into normalized associative rows.
+     *
+     * Dispatches on the upload source: a bank statement goes through
+     * {@see parseStatement()}, anything else is read as a spreadsheet. Both
+     * return the same row shape, so everything downstream is source-agnostic.
+     *
+     * @param string $path Absolute path to the staged file
+     * @param array $options Import options, as built by ImportForm::options()
+     * @return array{rows: array<int,array>, error: string|null, format?: string|null}
+     *   Each row: ['_line' => int, 'date' => ?string, 'category' => ?string,
+     *   'payment_method' => ?string, 'reference' => ?string,
+     *   'description' => ?string, 'amount' => ?string] plus, for statements, the
+     *   '_fbr', '_excluded' and '_mismatch' metadata keys.
+     */
+    public function parse(string $path, array $options = []): array
+    {
+        if (($options['source'] ?? null) === ImportForm::SOURCE_STATEMENT) {
+            return $this->parseStatement($path, $options);
+        }
+
+        return $this->parseSpreadsheet($path);
+    }
+
+    /**
+     * Reads a bank statement into normalized rows.
+     *
+     * Expenses come from the statement's debit column and income from its
+     * credit column, so one statement can feed either import type. Lines that
+     * only move money (cash withdrawals, account transfers, credit card bill
+     * payments) are marked excluded rather than dropped, so the preview can
+     * show what was left out and why.
+     *
+     * @param string $path Absolute path to the staged statement text
+     * @param array $options
+     * @return array{rows: array<int,array>, error: string|null, format: string|null}
+     */
+    private function parseStatement(string $path, array $options): array
+    {
+        $raw = (string) file_get_contents($path);
+
+        $parsed = (new BankStatementParser())->parse($raw, $options['statementFormat'] ?? null);
+        if ($parsed['error'] !== null) {
+            return ['rows' => [], 'error' => $parsed['error'], 'format' => null];
+        }
+
+        $isIncome = ($options['type'] ?? self::TYPE_EXPENSE) === self::TYPE_INCOME;
+        $includeTransfers = !empty($options['includeTransfers']);
+        $fallback = $this->fallbackCategoryName($options);
+
+        $rows = [];
+        foreach ($parsed['rows'] as $row) {
+            // Expenses are what left the account, income is what came in.
+            $amount = $isIncome ? $row['credit'] : $row['debit'];
+            if ($amount === null || $amount <= 0.0) {
+                continue;
+            }
+
+            $class = StatementClassifier::classify($row['description']);
+
+            $excluded = null;
+            if (!$isIncome && $class['movement'] !== null && !$includeTransfers) {
+                $excluded = $class['movementLabel'];
+            }
+
+            $rows[] = [
+                '_line' => $row['line'],
+                'date' => $row['date'],
+                // Income categories are a different set from the expense ones
+                // the classifier knows, so credits always take the fallback.
+                'category' => $isIncome ? $fallback : ($class['category'] ?? $fallback),
+                'payment_method' => $class['payment'],
+                // The full Particular goes in `reference`, matching what the
+                // reconciliation screen writes when adding a statement line as
+                // an expense. It carries the STAN number, which is what makes
+                // re-importing the same statement detect duplicates.
+                'reference' => $row['description'],
+                'description' => null,
+                'amount' => (string) $amount,
+                '_fbr' => $isIncome ? null : $class['fbr'],
+                '_excluded' => $excluded,
+                '_mismatch' => (bool) $row['mismatch'],
+            ];
+        }
+
+        return ['rows' => $rows, 'error' => null, 'format' => $parsed['format']];
+    }
+
+    /**
+     * Resolves the fallback category id chosen in the wizard to its name, which
+     * is the key the rest of the pipeline matches categories by.
+     *
+     * @param array $options
+     * @return string
+     */
+    private function fallbackCategoryName(array $options): string
+    {
+        $id = $options['fallbackCategoryId'] ?? null;
+        if ($id === null) {
+            return '';
+        }
+
+        $class = ($options['type'] ?? self::TYPE_EXPENSE) === self::TYPE_INCOME
+            ? IncomeCategory::class
+            : ExpenseCategory::class;
+
+        $name = $class::find()
+            ->select(['name'])
+            ->where(['id' => (int) $id, 'workspace_id' => Yii::$app->workspace->getId()])
+            ->scalar();
+
+        return $name === false || $name === null ? '' : (string) $name;
+    }
+
+    /**
      * Reads a spreadsheet file into normalized associative rows.
      *
      * @param string $path Absolute path to the uploaded file
      * @return array{rows: array<int,array>, error: string|null}
-     *   Each row: ['_line' => int, 'date' => ?string, 'category' => ?string,
-     *   'payment_method' => ?string, 'reference' => ?string,
-     *   'description' => ?string, 'amount' => ?string]
      */
-    public function parse(string $path): array
+    private function parseSpreadsheet(string $path): array
     {
         try {
             $reader = IOFactory::createReaderForFile($path);
@@ -161,10 +275,21 @@ class ImportService
         $valid = 0;
         $invalid = 0;
         $duplicates = 0;
+        $excludedCount = 0;
         $newCategories = [];
 
         foreach ($rows as $row) {
             $errors = [];
+
+            // Statement lines that only move money are reported, not imported.
+            $excluded = $row['_excluded'] ?? null;
+
+            // A statement row whose running balance contradicts its printed
+            // debit/credit did not parse cleanly. Never import an amount we are
+            // not sure of; show it so the user can add that one by hand.
+            if (!empty($row['_mismatch'])) {
+                $errors[] = Yii::t('app', 'Amount does not match the running balance; add this row manually.');
+            }
 
             // Date
             $date = $this->normalizeDate($row['date']);
@@ -182,9 +307,9 @@ class ImportService
             $categoryName = trim((string) $row['category']);
             $categoryId = null;
             $willCreate = false;
-            if ($categoryName === '') {
+            if ($categoryName === '' && $excluded === null) {
                 $errors[] = Yii::t('app', 'Category is required.');
-            } else {
+            } elseif ($categoryName !== '') {
                 $key = mb_strtolower($categoryName);
                 if (isset($categoryMap[$key])) {
                     $categoryId = $categoryMap[$key];
@@ -200,12 +325,14 @@ class ImportService
 
             // Duplicate detection (only meaningful when core fields are valid)
             $isDuplicate = false;
-            if (empty($errors) && $skipDuplicates && $categoryId !== null) {
+            if (empty($errors) && $excluded === null && $skipDuplicates && $categoryId !== null) {
                 $isDuplicate = $this->isDuplicate($type, $userId, $categoryId, $date, $amount, (string) $row['reference']);
             }
 
             $isValid = empty($errors);
-            if (!$isValid) {
+            if ($excluded !== null) {
+                $excludedCount++;
+            } elseif (!$isValid) {
                 $invalid++;
             } elseif ($isDuplicate) {
                 $duplicates++;
@@ -223,6 +350,8 @@ class ImportService
                 'amount' => $amount,
                 'valid' => $isValid,
                 'duplicate' => $isDuplicate,
+                'excluded' => $excluded,
+                'fbr' => $row['_fbr'] ?? null,
                 'willCreateCategory' => $willCreate,
                 'errors' => $errors,
             ];
@@ -235,6 +364,7 @@ class ImportService
                 'valid' => $valid,
                 'invalid' => $invalid,
                 'duplicates' => $duplicates,
+                'excluded' => $excludedCount,
                 'newCategories' => $newCategories,
                 'importable' => $valid, // rows that will actually be inserted
             ],
@@ -266,6 +396,13 @@ class ImportService
         $transaction = Yii::$app->db->beginTransaction();
         try {
             foreach ($rows as $row) {
+                // Money-movement lines and rows whose amount failed the running
+                // balance check are reported in the preview but never written.
+                if (!empty($row['_excluded']) || !empty($row['_mismatch'])) {
+                    $skipped++;
+                    continue;
+                }
+
                 $date = $this->normalizeDate($row['date']);
                 $amount = $this->normalizeAmount($row['amount']);
                 $categoryName = trim((string) $row['category']);
@@ -283,7 +420,7 @@ class ImportService
                         $skipped++;
                         continue;
                     }
-                    $categoryId = $this->createCategory($type, $userId, $categoryName);
+                    $categoryId = $this->createCategory($type, $userId, $categoryName, $row['_fbr'] ?? null);
                     if ($categoryId === null) {
                         $failed++;
                         $errors[] = Yii::t('app', 'Line {line}: failed to create category.', ['line' => $row['_line']]);
@@ -298,7 +435,7 @@ class ImportService
                     continue;
                 }
 
-                $model = $this->buildModel($type, $userId, $categoryId, $date, $amount, $row);
+                $model = $this->buildModel($type, $userId, $categoryId, $date, $amount, $row, $options);
 
                 if ($model->save()) {
                     $imported++;
@@ -332,13 +469,20 @@ class ImportService
     /**
      * Builds an unsaved Expense/Income model from a row.
      *
+     * Statement rows get two things a spreadsheet row does not: the bank chosen
+     * in the wizard, and draft status. They land as drafts because their
+     * category and tax category were derived from the description rather than
+     * stated by the user, so they are meant to be reviewed before they count.
+     *
+     * @param array $options Import options, as built by ImportForm::options()
      * @return Expense|Income
      */
-    private function buildModel(string $type, int $userId, int $categoryId, string $date, float $amount, array $row)
+    private function buildModel(string $type, int $userId, int $categoryId, string $date, float $amount, array $row, array $options = [])
     {
         $reference = $this->clean($row['reference']);
         $description = $this->clean($row['description']);
         $amountStr = number_format($amount, 2, '.', '');
+        $isStatement = ($options['source'] ?? null) === ImportForm::SOURCE_STATEMENT;
 
         if ($type === self::TYPE_INCOME) {
             $model = new Income();
@@ -357,6 +501,14 @@ class ImportService
             $model->reference = $reference;
             $model->description = $description;
             $model->payment_method = $this->normalizePaymentMethod($row['payment_method']);
+
+            if ($isStatement) {
+                $model->bank_id = $options['bankId'] ?? null;
+                $model->status = Expense::STATUS_DRAFT;
+                if (!empty($row['_fbr'])) {
+                    $model->fbr_category = $row['_fbr'];
+                }
+            }
         }
 
         // Blameable is web-only; set explicitly so console/import works too
@@ -482,15 +634,23 @@ class ImportService
     /**
      * Creates a category for the given type and returns its id.
      *
+     * When a statement rule supplied an FBR tax category, it is stamped on the
+     * new category too, so later expenses filed under it inherit the right tax
+     * treatment without the user setting it again.
+     *
+     * @param string|null $fbr FBR category code, when the classifier knew one
      * @return int|null
      */
-    private function createCategory(string $type, int $userId, string $name): ?int
+    private function createCategory(string $type, int $userId, string $name, ?string $fbr = null): ?int
     {
         $model = $type === self::TYPE_INCOME ? new IncomeCategory() : new ExpenseCategory();
         $model->user_id = $userId;
         $model->name = $name;
         if ($model->hasAttribute('status')) {
             $model->status = 1;
+        }
+        if ($fbr !== null && $model->hasAttribute('fbr_category')) {
+            $model->fbr_category = $fbr;
         }
         $model->created_by = $userId;
         $model->updated_by = $userId;

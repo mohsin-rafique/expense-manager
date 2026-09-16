@@ -10,7 +10,9 @@ namespace app\controllers;
 
 use Yii;
 use app\components\ApiResponse;
+use app\models\Bank;
 use app\models\Expense;
+use app\models\ExpenseCategory;
 use app\models\ExpenseSearch;
 use yii\web\Response;
 use yii\web\UploadedFile;
@@ -48,7 +50,7 @@ class ExpenseController extends Controller
             'workspaceWrite' => [
                 'class' => \app\components\RequireWorkspaceCapability::class,
                 'capability' => \app\models\WorkspaceMember::CAN_MANAGE_DATA,
-                'only' => ['create', 'update', 'delete'],
+                'only' => ['create', 'update', 'duplicate', 'delete'],
             ],
             'access' => [
                 'class' => AccessControl::class,
@@ -120,13 +122,77 @@ class ExpenseController extends Controller
     {
         $model = new Expense();
         $model->user_id = Yii::$app->user->id;
-        $model->expense_date = date('Y-m-d');
 
         if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
             return $this->processExpenseForm($model);
         }
 
+        // Defaults and optional prefill for the render path. The reconciliation
+        // screen links here with date/amount/reference so a missing statement
+        // entry can be added in one click.
+        $request = Yii::$app->request;
+        $model->expense_date = date('Y-m-d');
+        $model->status = Expense::STATUS_ACTIVE;
+
+        $prefillDate = (string) $request->get('expense_date', '');
+        if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $prefillDate)) {
+            $model->expense_date = $prefillDate;
+        }
+
+        $amount = str_replace(',', '', (string) $request->get('amount', ''));
+        if ($amount !== '' && is_numeric($amount)) {
+            $model->amount = $amount;
+        }
+
+        $reference = trim((string) $request->get('reference', ''));
+        if ($reference !== '') {
+            $model->reference = mb_substr($reference, 0, 191);
+        }
+
+        // Entries added from the reconciliation screen are bank statement debits,
+        // so default the payment method to Bank Transfer and preselect the first
+        // available bank. The user can still change either before saving.
+        if ($request->get('source') === 'reconcile') {
+            $model->payment_method = Expense::PAYMENT_BANK;
+            $banks = Bank::getList();
+            if (!empty($banks)) {
+                $model->bank_id = (int) array_key_first($banks);
+            }
+
+            // Pre-tag with the FBR tax category matching the statement group
+            // (e.g. Service Charge, SMS Alert Fee), when a valid one is passed.
+            $fbr = (string) $request->get('fbr_category', '');
+            if ($fbr !== '' && array_key_exists($fbr, ExpenseCategory::getFbrCategories())) {
+                $model->fbr_category = $fbr;
+            }
+        }
+
         return $this->renderAjax('create', ['model' => $model]);
+    }
+
+    /**
+     * Opens a pre-filled copy of an existing expense as a new draft.
+     *
+     * Nothing is written here: the form is rendered with the source values so
+     * the user can adjust them, and it posts to actionCreate() like any other
+     * new expense. The copy is marked as a draft, while a plain "Add Expense"
+     * defaults to active.
+     *
+     * @param int $id
+     * @return string
+     */
+    public function actionDuplicate($id)
+    {
+        $source = $this->findModel($id);
+        $this->checkOwnership($source);
+
+        $model = $source->makeDuplicate();
+        $model->user_id = Yii::$app->user->id;
+
+        return $this->renderAjax('create', [
+            'model' => $model,
+            'isDuplicate' => true,
+        ]);
     }
 
     /**

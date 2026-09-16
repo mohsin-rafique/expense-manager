@@ -74,7 +74,9 @@ class AppAsset extends AssetBundle
      */
     public $js = [
         '/libs/choices.js/public/assets/scripts/choices.min.js',
-        '/js/nem.js',
+        // Relative (no leading slash) so the asset manager appends a ?v=<mtime>
+        // cache-buster; leading-slash paths are returned untouched.
+        'js/nem.js',
     ];
 
     /**

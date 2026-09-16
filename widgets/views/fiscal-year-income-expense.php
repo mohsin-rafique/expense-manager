@@ -19,6 +19,8 @@
  * @var bool $showTrendIndicators Whether to show trend arrows
  * @var string $currencyCode Currency code for formatting
  * @var string $chartId Unique DOM ID (used for unique widget identification)
+ * @var bool $enableExport Whether export is enabled
+ * @var string $exportUrl Export URL
  *
  * @author Mohsin Rafique <mohsin.rafique@gmail.com>
  * @since 1.0.0
@@ -52,6 +54,16 @@ foreach ($monthlyData as $row) {
             <div class="d-flex align-items-center gap-2">
                 <?php if (!empty($fiscalYearLabel)): ?>
                     <span class="fy-badge"><?= Html::encode($fiscalYearLabel) ?></span>
+                <?php endif; ?>
+
+                <?php if ($enableExport): ?>
+                    <div class="fy-actions d-flex gap-2">
+                        <?= Html::a(
+                            '<i class="bi bi-download me-1"></i>' . Yii::t('app', 'Export'),
+                            $exportUrl,
+                            ['class' => 'btn']
+                        ) ?>
+                    </div>
                 <?php endif; ?>
             </div>
         </div>

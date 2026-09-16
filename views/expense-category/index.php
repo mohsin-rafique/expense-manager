@@ -30,6 +30,14 @@ use yii\widgets\Pjax;
 
 $this->title = Yii::t('app', 'Expense Categories');
 
+// Which pane is showing. Carried in the query string so a search submit keeps
+// the user on the view they were already looking at.
+$activeView = $searchModel->viewType === 'list' ? 'list' : 'tree';
+
+// Drives the empty state: "nothing matched" reads very differently from
+// "you have not created anything yet".
+$hasFilters = $searchModel->hasTreeFilters();
+
 // Register jsTree CSS & JS (use CDN or local)
 $this->registerCssFile('https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.16/themes/default/style.min.css');
 $this->registerJsFile('https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.16/jstree.min.js', ['depends' => [\yii\web\JqueryAsset::class]]);
@@ -141,6 +149,25 @@ $this->registerJsFile('https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.16/jstr
         </div>
     </div>
 
+    <!-- Search/Filter Card -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white border-bottom py-3">
+            <div class="d-flex align-items-center justify-content-between">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-funnel me-2"></i><?= Yii::t('app', 'Filter & Search') ?>
+                </h5>
+                <button class="btn btn-sm btn-light" type="button" data-bs-toggle="collapse" data-bs-target="#searchPanel" aria-expanded="true">
+                    <i class="bi bi-chevron-down"></i>
+                </button>
+            </div>
+        </div>
+        <div class="collapse show" id="searchPanel">
+            <div class="card-body">
+                <?= $this->render('_search', ['model' => $searchModel]) ?>
+            </div>
+        </div>
+    </div>
+
     <!-- Main Content Card -->
     <div class="card shadow-sm">
         <div class="card-header border-0 bg-transparent">
@@ -153,22 +180,12 @@ $this->registerJsFile('https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.16/jstr
                 </div>
                 <div class="col-md-6">
                     <div class="d-flex gap-2 justify-content-md-end">
-                        <!-- Search Box -->
-                        <div class="input-group" style="max-width: 250px;">
-                            <span class="input-group-text bg-transparent border-end-0">
-                                <i class="bi bi-search text-muted"></i>
-                            </span>
-                            <input type="text"
-                                class="form-control border-start-0"
-                                id="tree-search"
-                                placeholder="<?= Yii::t('app', 'Search categories...') ?>">
-                        </div>
                         <!-- View Toggle -->
                         <div class="btn-group view-toggle" role="group">
-                            <button type="button" class="btn btn-outline-secondary active" data-view="tree" title="<?= Yii::t('app', 'Tree View') ?>">
+                            <button type="button" class="btn btn-outline-secondary<?= $activeView === 'tree' ? ' active' : '' ?>" data-view="tree" title="<?= Yii::t('app', 'Tree View') ?>">
                                 <i class="bi bi-diagram-3"></i>
                             </button>
-                            <button type="button" class="btn btn-outline-secondary" data-view="list" title="<?= Yii::t('app', 'List View') ?>">
+                            <button type="button" class="btn btn-outline-secondary<?= $activeView === 'list' ? ' active' : '' ?>" data-view="list" title="<?= Yii::t('app', 'List View') ?>">
                                 <i class="bi bi-list-ul"></i>
                             </button>
                         </div>
@@ -178,8 +195,8 @@ $this->registerJsFile('https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.16/jstr
         </div>
 
         <div class="card-body">
-            <!-- Tree Toolbar -->
-            <div class="tree-toolbar">
+            <!-- Tree Toolbar (tree view only) -->
+            <div class="tree-toolbar<?= $activeView === 'tree' ? '' : ' d-none' ?>" id="tree-toolbar">
                 <button type="button" class="btn btn-sm btn-outline-secondary" id="btn-expand-all">
                     <i class="bi bi-arrows-expand me-1"></i><?= Yii::t('app', 'Expand All') ?>
                 </button>
@@ -196,32 +213,44 @@ $this->registerJsFile('https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.16/jstr
             </div>
 
             <!-- Tree Container -->
-            <div class="tree-container" id="category-tree">
+            <div class="tree-container<?= $activeView === 'tree' ? '' : ' d-none' ?>" id="category-tree">
                 <?php if (empty($treeData)): ?>
                     <div class="empty-tree">
                         <div class="empty-tree-icon">
                             <i class="bi bi-folder-plus text-danger" style="font-size: 2rem;"></i>
                         </div>
-                        <h5><?= Yii::t('app', 'No categories yet') ?></h5>
-                        <p class="text-muted mb-4">
-                            <?= Yii::t('app', 'Create your first expense category to start organizing your expenses.') ?>
-                        </p>
-                        <?= Html::button(
-                            '<i class="bi bi-plus-lg me-1"></i>' . Yii::t('app', 'Create Category'),
-                            [
-                                'class' => 'btn btn-danger btn-modal',
-                                'data-url' => Url::to(['create']),
-                                'data-title' => Yii::t('app', 'Add New Category'),
-                                'data-icon' => '<i class="bi bi-folder-plus text-danger me-2"></i>',
-                                'data-target' => '#nemModal',
-                            ]
-                        ) ?>
+                        <?php if ($hasFilters): ?>
+                            <h5><?= Yii::t('app', 'No categories found') ?></h5>
+                            <p class="text-muted mb-4">
+                                <?= Yii::t('app', 'No categories match your search criteria. Try adjusting your filters.') ?>
+                            </p>
+                            <?= Html::a(
+                                '<i class="bi bi-arrow-counterclockwise me-1"></i>' . Yii::t('app', 'Clear Filters'),
+                                ['index'],
+                                ['class' => 'btn btn-outline-secondary', 'data-pjax' => '0']
+                            ) ?>
+                        <?php else: ?>
+                            <h5><?= Yii::t('app', 'No categories yet') ?></h5>
+                            <p class="text-muted mb-4">
+                                <?= Yii::t('app', 'Create your first expense category to start organizing your expenses.') ?>
+                            </p>
+                            <?= Html::button(
+                                '<i class="bi bi-plus-lg me-1"></i>' . Yii::t('app', 'Create Category'),
+                                [
+                                    'class' => 'btn btn-danger btn-modal',
+                                    'data-url' => Url::to(['create']),
+                                    'data-title' => Yii::t('app', 'Add New Category'),
+                                    'data-icon' => '<i class="bi bi-folder-plus text-danger me-2"></i>',
+                                    'data-target' => '#nemModal',
+                                ]
+                            ) ?>
+                        <?php endif; ?>
                     </div>
                 <?php endif; ?>
             </div>
 
-            <!-- List View Container (hidden by default) -->
-            <div class="list-container d-none" id="category-list">
+            <!-- List View Container -->
+            <div class="list-container<?= $activeView === 'list' ? '' : ' d-none' ?>" id="category-list">
                 <?= $this->render('_list', [
                     'dataProvider' => $dataProvider,
                     'searchModel' => $searchModel,
@@ -502,21 +531,6 @@ $js = <<<JS
     });
 
     /**
-     * Search functionality
-     */
-    var searchTimeout;
-    jQuery('#tree-search').on('input', function() {
-        var input = jQuery(this);
-        clearTimeout(searchTimeout);
-        var query = input.val();
-        searchTimeout = setTimeout(function() {
-            if (jstree) {
-                jstree.search(query);
-            }
-        }, 300);
-    });
-
-    /**
      * Expand/Collapse all
      */
     jQuery('#btn-expand-all').on('click', function() {
@@ -540,19 +554,21 @@ $js = <<<JS
 
     /**
      * View toggle (Tree/List)
+     *
+     * The tree toolbar only makes sense over the tree, and the choice is
+     * mirrored into the search form so submitting a filter stays on this view.
      */
-    jQuery('.view-toggle .btn').on('click', function() {
+    jQuery(document).on('click', '.view-toggle .btn', function() {
         var view = jQuery(this).data('view');
+        var isTree = view === 'tree';
+
         jQuery('.view-toggle .btn').removeClass('active');
         jQuery(this).addClass('active');
 
-        if (view === 'tree') {
-            jQuery('#category-tree').removeClass('d-none');
-            jQuery('#category-list').addClass('d-none');
-        } else {
-            jQuery('#category-tree').addClass('d-none');
-            jQuery('#category-list').removeClass('d-none');
-        }
+        jQuery('#category-tree').toggleClass('d-none', !isTree);
+        jQuery('#tree-toolbar').toggleClass('d-none', !isTree);
+        jQuery('#category-list').toggleClass('d-none', isTree);
+        jQuery('#category-view-type').val(view);
     });
 
     /**

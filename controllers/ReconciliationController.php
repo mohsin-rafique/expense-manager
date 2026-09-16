@@ -1,0 +1,222 @@
+<?php
+
+/**
+ * @link https://github.com/mohsin-rafique/expense-manager
+ * @copyright Copyright (c) 2025 - 2026 Mohsin Rafique
+ * @license https://opensource.org/licenses/MIT MIT License
+ */
+
+namespace app\controllers;
+
+use Yii;
+use app\models\FbrReturnForm;
+use app\models\ReconcileForm;
+use app\services\FbrReconciliationService;
+use app\services\FbrReturnParser;
+use app\services\FiscalYearService;
+use app\services\ReconciliationService;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
+use yii\web\Controller;
+
+/**
+ * ReconciliationController compares recorded expenses against an external
+ * document: a bank statement ({@see actionIndex()}) or the FBR income tax
+ * return filed for a fiscal year ({@see actionFbr()}).
+ *
+ * The whole controller is gated to users whose profile country is Pakistan
+ * ('PK'), matching the FBR tax features. Non-PK authenticated users receive a
+ * 403; guests are sent to the login page.
+ *
+ * @author Mohsin Rafique <mohsin.rafique@gmail.com>
+ * @since 1.2.0
+ */
+class ReconciliationController extends Controller
+{
+    /**
+     * {@inheritdoc}
+     */
+    public function behaviors(): array
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['@'],
+                        'matchCallback' => fn () => self::isPakistanUser(),
+                    ],
+                ],
+            ],
+            'verbs' => [
+                'class' => VerbFilter::class,
+                'actions' => [
+                    'index' => ['GET', 'POST'],
+                    'fbr' => ['GET', 'POST'],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * Displays the reconciliation screen and, on submit, the results.
+     *
+     * @return string
+     */
+    public function actionIndex(): string
+    {
+        $model = new ReconcileForm();
+        $result = null;
+        $parseSkipped = 0;
+        $reversedIgnored = 0;
+
+        if (Yii::$app->request->isPost) {
+            $model->load(Yii::$app->request->post());
+            $model->loadUploadedFile();
+
+            if ($model->validate()) {
+                $service = new ReconciliationService();
+                $parsed = $service->parseStatement($model->rawContent());
+                $parseSkipped = $parsed['skipped'];
+                $reversedIgnored = $parsed['reversed'] ?? 0;
+
+                if (empty($parsed['rows'])) {
+                    if ($model->isPdf() && trim($model->rawContent()) === '') {
+                        if ($model->isEncryptedPdf()) {
+                            $model->addError('password', (string) $model->password === ''
+                                ? Yii::t('app', 'This PDF is password-protected. Enter its open password and try again.')
+                                : Yii::t('app', 'The PDF password appears to be incorrect. Please check it and try again.'));
+                        } else {
+                            $model->addError('file', Yii::t('app', 'Could not read any text from this PDF. If it is a scanned image, export a CSV from your bank instead.'));
+                        }
+                    } else {
+                        $model->addError('statement', Yii::t('app', 'No usable debit lines were found. Expected tab-separated: date, amount, description.'));
+                    }
+                } else {
+                    $result = $service->reconcile($parsed['rows'], (int) Yii::$app->workspace->getId());
+                }
+            }
+        }
+
+        return $this->render('index', [
+            'model' => $model,
+            'result' => $result,
+            'parseSkipped' => $parseSkipped,
+            'reversedIgnored' => $reversedIgnored,
+        ]);
+    }
+
+    /**
+     * Displays the FBR return reconciliation screen and, on submit, the results.
+     *
+     * The uploaded return's Personal Expenses (wealth statement) are compared
+     * against the workspace's expenses for the fiscal year the return covers.
+     *
+     * @return string
+     */
+    public function actionFbr(): string
+    {
+        $model = new FbrReturnForm();
+        $fiscalService = new FiscalYearService();
+        $parsed = null;
+        $result = null;
+        $fiscalYear = null;
+
+        if (Yii::$app->request->isPost) {
+            $model->load(Yii::$app->request->post());
+            $model->loadUploadedFile();
+
+            if ($model->validate()) {
+                $text = $model->text();
+
+                if (trim($text) === '') {
+                    $model->addEmptyTextError();
+                } else {
+                    $parsed = (new FbrReturnParser())->parse($text);
+
+                    if (!$parsed['isReturn']) {
+                        $model->addError('file', Yii::t('app', 'This PDF does not look like an FBR return. Upload the return generated by IRIS.'));
+                        $parsed = null;
+                    } elseif (empty($parsed['lines'])) {
+                        $model->addError('file', Yii::t('app', 'No personal expenses were found in this return. Its Wealth Statement may be empty.'));
+                        $parsed = null;
+                    } else {
+                        $fiscalYear = $this->resolveFiscalYear($model, $parsed, $fiscalService);
+                        $service = new FbrReconciliationService();
+                        $result = $service->reconcile(
+                            $parsed,
+                            $service->expenseTotals(
+                                (int) Yii::$app->workspace->getId(),
+                                $fiscalYear['startDate'],
+                                $fiscalYear['endDate']
+                            )
+                        );
+                    }
+                }
+            }
+        }
+
+        return $this->render('fbr', [
+            'model' => $model,
+            'parsed' => $parsed,
+            'result' => $result,
+            'fiscalYear' => $fiscalYear,
+            'fiscalYears' => $fiscalService->getAvailableFiscalYears(),
+        ]);
+    }
+
+    /**
+     * Decides which fiscal year the return is compared against.
+     *
+     * An explicit choice wins; otherwise the return's own period is used, which
+     * is what makes the comparison cover exactly the year that was filed. A
+     * period outside the app's fiscal year list (a return filed for a year the
+     * app has no data for yet) still yields a usable range and label. Falls back
+     * to the current fiscal year when the period cannot be read.
+     *
+     * @param FbrReturnForm $model
+     * @param array $parsed Result of {@see FbrReturnParser::parse()}
+     * @param FiscalYearService $fiscalService
+     * @return array{startDate: string, endDate: string, label: string, fromReturn: bool}
+     */
+    private function resolveFiscalYear(FbrReturnForm $model, array $parsed, FiscalYearService $fiscalService): array
+    {
+        if ((string) $model->fiscalYear !== '') {
+            $chosen = $fiscalService->getFiscalYearByLabel((string) $model->fiscalYear);
+            if ($chosen !== null) {
+                return $chosen + ['fromReturn' => false];
+            }
+        }
+
+        $start = $parsed['periodStart'] ?? null;
+        $end = $parsed['periodEnd'] ?? null;
+
+        if ($start !== null && $end !== null) {
+            foreach ($fiscalService->getAvailableFiscalYears() as $fy) {
+                if ($fy['startDate'] === $start && $fy['endDate'] === $end) {
+                    return $fy + ['fromReturn' => true];
+                }
+            }
+
+            return [
+                'startDate' => $start,
+                'endDate' => $end,
+                'label' => 'FY ' . substr($start, 0, 4) . '-' . substr($end, 2, 2),
+                'fromReturn' => true,
+            ];
+        }
+
+        return $fiscalService->getCurrentFiscalYear() + ['fromReturn' => false];
+    }
+
+    /**
+     * Whether the current user's profile country is Pakistan.
+     *
+     * @return bool
+     */
+    public static function isPakistanUser(): bool
+    {
+        return (Yii::$app->user->identity?->profile?->country_code) === 'PK';
+    }
+}

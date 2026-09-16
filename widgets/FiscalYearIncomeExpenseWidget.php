@@ -65,6 +65,17 @@ class FiscalYearIncomeExpenseWidget extends Widget
     public $currencyCode = 'USD';
 
     /**
+     * @var bool Whether to show the Export button
+     */
+    public $enableExport = true;
+
+    /**
+     * @var string Query parameter that triggers the export. Kept distinct from
+     *             the other fiscal-year widgets so only one exports at a time.
+     */
+    public $exportParam = 'export_income_expense';
+
+    /**
      * {@inheritdoc}
      */
     public function init()
@@ -85,6 +96,12 @@ class FiscalYearIncomeExpenseWidget extends Widget
     {
         $data = $this->prepareData();
 
+        // Handle export request. Exits the request, so it must run before any
+        // of this widget's markup is produced.
+        if ($this->enableExport && Yii::$app->request->get($this->exportParam) == 1) {
+            $this->exportToExcel($data);
+        }
+
         return $this->render('fiscal-year-income-expense', [
             'monthlyData' => $data['monthly'],
             'totals' => $data['totals'],
@@ -93,7 +110,25 @@ class FiscalYearIncomeExpenseWidget extends Widget
             'showTrendIndicators' => $this->showTrendIndicators,
             'currencyCode' => $this->currencyCode,
             'chartId' => $this->getId() . '-chart',
+            'enableExport' => $this->enableExport,
+            'exportUrl' => $this->getExportUrl(),
         ]);
+    }
+
+    /**
+     * Builds the URL that triggers this widget's export
+     *
+     * Appends the export flag to the current URL so the fiscal year and any
+     * other dashboard filters in play are preserved.
+     *
+     * @return string
+     */
+    protected function getExportUrl(): string
+    {
+        $url = Yii::$app->request->url;
+        $separator = (strpos($url, '?') === false) ? '?' : '&';
+
+        return $url . $separator . $this->exportParam . '=1';
     }
 
     /**
@@ -245,5 +280,94 @@ class FiscalYearIncomeExpenseWidget extends Widget
         }
 
         return $months;
+    }
+
+    /**
+     * Streams the fiscal year comparison as an .xlsx download
+     *
+     * Writes one row per month with income, expenses and net balance, followed
+     * by a totals row and the savings rate. Amounts are written as numbers so
+     * the sheet stays usable for further calculation. Terminates the request.
+     *
+     * @param array $data Output of prepareData()
+     * @return void
+     */
+    protected function exportToExcel(array $data): void
+    {
+        // Disable debug module if present
+        if (Yii::$app->hasModule('debug')) {
+            Yii::$app->getModule('debug')->instance = null;
+        }
+
+        // Discard markup already produced by earlier dashboard widgets
+        while (ob_get_level() > 0) {
+            ob_end_clean();
+        }
+
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setTitle('Income vs Expenses');
+
+        // Headers
+        $sheet->setCellValue('A1', 'Month');
+        $sheet->setCellValue('B1', 'Income');
+        $sheet->setCellValue('C1', 'Expenses');
+        $sheet->setCellValue('D1', 'Net Balance');
+
+        // Data rows
+        $rowIndex = 2;
+        foreach ($data['monthly'] as $row) {
+            $sheet->setCellValueExplicit(
+                "A{$rowIndex}",
+                $row['month'],
+                \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING
+            );
+            $sheet->setCellValue("B{$rowIndex}", $row['income']);
+            $sheet->setCellValue("C{$rowIndex}", $row['expense']);
+            $sheet->setCellValue("D{$rowIndex}", $row['net']);
+            $rowIndex++;
+        }
+
+        // Totals row
+        $totalsRowIndex = $rowIndex;
+        $sheet->setCellValue("A{$totalsRowIndex}", 'Total');
+        $sheet->setCellValue("B{$totalsRowIndex}", $data['totals']['income']);
+        $sheet->setCellValue("C{$totalsRowIndex}", $data['totals']['expense']);
+        $sheet->setCellValue("D{$totalsRowIndex}", $data['totals']['net']);
+        $rowIndex++;
+
+        // Savings rate row
+        $sheet->setCellValue("A{$rowIndex}", 'Savings Rate (%)');
+        $sheet->setCellValue("B{$rowIndex}", $data['totals']['savingsRate']);
+
+        // Header style
+        $sheet->getStyle('A1:D1')->getFont()->setBold(true);
+        $sheet->getStyle('A1:D1')->getFill()
+            ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+            ->getStartColor()->setRGB('E9EBEC');
+
+        // Totals row style
+        $sheet->getStyle("A{$totalsRowIndex}:D{$totalsRowIndex}")->getFont()->setBold(true);
+        $sheet->getStyle("A{$totalsRowIndex}:D{$totalsRowIndex}")->getFill()
+            ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+            ->getStartColor()->setRGB('CEF0EB');
+
+        // Column widths
+        $sheet->getColumnDimension('A')->setWidth(18);
+        foreach (['B', 'C', 'D'] as $col) {
+            $sheet->getColumnDimension($col)->setWidth(16);
+        }
+
+        // Output
+        $label = $this->fiscalYearLabel !== '' ? $this->fiscalYearLabel : date('Y');
+        $filename = 'Income-vs-Expenses-' . str_replace(' ', '-', $label) . '.xlsx';
+
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment; filename="' . rawurlencode($filename) . '"');
+        header('Cache-Control: max-age=0');
+
+        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+        $writer->save('php://output');
+        exit;
     }
 }

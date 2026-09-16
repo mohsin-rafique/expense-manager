@@ -445,6 +445,15 @@
     z-index: 2;
 }
 
+/* Category headers can be a full sentence (e.g. the FBR advance tax on
+   remittances by card), so let those wrap instead of forcing one very wide
+   column. The Month header above keeps its nowrap. */
+.fy-table thead th.category-col {
+    white-space: normal;
+    max-width: 170px;
+    vertical-align: bottom;
+}
+
 .fy-table thead th:first-child {
     position: sticky;
     left: 0;

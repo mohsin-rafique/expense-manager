@@ -1185,55 +1185,51 @@ a:hover {
 /* PROFILE SECTION STYLES                                         */
 /* ============================================================== */
 
-/* Profile Header */
-.profile-header-section {
+/* Profile Banner */
+.profile-banner {
     position: relative;
-    margin: -1.5rem -1.5rem 0 -1.5rem;
-}
-
-.profile-cover {
-    height: 200px;
-    background: linear-gradient(135deg, var(--em-primary) 0%, var(--em-primary-dark) 50%, var(--em-gray-800) 100%);
-    background-size: cover;
-    position: relative;
+    border-radius: var(--em-radius-xl);
+    background: linear-gradient(120deg, var(--em-primary-dark) 0%, var(--em-primary) 45%, #1e3a8a 100%);
+    box-shadow: var(--em-shadow-lg);
     overflow: hidden;
 }
 
-.profile-cover::before {
+.profile-banner::before {
     content: "";
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    inset: 0;
     background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    pointer-events: none;
 }
 
-.profile-cover-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.3) 100%);
-}
-
-.profile-header-content {
+.profile-banner-body {
     position: relative;
-    margin-top: -60px;
-    padding: 0 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    padding: 2rem;
+}
+
+.profile-banner-main {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    min-width: 0;
 }
 
 .profile-avatar-wrapper {
     position: relative;
     display: inline-block;
+    flex-shrink: 0;
 }
 
 .profile-avatar {
-    width: 120px;
-    height: 120px;
+    width: 104px;
+    height: 104px;
     border-radius: var(--em-radius-full);
-    border: 4px solid var(--em-white);
+    border: 4px solid rgba(255, 255, 255, 0.55);
     box-shadow: var(--em-shadow-lg);
     object-fit: cover;
     background-color: var(--em-white);
@@ -1243,16 +1239,16 @@ a:hover {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, var(--em-primary) 0%, var(--em-info) 100%);
+    background: linear-gradient(135deg, var(--em-primary-hover) 0%, #7c3aed 100%);
     color: var(--em-white);
-    font-size: 2.5rem;
+    font-size: 2.25rem;
     font-weight: 700;
 }
 
 .profile-status {
     position: absolute;
-    bottom: 8px;
-    right: 8px;
+    bottom: 6px;
+    right: 6px;
     width: 20px;
     height: 20px;
     border-radius: var(--em-radius-full);
@@ -1272,27 +1268,27 @@ a:hover {
     background-color: var(--em-warning);
 }
 
-.profile-header-info {
-    padding: 1rem 0;
+.profile-banner-info {
+    min-width: 0;
 }
 
 .profile-name {
     font-size: 1.75rem;
     font-weight: 700;
-    color: var(--em-gray-900);
+    color: var(--em-white);
     margin-bottom: 0.25rem;
 }
 
 .profile-designation {
     font-size: 1rem;
-    color: var(--em-gray-600);
-    margin-bottom: 0.5rem;
+    color: rgba(255, 255, 255, 0.85);
+    margin-bottom: 0.625rem;
 }
 
 .profile-meta {
     display: flex;
     flex-wrap: wrap;
-    gap: 1rem;
+    gap: 1.25rem;
 }
 
 .profile-meta-item {
@@ -1300,16 +1296,35 @@ a:hover {
     align-items: center;
     gap: 0.375rem;
     font-size: 0.875rem;
-    color: var(--em-gray-500);
+    color: rgba(255, 255, 255, 0.8);
 }
 
 .profile-meta-item i {
     font-size: 1rem;
-    color: var(--em-gray-400);
+    color: rgba(255, 255, 255, 0.7);
 }
 
-.profile-actions {
-    padding: 1rem 0;
+.profile-banner-actions {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.profile-edit-btn {
+    display: inline-flex;
+    align-items: center;
+    background-color: var(--em-white);
+    color: var(--em-primary);
+    font-weight: 600;
+    border: none;
+    border-radius: var(--em-radius-md);
+    padding: 0.5rem 1.125rem;
+    box-shadow: var(--em-shadow-sm);
+    transition: all var(--em-transition);
+}
+
+.profile-edit-btn:hover {
+    background-color: var(--em-gray-100);
+    color: var(--em-primary-dark);
 }
 
 /* Profile Cards */
@@ -1343,8 +1358,9 @@ a:hover {
 
 .profile-info-item {
     display: flex;
-    flex-direction: column;
-    padding: 0.75rem 0;
+    align-items: center;
+    gap: 0.875rem;
+    padding: 0.875rem 0;
     border-bottom: 1px solid var(--em-gray-100);
 }
 
@@ -1352,26 +1368,37 @@ a:hover {
     border-bottom: none;
 }
 
-.profile-info-label {
+.profile-info-icon {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    justify-content: center;
+    border-radius: var(--em-radius-md);
+    background-color: var(--em-primary-light);
+    color: var(--em-primary);
+    font-size: 1.0625rem;
+}
+
+.profile-info-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.profile-info-label {
     font-size: 0.75rem;
     font-weight: 500;
     color: var(--em-gray-500);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 0.25rem;
-}
-
-.profile-info-label i {
-    font-size: 0.875rem;
+    margin-bottom: 0.125rem;
 }
 
 .profile-info-value {
     font-size: 0.9375rem;
     color: var(--em-gray-800);
-    font-weight: 500;
+    font-weight: 600;
+    word-break: break-word;
 }
 
 .profile-info-value a {
@@ -1469,6 +1496,76 @@ a:hover {
     font-size: 0.8125rem;
     color: var(--em-gray-500);
     margin-top: 0.125rem;
+}
+
+/* Profile Quick Actions */
+.profile-actions-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+}
+
+.profile-action-item {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    padding: 1rem;
+    background-color: var(--em-gray-50);
+    border: 1px solid var(--em-gray-100);
+    border-radius: var(--em-radius-lg);
+    text-decoration: none;
+    transition: all var(--em-transition);
+}
+
+.profile-action-item:hover {
+    background-color: var(--em-white);
+    border-color: var(--em-gray-200);
+    box-shadow: var(--em-shadow-md);
+    transform: translateY(-2px);
+}
+
+.profile-action-icon {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--em-radius-md);
+    font-size: 1.25rem;
+}
+
+.profile-action-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    flex: 1;
+}
+
+.profile-action-label {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--em-gray-800);
+}
+
+.profile-action-subtitle {
+    font-size: 0.8125rem;
+    color: var(--em-gray-500);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.profile-action-arrow {
+    flex-shrink: 0;
+    color: var(--em-gray-400);
+    font-size: 0.875rem;
+    transition: transform var(--em-transition);
+}
+
+.profile-action-item:hover .profile-action-arrow {
+    transform: translateX(3px);
+    color: var(--em-primary);
 }
 
 /* ============================================================== */
@@ -1775,21 +1872,17 @@ a:hover {
 /* ============================================================== */
 
 @media (max-width: 991.98px) {
-    .profile-header-content {
-        margin-top: -50px;
-    }
-
     .profile-avatar {
-        width: 100px;
-        height: 100px;
+        width: 92px;
+        height: 92px;
     }
 
     .profile-name {
         font-size: 1.5rem;
     }
 
-    .profile-actions {
-        margin-top: 1rem;
+    .profile-actions-grid {
+        grid-template-columns: repeat(2, 1fr);
     }
 
     .settings-nav {
@@ -1820,17 +1913,21 @@ a:hover {
 }
 
 @media (max-width: 767.98px) {
-    .profile-header-section {
-        margin: -1rem -1rem 0 -1rem;
+    .profile-banner-body {
+        padding: 1.5rem;
     }
 
-    .profile-cover {
-        height: 150px;
+    .profile-banner-main {
+        gap: 1rem;
     }
 
-    .profile-header-content {
-        margin-top: -40px;
-        padding: 0 1rem;
+    .profile-banner-actions {
+        width: 100%;
+    }
+
+    .profile-edit-btn {
+        width: 100%;
+        justify-content: center;
     }
 
     .profile-avatar {
@@ -1851,9 +1948,8 @@ a:hover {
         gap: 0.5rem;
     }
 
-    .profile-stat-card {
-        flex-direction: column;
-        text-align: center;
+    .profile-actions-grid {
+        grid-template-columns: 1fr;
     }
 
     .settings-avatar {
@@ -2296,14 +2392,47 @@ a:hover {
     padding: 1rem;
     background: var(--em-white, #fff);
 }
+/*
+ * jsTree row metrics.
+ *
+ * The default theme lays every row out on a single fixed-height grid: the node,
+ * the anchor, the open/close arrow, the icon and the absolutely positioned
+ * .jstree-wholerow highlight bar all have to share that height. Padding the
+ * anchor on its own grew it past the grid while the highlight bar stayed behind,
+ * which left the selected row's bar out of line with its text and arrow.
+ *
+ * So set one row height in --em-tree-row and apply it everywhere. The 24px
+ * sprite icons keep their own box (their background-position is tuned for it)
+ * and are centred in the row with vertical-align instead of being resized.
+ */
+.expense-categories-index {
+    --em-tree-row: 34px;
+}
 .expense-categories-index .jstree-default .jstree-node {
+    min-height: var(--em-tree-row);
+    line-height: var(--em-tree-row);
     margin-left: 24px;
 }
+.expense-categories-index .jstree-default > .jstree-container-ul > .jstree-node {
+    margin-left: 0;
+}
 .expense-categories-index .jstree-default .jstree-anchor {
-    padding: 6px 8px;
+    height: var(--em-tree-row);
+    line-height: var(--em-tree-row);
+    padding: 0 8px;
     border-radius: 6px;
+    vertical-align: middle;
     transition: background-color 0.15s ease;
 }
+.expense-categories-index .jstree-default .jstree-icon,
+.expense-categories-index .jstree-default .jstree-icon:empty {
+    vertical-align: middle;
+}
+.expense-categories-index .jstree-default .jstree-wholerow {
+    height: var(--em-tree-row);
+    border-radius: 6px;
+}
+/* Anchor-level states, used when the wholerow plugin is not drawing the row. */
 .expense-categories-index .jstree-default .jstree-hovered {
     background: rgba(var(--em-primary-rgb, 37, 99, 235), 0.05);
     box-shadow: none;
@@ -2311,6 +2440,17 @@ a:hover {
 .expense-categories-index .jstree-default .jstree-clicked {
     background: rgba(var(--em-primary-rgb, 37, 99, 235), 0.1);
     box-shadow: none;
+}
+/*
+ * With the wholerow plugin the theme blanks the anchor states and paints the
+ * bar instead, so the app colours have to be repeated here or the row falls
+ * back to jsTree's stock blue gradient.
+ */
+.expense-categories-index .jstree-default .jstree-wholerow-hovered {
+    background: rgba(var(--em-primary-rgb, 37, 99, 235), 0.05);
+}
+.expense-categories-index .jstree-default .jstree-wholerow-clicked {
+    background: rgba(var(--em-primary-rgb, 37, 99, 235), 0.1);
 }
 .expense-categories-index .category-actions {
     display: none;

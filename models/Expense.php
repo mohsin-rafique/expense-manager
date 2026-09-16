@@ -31,6 +31,7 @@ use yii\web\UploadedFile;
  * @property string|null $filepath
  * @property string $payment_method
  * @property string|null $reference
+ * @property string $status
  * @property int|null $created_at
  * @property int|null $updated_at
  * @property int|null $created_by
@@ -57,6 +58,13 @@ class Expense extends ActiveRecord
     public const PAYMENT_CASH = 'Cash';
     public const PAYMENT_CARD = 'Card';
     public const PAYMENT_BANK = 'Bank';
+
+    /**
+     * Record statuses. New expenses are active; duplicates start as draft so
+     * they can be reviewed and edited before being marked active.
+     */
+    public const STATUS_ACTIVE = 'active';
+    public const STATUS_DRAFT = 'draft';
 
     /**
      * {@inheritdoc}
@@ -98,6 +106,12 @@ class Expense extends ActiveRecord
             $this->amount = str_replace(',', '', trim($this->amount));
         }
 
+        // Bank only applies to Card / Bank Transfer payments; never persist a
+        // stale bank when the payment method does not use one.
+        if (!in_array($this->payment_method, [self::PAYMENT_CARD, self::PAYMENT_BANK], true)) {
+            $this->bank_id = null;
+        }
+
         return parent::beforeValidate();
     }
 
@@ -113,10 +127,19 @@ class Expense extends ActiveRecord
             [['fbr_category'], 'string', 'max' => 100],
 
             // Integer fields
-            [['user_id', 'workspace_id', 'expense_category_id', 'created_at', 'updated_at', 'created_by', 'updated_by'], 'integer'],
+            [['user_id', 'workspace_id', 'expense_category_id', 'bank_id', 'created_at', 'updated_at', 'created_by', 'updated_by'], 'integer'],
+
+            // Bounds match the DECIMAL(12,2) column, so an out-of-range value
+            // is reported as a validation error rather than reaching the
+            // database and being rejected or rounded there.
+            [['amount'], 'number', 'min' => 0, 'max' => 9999999999.99],
 
             // Safe attributes
             [['fbr_category', 'expense_date'], 'safe'],
+
+            // Bank is optional; only meaningful for Card / Bank Transfer payments.
+            [['bank_id'], 'default', 'value' => null],
+            [['bank_id'], 'exist', 'skipOnError' => true, 'targetClass' => Bank::class, 'targetAttribute' => ['bank_id' => 'id']],
 
             // String validations
             [['description'], 'string'],
@@ -129,14 +152,23 @@ class Expense extends ActiveRecord
             // Payment method validation
             [['payment_method'], 'in', 'range' => array_keys(self::getPaymentMethods())],
 
+            // Status: active unless explicitly marked as a draft
+            [['status'], 'default', 'value' => self::STATUS_ACTIVE],
+            [['status'], 'in', 'range' => array_keys(self::getStatuses())],
+
             // Foreign key validations
             [['created_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['created_by' => 'id']],
             [['expense_category_id'], 'exist', 'skipOnError' => true, 'targetClass' => ExpenseCategory::class, 'targetAttribute' => ['expense_category_id' => 'id']],
             [['updated_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['updated_by' => 'id']],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
 
-            // Trim whitespace
-            [['reference', 'description', 'payment_method'], 'filter', 'filter' => fn ($value) => $value === null ? null : trim($value)],
+            // Trim whitespace. Uses a Unicode-aware trim (not PHP trim(), which
+            // only strips ASCII whitespace) so pasted values containing a
+            // non-breaking space (U+00A0), zero-width space (U+200B) or BOM
+            // (U+FEFF) are cleaned too.
+            [['reference', 'description', 'payment_method'], 'filter', 'filter' => fn ($value) => $value === null
+                ? null
+                : preg_replace('/^[\s\p{Z}\x{FEFF}\x{200B}]+|[\s\p{Z}\x{FEFF}\x{200B}]+$/u', '', $value)],
         ];
     }
 
@@ -157,7 +189,9 @@ class Expense extends ActiveRecord
             'filename' => Yii::t('app', 'Attachment'),
             'filepath' => Yii::t('app', 'File Path'),
             'payment_method' => Yii::t('app', 'Payment Method'),
+            'bank_id' => Yii::t('app', 'Bank'),
             'reference' => Yii::t('app', 'Reference'),
+            'status' => Yii::t('app', 'Status'),
             'created_at' => Yii::t('app', 'Created At'),
             'updated_at' => Yii::t('app', 'Updated At'),
             'created_by' => Yii::t('app', 'Created By'),
@@ -196,6 +230,84 @@ class Expense extends ActiveRecord
     }
 
     /**
+     * Gets available record statuses
+     *
+     * @return array
+     */
+    public static function getStatuses(): array
+    {
+        return [
+            self::STATUS_ACTIVE => Yii::t('app', 'Active'),
+            self::STATUS_DRAFT => Yii::t('app', 'Draft'),
+        ];
+    }
+
+    /**
+     * Gets the human readable status label
+     *
+     * @return string
+     */
+    public function getStatusLabel(): string
+    {
+        return self::getStatuses()[$this->status] ?? (string) $this->status;
+    }
+
+    /**
+     * Gets the status badge CSS class
+     *
+     * @return string
+     */
+    public function getStatusBadgeClass(): string
+    {
+        $classes = [
+            self::STATUS_ACTIVE => 'bg-success bg-opacity-10 text-success',
+            self::STATUS_DRAFT => 'bg-secondary bg-opacity-10 text-secondary',
+        ];
+
+        return $classes[$this->status] ?? 'bg-secondary bg-opacity-10 text-secondary';
+    }
+
+    /**
+     * Whether this expense is still a draft
+     *
+     * @return bool
+     */
+    public function isDraft(): bool
+    {
+        return $this->status === self::STATUS_DRAFT;
+    }
+
+    /**
+     * Builds an unsaved copy of this expense, marked as a draft.
+     *
+     * The attachment is deliberately not copied: both records would then point
+     * at the same file on disk, and deleting either one would remove the file
+     * from under the other.
+     *
+     * @return static
+     */
+    public function makeDuplicate(): self
+    {
+        $copy = new static();
+
+        $copy->setAttributes([
+            'user_id' => $this->user_id,
+            'expense_category_id' => $this->expense_category_id,
+            'fbr_category' => $this->fbr_category,
+            'expense_date' => $this->expense_date,
+            'description' => $this->description,
+            'amount' => $this->amount,
+            'payment_method' => $this->payment_method,
+            'bank_id' => $this->bank_id,
+            'reference' => $this->reference,
+        ], false);
+
+        $copy->status = self::STATUS_DRAFT;
+
+        return $copy;
+    }
+
+    /**
      * Gets query for [[CreatedBy]].
      *
      * @return \yii\db\ActiveQuery
@@ -213,6 +325,16 @@ class Expense extends ActiveRecord
     public function getExpenseCategory(): \yii\db\ActiveQuery
     {
         return $this->hasOne(ExpenseCategory::class, ['id' => 'expense_category_id']);
+    }
+
+    /**
+     * Gets query for [[Bank]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getBank(): \yii\db\ActiveQuery
+    {
+        return $this->hasOne(Bank::class, ['id' => 'bank_id']);
     }
 
     /**

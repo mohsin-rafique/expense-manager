@@ -74,14 +74,20 @@ class ExpenseCategoryController extends Controller
      */
     public function actionIndex(): string
     {
+        $workspaceId = (int) Yii::$app->workspace->getId();
+        $params = Yii::$app->request->queryParams;
+
         $searchModel = new ExpenseCategorySearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->search($params);
 
         // Ensure user can only see their own categories
-        $dataProvider->query->andWhere(['workspace_id' => Yii::$app->workspace->getId()]);
+        $dataProvider->query->andWhere(['workspace_id' => $workspaceId]);
 
-        // Get tree data for tree view
-        $treeData = ExpenseCategory::getJsTreeData(Yii::$app->workspace->getId(), false);
+        // Tree view honours the same filters as the list, so both views of the
+        // page agree on what is being shown.
+        $treeData = ExpenseCategory::getJsTreeDataFor(
+            $searchModel->searchTreeNodes($params, $workspaceId)
+        );
 
         // Get statistics
         $stats = $this->getCategoryStats();

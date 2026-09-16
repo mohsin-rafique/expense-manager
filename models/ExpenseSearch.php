@@ -60,7 +60,7 @@ class ExpenseSearch extends Expense
             [['start_date', 'end_date'], 'date', 'format' => 'php:Y-m-d', 'message' => Yii::t('app', 'Invalid date format!')],
 
             // Safe attributes for filtering
-            [['expense_date', 'payment_method', 'reference', 'description', 'amount', 'filename', 'filepath', 'start_date', 'end_date', 's', 'pageSize'], 'safe'],
+            [['expense_date', 'payment_method', 'status', 'reference', 'description', 'amount', 'filename', 'filepath', 'fbr_category', 'start_date', 'end_date', 's', 'pageSize'], 'safe'],
         ];
     }
 
@@ -93,7 +93,6 @@ class ExpenseSearch extends Expense
                 'attributes' => [
                     'id',
                     'expense_date',
-                    'amount',
                     'payment_method',
                     'reference',
                     'created_at',
@@ -102,9 +101,25 @@ class ExpenseSearch extends Expense
                         'asc'  => ['{{%expenses}}.description' => SORT_ASC],
                         'desc' => ['{{%expenses}}.description' => SORT_DESC],
                     ],
+                    // Qualified so the join with expense_categories cannot make
+                    // the column ambiguous. Sorts numerically because the
+                    // column is DECIMAL(12,2).
+                    'amount' => [
+                        'asc'  => ['{{%expenses}}.amount' => SORT_ASC],
+                        'desc' => ['{{%expenses}}.amount' => SORT_DESC],
+                    ],
                     'expense_category_id' => [
                         'asc'  => ['{{%expense_categories}}.name' => SORT_ASC],
                         'desc' => ['{{%expense_categories}}.name' => SORT_DESC],
+                    ],
+                    'fbr_category' => [
+                        'asc'  => ['{{%expenses}}.fbr_category' => SORT_ASC],
+                        'desc' => ['{{%expenses}}.fbr_category' => SORT_DESC],
+                    ],
+                    // Qualified: expense_categories also has a status column
+                    'status' => [
+                        'asc'  => ['{{%expenses}}.status' => SORT_ASC],
+                        'desc' => ['{{%expenses}}.status' => SORT_DESC],
                     ],
                 ],
             ],
@@ -171,6 +186,9 @@ class ExpenseSearch extends Expense
         if (array_key_exists('payment_method', $data)) {
             $this->payment_method = $data['payment_method'];
         }
+        if (array_key_exists('status', $data)) {
+            $this->status = $data['status'];
+        }
         if (array_key_exists('amount', $data)) {
             $this->amount = $data['amount'];
         }
@@ -211,6 +229,12 @@ class ExpenseSearch extends Expense
 
         // Payment method filter
         $query->andFilterWhere(['like', 'payment_method', $this->payment_method]);
+
+        // Status filter (no value means both drafts and active records)
+        $query->andFilterWhere(['{{%expenses}}.status' => $this->status]);
+
+        // FBR tax category filter (drill-down from the FBR summary / reconciliation)
+        $query->andFilterWhere(['{{%expenses}}.fbr_category' => $this->fbr_category]);
 
         // Reference filter
         $query->andFilterWhere(['like', 'reference', $this->reference]);

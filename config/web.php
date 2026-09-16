@@ -192,8 +192,13 @@ $config = [
                 'profile/delete-avatar' => 'profile/delete-avatar',    // Avatar delete
                 'profile/upload-banner' => 'profile/upload-banner',    // Banner upload
                 'profile/delete-banner' => 'profile/delete-banner',    // Banner delete
+                'profile/delete-backup' => 'profile/delete-backup',    // Backup delete
                 'profile/export' => 'profile/export',                  // Export data
                 'profile/<action:[\w\-]+>' => 'profile/<action>',      // Catch-all for profile
+
+                // Statement reconciliation (PK users only; gated in the controller)
+                'reconcile' => 'reconciliation/index',                 // Reconcile bank statement
+                'reconcile/fbr' => 'reconciliation/fbr',               // Reconcile FBR tax return
 
                 /*
                 |------------------------------------------------------------------
@@ -259,6 +264,16 @@ $config = [
                 'expense/fiscal-year' => 'expense/fiscal-year',        // Fiscal year view
                 'expense/fiscal-year/<year:[\w\-]+>' => 'expense/fiscal-year', // Specific FY
                 'expense/<action:[\w\-]+>' => 'expense/<action>',      // Catch-all for expense
+
+                /*
+                |------------------------------------------------------------------
+                | Bank Routes
+                |------------------------------------------------------------------
+                */
+                'banks' => 'bank/index',                               // Bank list
+                'bank/create' => 'bank/create',                        // Add bank (AJAX)
+                'bank/delete/<id:\d+>' => 'bank/delete',               // Delete bank
+                'bank/<action:[\w\-]+>' => 'bank/<action>',            // Catch-all for bank
 
                 /*
                 |------------------------------------------------------------------
@@ -389,7 +404,6 @@ $config = [
             'traceLevel' => YII_DEBUG ? 3 : 0,
             'flushInterval' => 100,
             'targets' => [
-
                 /*
                  * Error Log
                  * Critical issues requiring immediate attention.
@@ -440,14 +454,19 @@ $config = [
                 /*
                  * Application Log
                  * Combined log for all levels - useful for quick review.
+                 * Excludes database queries to keep the log clean (SQL still
+                 * goes to sql.log when debugging).
                  */
                 'app' => [
                     'class' => 'yii\log\FileTarget',
-                    'levels' => ['error', 'warning', 'info'],
+                    'levels' => ['error', 'warning'],
                     'logFile' => '@runtime/logs/app.log',
                     'maxFileSize' => 10240, // 10MB
                     'maxLogFiles' => 5,
                     'logVars' => [],
+                    'except' => [
+                        'yii\db\*',
+                    ],
                 ],
 
                 /*
@@ -582,6 +601,17 @@ $config = [
          */
         'workspace' => [
             'class' => 'app\components\WorkspaceManager',
+        ],
+
+        /**
+         * Asset Manager
+         *
+         * Appends each asset file's last-modified time as a ?v= query string
+         * so browsers fetch the new version whenever a JS/CSS file changes,
+         * instead of serving a stale cached copy.
+         */
+        'assetManager' => [
+            'appendTimestamp' => true,
         ],
 
     ],

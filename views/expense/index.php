@@ -75,16 +75,16 @@ $pjaxContainerId = 'expenses-pjax';
                 ]
             ) ?>
             <?php if (Yii::$app->workspace->can(\app\models\WorkspaceMember::CAN_MANAGE_DATA)): ?>
-            <?= Html::button(
-                '<i class="bi bi-plus-lg me-1"></i>' . Yii::t('app', 'Add Expense'),
-                [
+                <?= Html::button(
+                    '<i class="bi bi-plus-lg me-1"></i>' . Yii::t('app', 'Add Expense'),
+                    [
                     'class' => 'btn btn-danger btn-modal',
                     'data-url' => Url::to(['create']),
                     'data-icon' => '<i class="bi bi-graph-down-arrow text-danger me-2"></i>',
                     'data-title' => Yii::t('app', 'Add New Expense'),
                     'data-target' => '#nemModal',
-                ]
-            ) ?>
+                    ]
+                ) ?>
             <?php endif; ?>
         </div>
     </div>
@@ -245,7 +245,9 @@ $pjaxContainerId = 'expenses-pjax';
                             'contentOptions' => ['class' => 'text-center'],
                         ],
 
-                        // Date - Fixed width, no wrap
+                        // Date + status - Fixed width, no wrap. The status rides
+                        // along under the date rather than taking its own column,
+                        // which the table has no horizontal room for.
                         [
                             'attribute' => 'expense_date',
                             'headerOptions' => ['style' => 'width: 110px; white-space: nowrap;'],
@@ -255,6 +257,10 @@ $pjaxContainerId = 'expenses-pjax';
                                 return '<span class="date-cell">'
                                     . '<i class="bi bi-calendar3 me-1"></i>'
                                     . Yii::$app->formatter->asDate($model->expense_date, 'medium')
+                                    . '</span>'
+                                    . '<span class="badge ' . $model->getStatusBadgeClass() . ' d-block mt-1 fw-normal" '
+                                    . 'style="width: fit-content;">'
+                                    . Html::encode($model->getStatusLabel())
                                     . '</span>';
                             },
                         ],
@@ -262,11 +268,12 @@ $pjaxContainerId = 'expenses-pjax';
                         // Category - Flexible
                         [
                             'attribute' => 'expense_category_id',
-                            'headerOptions' => ['style' => 'width: 100px;'],
+                            'headerOptions' => ['style' => 'width: 160px;'],
+                            'contentOptions' => ['style' => 'white-space: normal;'],
                             'format' => 'raw',
                             'value' => function ($model) {
                                 $icon = $model->expenseCategory->icon ?? 'bi-tag';
-                                return '<span class="badge bg-light text-dark">
+                                return '<span class="badge bg-light text-dark text-wrap text-start">
                                     <i class="bi ' . $icon . ' me-1"></i>' .
                                     Html::encode($model->expenseCategory->name ?? 'N/A') .
                                     '</span>';
@@ -279,7 +286,10 @@ $pjaxContainerId = 'expenses-pjax';
                             'attribute' => 'fbr_category',
                             'label' => Yii::t('app', 'FBR Category'),
                             'headerOptions' => ['style' => 'width: 120px;'],
-                            'contentOptions' => ['style' => 'white-space: nowrap;'],
+                            // Some FBR labels are a full sentence (e.g. the
+                            // remittance-by-card advance tax), so let them wrap
+                            // instead of stretching the table.
+                            'contentOptions' => ['style' => 'max-width: 160px; white-space: normal;'],
                             'format' => 'raw',
                             'visible' => (Yii::$app->user->identity?->profile?->country_code) === 'PK',
                             'value' => function ($model) {
@@ -288,7 +298,8 @@ $pjaxContainerId = 'expenses-pjax';
                                 }
                                 $fbrCategories = \app\models\ExpenseCategory::getFbrCategories();
                                 $label = $fbrCategories[$model->fbr_category] ?? $model->fbr_category;
-                                return '<span class="badge bg-warning bg-opacity-10 text-warning">' .
+                                return '<span class="badge bg-warning bg-opacity-10 text-warning text-wrap text-start"'
+                                    . ' title="' . Html::encode($label) . '">' .
                                     Html::encode($label) .
                                     '</span>';
                             },
@@ -317,11 +328,29 @@ $pjaxContainerId = 'expenses-pjax';
                             },
                         ],
 
-                        // Reference - Truncated
+                        // Bank - Compact
+                        [
+                            'attribute' => 'bank_id',
+                            'label' => Yii::t('app', 'Bank'),
+                            'headerOptions' => ['style' => 'width: 120px;'],
+                            'contentOptions' => ['style' => 'white-space: nowrap;'],
+                            'format' => 'raw',
+                            'value' => function ($model) {
+                                if (empty($model->bank_id) || $model->bank === null) {
+                                    return '<span class="text-muted">-</span>';
+                                }
+                                return '<span class="badge bg-info bg-opacity-10 text-info">
+                                    <i class="bi bi-bank2 me-1"></i>' .
+                                    Html::encode($model->bank->name) .
+                                    '</span>';
+                            },
+                        ],
+
+                        // Reference - Wrapped
                         [
                             'attribute' => 'reference',
-                            'headerOptions' => ['style' => 'width: 120px;'],
-                            'contentOptions' => ['class' => 'text-truncate', 'style' => 'max-width: 120px;'],
+                            'headerOptions' => ['style' => 'width: 210px;'],
+                            'contentOptions' => ['style' => 'min-width: 170px; max-width: 280px; white-space: normal; overflow-wrap: anywhere; word-break: break-word;'],
                             'format' => 'raw',
                             'value' => function ($model) {
                                 if (empty($model->reference)) {
@@ -336,15 +365,13 @@ $pjaxContainerId = 'expenses-pjax';
                         [
                             'attribute' => 'description',
                             'headerOptions' => ['style' => 'min-width: 150px;'],
-                            'contentOptions' => ['class' => 'text-truncate', 'style' => 'max-width: 200px;'],
+                            'contentOptions' => ['style' => 'min-width: 150px; max-width: 300px; white-space: normal; overflow-wrap: anywhere;'],
                             'format' => 'raw',
                             'value' => function ($model) {
                                 if (empty($model->description)) {
                                     return '<span class="text-muted">-</span>';
                                 }
-                                $desc = \yii\helpers\StringHelper::truncate($model->description, 40);
-                                return '<span title="' . Html::encode($model->description) . '">' .
-                                    Html::encode($desc) . '</span>';
+                                return nl2br(Html::encode($model->description));
                             },
                         ],
 
@@ -368,7 +395,7 @@ $pjaxContainerId = 'expenses-pjax';
                         // Amount - Fixed width, no wrap
                         [
                             'attribute' => 'amount',
-                            'headerOptions' => ['style' => 'width: 120px; white-space: nowrap;', 'class' => 'text-end'],
+                            'headerOptions' => ['style' => 'width: 80px; white-space: nowrap;', 'class' => 'text-end'],
                             'contentOptions' => ['class' => 'text-end fw-medium text-danger', 'style' => 'white-space: nowrap;'],
                             'format' => 'raw',
                             'value' => function ($model) {
@@ -384,9 +411,9 @@ $pjaxContainerId = 'expenses-pjax';
                         [
                             'class' => 'yii\grid\ActionColumn',
                             'header' => Yii::t('app', 'Actions'),
-                            'headerOptions' => ['style' => 'width: 120px; white-space: nowrap;', 'class' => 'text-center'],
+                            'headerOptions' => ['style' => 'width: 140px; white-space: nowrap;', 'class' => 'text-center'],
                             'contentOptions' => ['class' => 'text-center', 'style' => 'white-space: nowrap;'],
-                            'template' => '{view} {update} {delete}',
+                            'template' => '{view} {update} {duplicate} {delete}',
                             'buttons' => [
                                 'view' => function ($url, $model) {
                                     return Html::button(
@@ -411,6 +438,19 @@ $pjaxContainerId = 'expenses-pjax';
                                             'data-title' => Yii::t('app', 'Update Expense'),
                                             'data-target' => '#nemModal',
                                             'title' => Yii::t('app', 'Edit'),
+                                        ]
+                                    );
+                                },
+                                'duplicate' => function ($url, $model) {
+                                    return Html::button(
+                                        '<i class="bi bi-files"></i>',
+                                        [
+                                            'class' => 'btn btn-sm btn-light btn-action me-1 btn-modal',
+                                            'data-url' => Url::to(['duplicate', 'id' => $model->id]),
+                                            'data-icon' => '<i class="bi bi-files text-danger me-2"></i>',
+                                            'data-title' => Yii::t('app', 'Duplicate Expense'),
+                                            'data-target' => '#nemModal',
+                                            'title' => Yii::t('app', 'Duplicate'),
                                         ]
                                     );
                                 },

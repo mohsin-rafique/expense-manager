@@ -14,6 +14,7 @@
  *
  * @var yii\web\View $this
  * @var app\models\Expense $model
+ * @var bool $isDuplicate Whether the form is pre-filled from an existing expense
  *
  * @author Mohsin Rafique <mohsin.rafique@gmail.com>
  * @since 1.0.0
@@ -24,10 +25,18 @@ use yii\widgets\ActiveForm;
 use yii\helpers\Url;
 use app\models\ExpenseCategory;
 use app\models\Expense;
+use app\models\Bank;
 
 $isNewRecord = $model->isNewRecord;
+$isDuplicate = isset($isDuplicate) ? (bool) $isDuplicate : false;
+// Launched from the reconciliation screen (via the "+" on a missing line).
+// There the surrounding page is a POST result and has no expenses PJAX
+// container, so we must not trigger the list PJAX reload after saving.
+$fromReconcile = $isNewRecord && Yii::$app->request->get('source') === 'reconcile';
 $categories = ExpenseCategory::getExpenseCategoryHierarchy();
 $fbrCategories = ExpenseCategory::getFbrCategories();
+$banks = Bank::getList();
+$showBank = in_array($model->payment_method, [Expense::PAYMENT_CARD, Expense::PAYMENT_BANK], true);
 
 $showFbr = (Yii::$app->user->identity?->profile?->country_code) === 'PK';
 ?>
@@ -35,16 +44,24 @@ $showFbr = (Yii::$app->user->identity?->profile?->country_code) === 'PK';
 <?php $form = ActiveForm::begin([
     'id' => 'expense-form',
     'action' => $isNewRecord ? Url::to(['create']) : Url::to(['update', 'id' => $model->id]),
-    'options' => [
+    'options' => array_merge([
         'enctype' => 'multipart/form-data',
         'class' => 'needs-validation data-form expense-form',
-        'data-container' => 'expenses-pjax',
-    ],
+    ], $fromReconcile
+        ? ['data-source' => 'reconcile']
+        : ['data-container' => 'expenses-pjax']),
     'enableClientValidation' => true,
     'enableAjaxValidation' => false,
 ]); ?>
 
 <?= Html::activeHiddenInput($model, 'user_id', ['value' => Yii::$app->user->id]); ?>
+
+<?php if ($isDuplicate): ?>
+    <div class="alert border-0 bg-secondary-subtle text-secondary-emphasis py-2 px-3 small mb-3 d-flex align-items-center">
+        <i class="bi bi-files me-2"></i>
+        <span><?= Yii::t('app', 'This is a copy of an existing expense. Change what you need, then set the status to Active when it is final.') ?></span>
+    </div>
+<?php endif; ?>
 
 <div class="row g-4">
     <!-- Main Fields Column -->
@@ -87,6 +104,18 @@ $showFbr = (Yii::$app->user->identity?->profile?->country_code) === 'PK';
             ])->label('<i class="bi bi-calendar3 me-1 text-danger"></i>' . Yii::t('app', 'Date') . ' <span class="text-danger">*</span>') ?>
         </div>
 
+        <!-- Status -->
+        <div class="mb-3">
+            <?= $form->field($model, 'status', [
+                'options' => ['class' => 'mb-0'],
+                'template' => '{label}{input}{hint}{error}',
+            ])->dropDownList(Expense::getStatuses(), [
+                'class' => 'form-select js-choices',
+                'id' => 'expense-status',
+            ])->label('<i class="bi bi-flag me-1 text-danger"></i>' . Yii::t('app', 'Status'))
+                ->hint(Yii::t('app', 'Drafts are copies you are still working on.'), ['class' => 'form-text small']) ?>
+        </div>
+
         <!-- Payment Method -->
         <div class="mb-3">
             <?= $form->field($model, 'payment_method', [
@@ -94,8 +123,37 @@ $showFbr = (Yii::$app->user->identity?->profile?->country_code) === 'PK';
                 'template' => '{label}{input}{hint}{error}',
             ])->dropDownList(Expense::getPaymentMethods(), [
                 'class' => 'form-select js-choices',
+                'id' => 'expense-payment-method',
                 'prompt' => Yii::t('app', '- Select Payment Method -'),
             ])->label('<i class="bi bi-credit-card me-1 text-danger"></i>' . Yii::t('app', 'Payment Method')) ?>
+        </div>
+
+        <!-- Bank (shown only for Card / Bank Transfer payments) -->
+        <div class="mb-3" id="bank-field-wrap" <?= $showBank ? '' : 'hidden' ?>>
+            <div class="d-flex justify-content-between align-items-center mb-1">
+                <label class="form-label mb-0" for="expense-bank-select">
+                    <i class="bi bi-bank2 me-1 text-danger"></i><?= Yii::t('app', 'Bank') ?>
+                </label>
+                <button type="button" class="btn btn-sm btn-link text-danger p-0 text-decoration-none" id="bank-add-toggle">
+                    <i class="bi bi-plus-lg"></i> <?= Yii::t('app', 'Add bank') ?>
+                </button>
+            </div>
+            <?= Html::activeDropDownList($model, 'bank_id', $banks, [
+                'class' => 'form-select js-choices',
+                'id' => 'expense-bank-select',
+                'prompt' => Yii::t('app', '- Select Bank -'),
+                'data-search-placeholder' => Yii::t('app', 'Search banks...'),
+            ]) ?>
+            <?= Html::error($model, 'bank_id', ['class' => 'text-danger small mt-1']) ?>
+
+            <!-- Inline quick-add -->
+            <div class="input-group input-group-sm mt-2 d-none" id="bank-add-box">
+                <input type="text" class="form-control" id="bank-add-name" maxlength="191" autocomplete="off"
+                    placeholder="<?= Yii::t('app', 'New bank name') ?>">
+                <button class="btn btn-danger" type="button" id="bank-add-save"><?= Yii::t('app', 'Save') ?></button>
+                <button class="btn btn-outline-secondary" type="button" id="bank-add-cancel"><?= Yii::t('app', 'Cancel') ?></button>
+            </div>
+            <div class="form-text small text-danger d-none" id="bank-add-error"></div>
         </div>
 
         <!-- Amount -->
@@ -226,7 +284,7 @@ $showFbr = (Yii::$app->user->identity?->profile?->country_code) === 'PK';
         </div>
 
         <!-- Quick Summary Card (for new records) -->
-        <?php if ($isNewRecord): ?>
+        <?php if ($isNewRecord && !$isDuplicate): ?>
             <div class="card border-0 bg-danger-subtle rounded-3 mt-3">
                 <div class="card-body">
                     <h6 class="card-title text-danger mb-3">
@@ -674,3 +732,93 @@ $(function () {
 JS;
 
 $this->registerJs($js);
+
+// Bank field: show only for Card / Bank Transfer, plus inline "add bank".
+$bankCfg = json_encode([
+    'url' => Url::to(['/bank/create']),
+    'csrfParam' => Yii::$app->request->csrfParam,
+    'csrfToken' => Yii::$app->request->csrfToken,
+    'showFor' => [Expense::PAYMENT_CARD, Expense::PAYMENT_BANK],
+    'failMsg' => Yii::t('app', 'Failed to add bank.'),
+]);
+$bankJs = <<<JS
+(function () {
+    var CFG = {$bankCfg};
+    var payEl = document.getElementById('expense-payment-method');
+    var wrap = document.getElementById('bank-field-wrap');
+    var sel = document.getElementById('expense-bank-select');
+    if (!payEl || !wrap) { return; }
+
+    function clearSel() {
+        if (sel && sel.choicesInstance) {
+            sel.choicesInstance.setChoiceByValue('');
+        } else if (sel) {
+            sel.value = '';
+        }
+    }
+    function toggle() {
+        if (CFG.showFor.indexOf(payEl.value) !== -1) {
+            wrap.removeAttribute('hidden');
+        } else {
+            wrap.setAttribute('hidden', 'hidden');
+            clearSel();
+        }
+    }
+    payEl.addEventListener('change', toggle);
+    toggle();
+
+    var toggleBtn = document.getElementById('bank-add-toggle');
+    var box = document.getElementById('bank-add-box');
+    var nameInput = document.getElementById('bank-add-name');
+    var saveBtn = document.getElementById('bank-add-save');
+    var cancelBtn = document.getElementById('bank-add-cancel');
+    var errEl = document.getElementById('bank-add-error');
+    if (!toggleBtn || !box) { return; }
+
+    function showBox(show) {
+        box.classList.toggle('d-none', !show);
+        errEl.classList.add('d-none');
+        if (show) { nameInput.value = ''; nameInput.focus(); }
+    }
+    function showErr(msg) { errEl.textContent = msg; errEl.classList.remove('d-none'); }
+
+    toggleBtn.addEventListener('click', function () { showBox(box.classList.contains('d-none')); });
+    cancelBtn.addEventListener('click', function () { showBox(false); });
+
+    function addBank() {
+        var name = (nameInput.value || '').trim();
+        if (!name) { nameInput.focus(); return; }
+        saveBtn.disabled = true;
+        var body = 'name=' + encodeURIComponent(name)
+            + '&' + encodeURIComponent(CFG.csrfParam) + '=' + encodeURIComponent(CFG.csrfToken);
+        fetch(CFG.url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' },
+            body: body
+        }).then(function (r) { return r.json(); }).then(function (data) {
+            saveBtn.disabled = false;
+            if (data && data.status === 'success') {
+                var val = String(data.id);
+                if (sel && sel.choicesInstance) {
+                    sel.choicesInstance.setChoices([{ value: val, label: data.name }], 'value', 'label', false);
+                    sel.choicesInstance.setChoiceByValue(val);
+                } else if (sel) {
+                    var o = document.createElement('option');
+                    o.value = val; o.text = data.name; o.selected = true; sel.appendChild(o);
+                }
+                showBox(false);
+            } else {
+                var m = (data && data.errors && data.errors.name) ? data.errors.name[0]
+                    : ((data && data.message) || CFG.failMsg);
+                showErr(m);
+            }
+        }).catch(function () { saveBtn.disabled = false; showErr(CFG.failMsg); });
+    }
+    saveBtn.addEventListener('click', addBank);
+    nameInput.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') { e.preventDefault(); addBank(); }
+    });
+})();
+JS;
+
+$this->registerJs($bankJs);

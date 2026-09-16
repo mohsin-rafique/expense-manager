@@ -823,6 +823,22 @@ class ExpenseCategory extends ActiveRecord
     }
 
     /**
+     * Returns the jsTree structure for an already-selected set of categories.
+     *
+     * Unlike {@see getJsTreeData()}, which loads the whole workspace, this
+     * builds the tree from a caller-supplied list so search filters can be
+     * applied first. The list must be self-contained: every node's parent has
+     * to be present, or that node is silently dropped by the tree builder.
+     *
+     * @param ExpenseCategory[] $categories Flat, filtered category list
+     * @return array
+     */
+    public static function getJsTreeDataFor(array $categories): array
+    {
+        return self::convertToJsTreeFormat(self::buildTree($categories));
+    }
+
+    /**
      * Converts tree to jsTree format
      *
      * @param array $tree Tree structure
@@ -931,6 +947,23 @@ class ExpenseCategory extends ActiveRecord
         'MEDICAL'       => Yii::t('app', 'Medical'),
         'EDUCATIONAL'   => Yii::t('app', 'Educational'),
         'FUNCTIONS'     => Yii::t('app', 'Functions / Gatherings'),
+        'CAR_INSTALL'   => Yii::t('app', 'Car Installment'),
+        'PLOT_INSTALL'  => Yii::t('app', 'Plot Installment'),
+        'RENT_RATE'     => Yii::t('app', 'Rent Rate'),
+        'SERVICE_CHARGE' => Yii::t('app', 'Service Charge'),
+        'SMS_ALERT_FEE' => Yii::t('app', 'SMS Alert Fee'),
+        'CARD_ANNUAL_FEE' => Yii::t('app', 'Card Annual Fee'),
+        'OTHER_FEES'    => Yii::t('app', 'Other Fees'),
+        'BANK_INDIRECT' => Yii::t('app', 'Bank / Indirect Expense'),
+        'FED_SALES_TAX' => Yii::t('app', '% FED / Sales Tax'),
+        'SALES_TAX_WHT' => Yii::t('app', '% Sales Tax Withholding'),
+        'ADV_INCOME_TAX' => Yii::t('app', 'Advance Income Tax'),
+        'ADV_TAX_CARD_REMIT' => Yii::t('app', 'Advance Tax on Persons Remitting Amounts Abroad Through Credit / Debit / Prepaid Cards'),
+        'DONATION'      => Yii::t('app', 'Donation'),
+        'ZAKAT'         => Yii::t('app', 'Zakat'),
+        'ANNUITY'       => Yii::t('app', 'Annuity'),
+        'PROFIT_ON_DEBT' => Yii::t('app', 'Profit on Debt'),
+        'LIFE_INS_PREMIUM' => Yii::t('app', 'Life Insurance Premium'),
         'OTHER_PERS'    => Yii::t('app', 'Other Personal / Household'),
         ];
     }

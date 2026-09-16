@@ -69,7 +69,7 @@ use yii\helpers\Url;
 
         <!-- Expenses Dropdown -->
         <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle <?= in_array($currentController, ['expense', 'expense-category']) ? 'active' : '' ?>" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <a class="nav-link dropdown-toggle <?= in_array($currentController, ['expense', 'expense-category', 'reconciliation']) ? 'active' : '' ?>" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="bi bi-graph-down-arrow nav-icon text-danger"></i>
                 <span><?= Yii::t('app', 'Expenses') ?></span>
             </a>
@@ -86,6 +86,12 @@ use yii\helpers\Url;
                         <span><?= Yii::t('app', 'Expense Categories') ?></span>
                     </a>
                 </li>
+                <li>
+                    <a class="dropdown-item <?= $currentController === 'bank' ? 'active' : '' ?>" href="<?= Url::to(['/bank/index']) ?>">
+                        <i class="bi bi-bank2 text-danger"></i>
+                        <span><?= Yii::t('app', 'Banks') ?></span>
+                    </a>
+                </li>
                 <li><hr class="dropdown-divider"></li>
                 <li>
                     <a class="dropdown-item" href="<?= Url::to(['/import/index', 'type' => 'expense']) ?>">
@@ -93,6 +99,20 @@ use yii\helpers\Url;
                         <span><?= Yii::t('app', 'Import Expenses') ?></span>
                     </a>
                 </li>
+                <?php if (\app\controllers\ReconciliationController::isPakistanUser()): ?>
+                    <li>
+                        <a class="dropdown-item <?= $currentController === 'reconciliation' && $currentAction === 'index' ? 'active' : '' ?>" href="<?= Url::to(['/reconciliation/index']) ?>">
+                            <i class="bi bi-bank2 text-danger"></i>
+                            <span><?= Yii::t('app', 'Reconcile Statement') ?></span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item <?= $currentController === 'reconciliation' && $currentAction === 'fbr' ? 'active' : '' ?>" href="<?= Url::to(['/reconciliation/fbr']) ?>">
+                            <i class="bi bi-file-earmark-bar-graph text-danger"></i>
+                            <span><?= Yii::t('app', 'Reconcile FBR Return') ?></span>
+                        </a>
+                    </li>
+                <?php endif; ?>
             </ul>
         </li>
 

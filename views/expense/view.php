@@ -32,6 +32,12 @@ $this->title = Yii::t('app', 'Expense #{id}', ['id' => $model->id]);
         <div class="text-muted">
             <?= Yii::$app->formatter->asDate($model->expense_date, 'full') ?>
         </div>
+        <div class="mt-2">
+            <span class="badge <?= $model->getStatusBadgeClass() ?>">
+                <i class="bi <?= $model->isDraft() ? 'bi-pencil-square' : 'bi-check-circle' ?> me-1"></i>
+                <?= Html::encode($model->getStatusLabel()) ?>
+            </span>
+        </div>
     </div>
 
     <!-- Main Details -->
@@ -69,6 +75,21 @@ $this->title = Yii::t('app', 'Expense #{id}', ['id' => $model->id]);
                 </div>
             </div>
         </div>
+
+        <?php if (!empty($model->bank_id) && $model->bank !== null): ?>
+        <!-- Bank -->
+        <div class="col-md-6">
+            <div class="detail-item">
+                <div class="detail-icon bg-info bg-opacity-10 text-info">
+                    <i class="bi bi-bank2"></i>
+                </div>
+                <div class="detail-content">
+                    <div class="detail-label"><?= Yii::t('app', 'Bank') ?></div>
+                    <div class="detail-value"><?= Html::encode($model->bank->name) ?></div>
+                </div>
+            </div>
+        </div>
+        <?php endif; ?>
 
         <!-- User -->
         <div class="col-md-6">
