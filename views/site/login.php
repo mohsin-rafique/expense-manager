@@ -59,6 +59,10 @@ $this->params['authPromoButtonUrl'] = ['/site/signup'];
 <!-- Password Field -->
 <?= $form->field($model, 'password', [
     'options' => ['class' => 'mb-3'],
+    // {error} must stay inside the input-group so it remains a CSS sibling of
+    // the .is-invalid input; Bootstrap's ".is-invalid ~ .invalid-feedback"
+    // selector won't match once the input is nested inside a wrapping div.
+    'template' => "{label}\n<div class=\"input-group has-validation\">{input}<button class=\"btn btn-outline-secondary toggle-password\" type=\"button\" tabindex=\"-1\" aria-label=\"" . Yii::t('app', 'Show password') . "\"><i class=\"bi bi-eye-slash\"></i></button>{error}</div>",
 ])->passwordInput([
     'placeholder' => Yii::t('app', 'Enter your password'),
     'class' => 'form-control',

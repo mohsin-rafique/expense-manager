@@ -1423,6 +1423,34 @@ var NEM = (function ($) {
 
     /**
      * =========================================================================
+     * PASSWORD VISIBILITY TOGGLE
+     * =========================================================================
+     */
+    var PasswordToggle = {
+        /**
+         * Initialize show/hide toggle buttons for password fields.
+         * Delegated on document, so it works for markup added after load too.
+         */
+        init: function () {
+            $(document).on("click", ".toggle-password", function (e) {
+                e.preventDefault();
+
+                var $btn = $(this);
+                var $input = $btn.closest(".input-group").find("input");
+                var $icon = $btn.find("i");
+                var isHidden = $input.attr("type") === "password";
+
+                $input.attr("type", isHidden ? "text" : "password");
+                $icon.toggleClass("bi-eye-slash", !isHidden).toggleClass("bi-eye", isHidden);
+                $btn.attr("aria-label", isHidden ? "Hide password" : "Show password");
+            });
+
+            Utils.log("Password toggle initialized", "log");
+        },
+    };
+
+    /**
+     * =========================================================================
      * FORM UTILITIES
      * =========================================================================
      */
@@ -1683,6 +1711,7 @@ var NEM = (function ($) {
         Delete.init();
         UI.initPageSize();
         UI.initTooltips();
+        PasswordToggle.init();
 
         // Generic status toggle (e.g. budgets): POST with CSRF, then reload PJAX
         $(document).on("click", ".nemToggleStatus", function (e) {
@@ -1751,6 +1780,7 @@ var NEM = (function ($) {
         AmountFormatter: AmountFormatter,
         GridCheckbox: GridCheckbox,
         BulkDelete: BulkDelete,
+        PasswordToggle: PasswordToggle,
         FormUtils: FormUtils,
         CurrencyPreview: CurrencyPreview,
         SettingsTabs: SettingsTabs,

@@ -220,9 +220,15 @@ $deleteBannerUrl = Url::to(['delete-banner']);
                         </div>
                         <?php $form = ActiveForm::begin(['id' => 'change-password-form', 'options' => ['class' => 'settings-form']]); ?>
                         <div class="row g-3">
-                            <div class="col-md-12"><?= $form->field($changePasswordModel, 'oldPassword')->passwordInput(['class' => 'form-control', 'placeholder' => Yii::t('app', 'Enter current password')])->label('<i class="bi bi-key me-1 text-muted"></i>' . Yii::t('app', 'Current Password')) ?></div>
-                            <div class="col-md-6"><?= $form->field($changePasswordModel, 'newPassword')->passwordInput(['class' => 'form-control', 'placeholder' => Yii::t('app', 'Enter new password')])->label('<i class="bi bi-lock me-1 text-muted"></i>' . Yii::t('app', 'New Password')) ?></div>
-                            <div class="col-md-6"><?= $form->field($changePasswordModel, 'confirmPassword')->passwordInput(['class' => 'form-control', 'placeholder' => Yii::t('app', 'Confirm new password')])->label('<i class="bi bi-lock-fill me-1 text-muted"></i>' . Yii::t('app', 'Confirm Password')) ?></div>
+                            <div class="col-md-12"><?= $form->field($changePasswordModel, 'oldPassword', [
+                                'template' => "{label}\n<div class=\"input-group has-validation\">{input}<button class=\"btn btn-outline-secondary toggle-password\" type=\"button\" tabindex=\"-1\" aria-label=\"" . Yii::t('app', 'Show password') . "\"><i class=\"bi bi-eye-slash\"></i></button>{error}</div>",
+                            ])->passwordInput(['class' => 'form-control', 'placeholder' => Yii::t('app', 'Enter current password')])->label('<i class="bi bi-key me-1 text-muted"></i>' . Yii::t('app', 'Current Password')) ?></div>
+                            <div class="col-md-6"><?= $form->field($changePasswordModel, 'newPassword', [
+                                'template' => "{label}\n<div class=\"input-group has-validation\">{input}<button class=\"btn btn-outline-secondary toggle-password\" type=\"button\" tabindex=\"-1\" aria-label=\"" . Yii::t('app', 'Show password') . "\"><i class=\"bi bi-eye-slash\"></i></button>{error}</div>",
+                            ])->passwordInput(['class' => 'form-control', 'placeholder' => Yii::t('app', 'Enter new password')])->label('<i class="bi bi-lock me-1 text-muted"></i>' . Yii::t('app', 'New Password')) ?></div>
+                            <div class="col-md-6"><?= $form->field($changePasswordModel, 'confirmPassword', [
+                                'template' => "{label}\n<div class=\"input-group has-validation\">{input}<button class=\"btn btn-outline-secondary toggle-password\" type=\"button\" tabindex=\"-1\" aria-label=\"" . Yii::t('app', 'Show password') . "\"><i class=\"bi bi-eye-slash\"></i></button>{error}</div>",
+                            ])->passwordInput(['class' => 'form-control', 'placeholder' => Yii::t('app', 'Confirm new password')])->label('<i class="bi bi-lock-fill me-1 text-muted"></i>' . Yii::t('app', 'Confirm Password')) ?></div>
                         </div>
                         <div class="settings-form-actions"><?= Html::submitButton('<i class="bi bi-shield-check me-1"></i>' . Yii::t('app', 'Update Password'), ['class' => 'btn btn-warning']) ?></div>
                         <?php ActiveForm::end(); ?>
