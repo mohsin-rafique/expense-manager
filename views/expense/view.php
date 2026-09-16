@@ -158,12 +158,12 @@ $this->title = Yii::t('app', 'Expense #{id}', ['id' => $model->id]);
                     <?php if ($fileExists): ?>
                         <div class="d-flex gap-2">
                             <?php if ($model->isImageFile()): ?>
-                                <button type="button"
+                                <a href="<?= Yii::getAlias('@web/' . $model->filepath) ?>"
                                     class="btn btn-outline-primary btn-sm"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#imagePreviewModal">
+                                    target="_blank"
+                                    rel="noopener">
                                     <i class="bi bi-eye"></i>
-                                </button>
+                                </a>
                             <?php endif; ?>
                             <a href="<?= Yii::getAlias('@web/' . $model->filepath) ?>"
                                 class="btn btn-primary btn-sm"
@@ -178,25 +178,6 @@ $this->title = Yii::t('app', 'Expense #{id}', ['id' => $model->id]);
                 </div>
             </div>
         </div>
-
-        <!-- Image Preview Modal -->
-        <?php if ($model->isImageFile() && $fileExists): ?>
-            <div class="modal fade" id="imagePreviewModal" tabindex="-1" aria-hidden="true">
-                <div class="modal-dialog modal-lg modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title"><?= Html::encode($model->filename) ?></h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body text-center">
-                            <img src="<?= Yii::getAlias('@web/' . $model->filepath) ?>"
-                                alt="<?= Html::encode($model->filename) ?>"
-                                class="img-fluid rounded">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        <?php endif; ?>
     <?php endif; ?>
 
     <!-- Audit Trail -->

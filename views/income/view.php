@@ -108,13 +108,13 @@ $color = $category->color ?? '#16a34a';
                     </div>
                     <div class="ms-2">
                         <?php if ($model->isImageAttachment()): ?>
-                            <button type="button"
+                            <a href="<?= $model->getFileUrl() ?>"
                                 class="btn btn-sm btn-outline-secondary me-1"
-                                data-bs-toggle="modal"
-                                data-bs-target="#imagePreviewModal"
+                                target="_blank"
+                                rel="noopener"
                                 title="<?= Yii::t('app', 'Preview') ?>">
                                 <i class="bi bi-eye"></i>
-                            </button>
+                            </a>
                         <?php endif; ?>
                         <a href="<?= $model->getFileUrl() ?>"
                             class="btn btn-sm btn-outline-primary"
@@ -129,35 +129,16 @@ $color = $category->color ?? '#16a34a';
                 <!-- Image Preview (inline for images) -->
                 <?php if ($model->isImageAttachment()): ?>
                     <div class="mt-3 text-center">
-                        <img src="<?= $model->getFileUrl() ?>"
-                            alt="<?= Html::encode($model->filename) ?>"
-                            class="img-fluid rounded shadow-sm"
-                            style="max-height: 200px; cursor: pointer;"
-                            data-bs-toggle="modal"
-                            data-bs-target="#imagePreviewModal">
+                        <a href="<?= $model->getFileUrl() ?>" target="_blank" rel="noopener">
+                            <img src="<?= $model->getFileUrl() ?>"
+                                alt="<?= Html::encode($model->filename) ?>"
+                                class="img-fluid rounded shadow-sm"
+                                style="max-height: 200px; cursor: pointer;">
+                        </a>
                     </div>
                 <?php endif; ?>
             </div>
         </div>
-
-        <!-- Image Preview Modal -->
-        <?php if ($model->isImageAttachment()): ?>
-            <div class="modal fade" id="imagePreviewModal" tabindex="-1">
-                <div class="modal-dialog modal-lg modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-header border-0">
-                            <h6 class="modal-title"><?= Html::encode($model->filename) ?></h6>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                        </div>
-                        <div class="modal-body text-center p-0">
-                            <img src="<?= $model->getFileUrl() ?>"
-                                alt="<?= Html::encode($model->filename) ?>"
-                                class="img-fluid">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        <?php endif; ?>
     <?php endif; ?>
 
     <!-- Meta Information -->
