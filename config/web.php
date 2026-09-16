@@ -416,6 +416,12 @@ $config = [
                     'maxFileSize' => 10240, // 10MB
                     'maxLogFiles' => 10,
                     'logVars' => ['_GET', '_POST', '_SESSION', '_COOKIE'],
+                    'maskVars' => [
+                        '_SERVER.HTTP_AUTHORIZATION',
+                        '_SERVER.PHP_AUTH_USER',
+                        '_SERVER.PHP_AUTH_PW',
+                        '_POST.*.*password*',
+                    ],
                     'except' => [
                         'yii\web\HttpException:404',
                     ],
@@ -432,6 +438,9 @@ $config = [
                     'maxFileSize' => 10240, // 10MB
                     'maxLogFiles' => 5,
                     'logVars' => ['_GET', '_POST'],
+                    'maskVars' => [
+                        '_POST.*.*password*',
+                    ],
                 ],
 
                 /*
@@ -500,6 +509,12 @@ $config = [
                     'maxFileSize' => 10240, // 10MB
                     'maxLogFiles' => 10,
                     'logVars' => ['_GET', '_POST', '_SERVER'],
+                    'maskVars' => [
+                        '_SERVER.HTTP_AUTHORIZATION',
+                        '_SERVER.PHP_AUTH_USER',
+                        '_SERVER.PHP_AUTH_PW',
+                        '_POST.*.*password*',
+                    ],
                 ],
 
             ],
